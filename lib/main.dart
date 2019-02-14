@@ -3,15 +3,18 @@ import './fetch_data.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import './maps/static_map_screen.dart';
 import './add_mensa.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import './maps/mensa_selector_list.dart';
 
 void main() {
   runApp(MaterialApp(
       title: 'First Route',
-      //theme: ThemeData(primaryColor: Colors.grey),
+      // TODO: theme: ThemeData(primaryColor: Colors.purple),
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(),
         '/mensa_selector': (context) => MapGenerator(),
+        // '/mensa_selector/list': (context) => RandomWords(latlng: ,),
       }));
 }
 
@@ -24,11 +27,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
+  bool _alreadySelectedMensa;
   final _widgetOptions = [
     Text('Index 0: Current Dishes'),
     Text('Index 1: Favourites'),
     AddMensa(),
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkIfMensaSelected(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +72,29 @@ class _MyHomePageState extends State<MyHomePage> {
         type: BottomNavigationBarType.shifting,
       ),
     );
+  }
+
+  checkIfMensaSelected(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getStringList('selectedMensas') == null ||
+        prefs.getStringList('selectedMensas').isEmpty) {
+      showAlert(context);
+    }
+  }
+
+  showAlert(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text("Select Mensa"),
+              content: Text(
+                  "Welcome to Open Mensa Germany :) \nI can take you to the place where you can select the Mensas you're interested in."),
+                  actions: <Widget>[
+                    FlatButton(child: Text('Let\'s go'), onPressed: () {
+                      Navigator.pushNamed(context, '/mensa_selector');
+                    },)
+                  ],
+            ));
   }
 
   void _onItemTapped(int index) {

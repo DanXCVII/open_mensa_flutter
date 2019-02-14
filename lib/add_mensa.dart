@@ -6,7 +6,6 @@ class AddMensa extends StatefulWidget {
 
   @override
   _AddMensaState createState() {
-    print('AddMensa_createState()');
     return _AddMensaState();
   }
 }
@@ -14,7 +13,6 @@ class AddMensa extends StatefulWidget {
 class _AddMensaState extends State<AddMensa> {
   @override
   Widget build(BuildContext context) {
-    print('AddMensaState_build()');
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.green[700],

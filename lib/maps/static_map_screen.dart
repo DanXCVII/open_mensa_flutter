@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'package:location/location.dart';
+import './mensa_selector_list.dart';
 
 class MapGenerator extends StatefulWidget {
   MapGenerator({Key key, this.title}) : super(key: key);
@@ -35,11 +36,25 @@ class MapGeneratorState extends State<MapGenerator> {
                 'confirm',
                 style: TextStyle(color: Colors.white),
               ),
-              onPressed: () { // When pressed confirm: show pop up with the mensas around the location with a tickbox to select the mensa.
-                mapController.addMarker(MarkerOptions(
-                    position: LatLng(
-                        mapController.cameraPosition.target.latitude,
-                        mapController.cameraPosition.target.longitude)));
+              onPressed: () {
+                // When pressed confirm: show pop up with the mensas around the location with a tickbox to select the mensa.
+                print(mapController.cameraPosition.target.longitude);
+                
+
+                /// Not so easy to pass Arguments to a named route, so implemented the alternative. Maybe do it nicer later
+                /// but the way it works now doesn't have any drawbacks. It's just not so nice :)
+                /// Navigator.pushNamed(context, '/mensa_selector/list');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CheckableMensaList(
+                          latlng: {
+                            "lat": mapController.cameraPosition.target.latitude,
+                            "lng": mapController.cameraPosition.target.longitude
+                          },
+                        ),
+                  ),
+                );
               },
             ),
           ],

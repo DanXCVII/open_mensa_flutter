@@ -53,7 +53,8 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.restaurant, color: Colors.grey),
+              icon: Icon(Icons.restaurant),
+              activeIcon: Icon(Icons.restaurant, color: Colors.grey),
               title: Text('Dishes'),
               backgroundColor: Colors.blue),
           BottomNavigationBarItem(
@@ -62,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
               title: Text('Favourites'),
               backgroundColor: Colors.brown[700]),
           BottomNavigationBarItem(
-              activeIcon: Icon(Icons.edit_location, color: Colors.deepOrange),
+              activeIcon: Icon(Icons.edit_location, color: Colors.red),
               icon: Icon(Icons.edit_location),
               title: Text('Mensas'),
               backgroundColor: Colors.green[700]),

@@ -37,9 +37,7 @@ class MapGeneratorState extends State<MapGenerator> {
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
-                // When pressed confirm: show pop up with the mensas around the location with a tickbox to select the mensa.
-                print(mapController.cameraPosition.target.longitude);
-                
+                // Maybe When pressed confirm: show pop up with the mensas around the location with a tickbox to select the mensa.                
 
                 /// Not so easy to pass Arguments to a named route, so implemented the alternative. Maybe do it nicer later
                 /// but the way it works now doesn't have any drawbacks. It's just not so nice :)

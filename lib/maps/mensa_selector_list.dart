@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../fetch_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 
 class CheckableMensaList extends StatefulWidget {
   // Map which contains the selected location of the user.
@@ -9,7 +10,7 @@ class CheckableMensaList extends StatefulWidget {
   CheckableMensaList({Key key, @required this.latlng}) : super(key: key);
 
   @override
-  CheckableMensaListState createState() => new CheckableMensaListState(
+  CheckableMensaListState createState() => CheckableMensaListState(
       mensaList: fetchPost(latlng['lat'].toString(), latlng['lng'].toString()));
 }
 
@@ -24,6 +25,18 @@ class CheckableMensaListState extends State<CheckableMensaList> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Select your Mensas'),
+          backgroundColor: Colors.black87,
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'confirm',
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
+              },
+            )
+          ],
         ),
         body: FutureBuilder<ListView>(
             future: createCheckedListView(mensaList),
@@ -31,7 +44,8 @@ class CheckableMensaListState extends State<CheckableMensaList> {
               if (snapshot.hasData) {
                 return snapshot.data;
               } else if (snapshot.hasError) {
-                if (snapshot.error.toString().contains('RangeError')) {
+                if (snapshot.error.toString().contains('RangeError') ||
+                    snapshot.data == null) {
                   return displayNoMensaFoundMessage(context);
                 }
                 return Center(child: Text("Fehlermeldung: ${snapshot.error}"));
@@ -41,10 +55,14 @@ class CheckableMensaListState extends State<CheckableMensaList> {
   }
 
   Future<ListView> createCheckedListView(Future<MensaList> fMensaList) async {
-    MensaList snapshot = await fMensaList; // TODO: catch error.
+    MensaList snapshot = await fMensaList;
     final prefs = await SharedPreferences.getInstance();
 
-    return new ListView.builder(
+    if (snapshot.mensas.isEmpty) {
+      throw Exception('No Mensa found');
+    }
+
+    return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (BuildContext _context, int i) {
           if (i.isOdd && i < snapshot.mensas.length * 2) {
@@ -61,10 +79,18 @@ class CheckableMensaListState extends State<CheckableMensaList> {
                     List<String> selectedMensas =
                         prefs.getStringList('selectedMensas') ?? [];
                     if (value) {
-                      selectedMensas.add(snapshot.mensas[index]['name']);
+                      selectedMensas.add("${snapshot.mensas[index]['id']}&" +
+                          "${snapshot.mensas[index]['name']}&&" +
+                          "${snapshot.mensas[index]['address']}&&&" +
+                          "${snapshot.mensas[index]['coordinates'][0]}&&&&" +
+                          "${snapshot.mensas[index]['coordinates'][1]}");
                       prefs.setStringList('selectedMensas', selectedMensas);
                     } else {
-                      selectedMensas.remove(snapshot.mensas[index]['name']);
+                      selectedMensas.remove("${snapshot.mensas[index]['id']}&" +
+                          "${snapshot.mensas[index]['name']}&&" +
+                          "${snapshot.mensas[index]['address']}&&&" +
+                          "${snapshot.mensas[index]['coordinates'][0]}&&&&" +
+                          "${snapshot.mensas[index]['coordinates'][1]}");
                       prefs.setStringList('selectedMensas', selectedMensas);
                     }
                   });
@@ -74,24 +100,36 @@ class CheckableMensaListState extends State<CheckableMensaList> {
   }
 
   Widget displayNoMensaFoundMessage(BuildContext context) {
+    print('Dekorierung gestartet');
     return Center(
         child: Column(
       children: <Widget>[
-        Text(
-          '😕', // TODO: Change emoji to a more material one ;)
-          style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 5.0),
+        Image.asset(
+          'images/sad.png',
+          width: 128.0,
+          height: 128.0,
+          color: Colors.grey[600],
         ),
-        Text('Unfortunately no mensas found'),
+        Text(
+          'Unfortunately no mensas found',
+          style: TextStyle(color: Colors.grey[600]),
+        ),
       ],
       mainAxisAlignment: MainAxisAlignment.center,
     ));
   }
 
   bool checkPrefForMensa(List<String> mensaList, String mensaName) {
+    bool ret = false;
     if (mensaList == null) {
       return false;
     } else {
-      return mensaList.contains(mensaName);
+      for (int i = 0; i < mensaList.length; i++) {
+        if (mensaList[i].contains(mensaName)) {
+          ret = true;
+        }
+      }
     }
+    return ret;
   }
 }

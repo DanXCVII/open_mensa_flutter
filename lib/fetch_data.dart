@@ -10,7 +10,6 @@ Future<MensaList> fetchPost(String lat, String lng) async {
   if (response.statusCode == 200) {
     print(
         'Commander: We established a connection to the openMensaAPI to fetch the canteens around you');
-    print(json.decode(response.body));
     return MensaList.fromJson(json.decode(response.body));
   } else {
     throw Exception(

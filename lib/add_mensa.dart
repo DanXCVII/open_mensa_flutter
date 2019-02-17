@@ -48,7 +48,7 @@ class _AddMensaState extends State<AddMensa> {
   }
 
   Widget mensaList(SharedPreferences prefs) {
-    if (mensas.length == 0) {
+    if (mensas == null || mensas.length == 0) {
       return noMensaSelected();
     } else {
       return ListView.builder(

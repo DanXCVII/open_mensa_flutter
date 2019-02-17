@@ -34,7 +34,13 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _alreadySelectedMensa;
   final _widgetOptions = [
     CurrentDishes(),
-    Text('Index 1: Favourites'),
+    Center(child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(Icons.favorite_border, size: 70,),
+        Text('Index 1: Favourites'),
+      ],
+    )),
     AddMensa(),
   ];
 

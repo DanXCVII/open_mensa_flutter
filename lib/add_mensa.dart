@@ -32,10 +32,12 @@ class _AddMensaState extends State<AddMensa> {
             future: getPrefs(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                mensas = snapshot.data.getStringList('selectedMensas');
-                return mensaList(snapshot.data);
-              } else if (snapshot.data == null) {
-                return noMensaSelected();
+                if (snapshot.data == null) {
+                  return noMensaSelected();
+                } else {
+                  mensas = snapshot.data.getStringList('selectedMensas');
+                  return mensaList(snapshot.data);
+                }
               } else if (snapshot.hasError) {
                 return Text('Fehlermeldung${snapshot.error}');
               }
@@ -46,44 +48,50 @@ class _AddMensaState extends State<AddMensa> {
   }
 
   Widget mensaList(SharedPreferences prefs) {
-    return ListView.builder(
-        itemCount: mensas.length,
-        itemBuilder: (BuildContext _context, int i) {
-          return Dismissible(
-            key: Key(mensas[i]),
-            onDismissed: (direction) {
-              setState(() {
-                List<String> tmp = prefs.getStringList('selectedMensas');
-                tmp.remove(mensas[i]);
-                prefs.setStringList('selectedMensas', tmp);
-              });
-            },
-            child: Card(
-              child: ListTile(
-                title: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(getMensaName(mensas[i]))),
-                subtitle: Padding(
-                    padding: EdgeInsets.only(bottom: 8.0),
-                    child: Text(getMensaAddress(mensas[i]))),
-                trailing: IconButton(
-                  icon: Icon(Icons.directions),
-                  onPressed: () {
-                    // TODO: Add Directions to Mensa
-                  },
+    if (mensas.length == 0) {
+      return noMensaSelected();
+    } else {
+      return ListView.builder(
+          itemCount: mensas.length,
+          itemBuilder: (BuildContext _context, int i) {
+            return Dismissible(
+              key: Key(mensas[i]),
+              onDismissed: (direction) {
+                setState(() {
+                  List<String> tmp = prefs.getStringList('selectedMensas');
+                  tmp.remove(mensas[i]);
+                  prefs.setStringList('selectedMensas', tmp);
+                });
+              },
+              child: Card(
+                child: ListTile(
+                  title: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(getMensaName(mensas[i]))),
+                  subtitle: Padding(
+                      padding: EdgeInsets.only(bottom: 8.0),
+                      child: Text(getMensaAddress(mensas[i]))),
+                  trailing: IconButton(
+                    icon: Icon(Icons.directions),
+                    onPressed: () {
+                      // TODO: Add Directions to Mensa
+                    },
+                  ),
                 ),
               ),
-            ),
-            background: Container(
-              color: Colors.red[800],
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: EdgeInsets.only(right: 18.0),
-                child: Icon(Icons.delete, color: Colors.white,)
+              background: Container(
+                color: Colors.red[800],
+                alignment: Alignment.centerRight,
+                child: Padding(
+                    padding: EdgeInsets.only(right: 18.0),
+                    child: Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                    )),
               ),
-            ),
-          );
-        });
+            );
+          });
+    }
   }
 
   String getMensaName(String fullMensaInfo) {

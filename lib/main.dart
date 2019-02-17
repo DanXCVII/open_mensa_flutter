@@ -5,6 +5,7 @@ import './maps/static_map_screen.dart';
 import './add_mensa.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './maps/mensa_selector_list.dart';
+import './current_dishes.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -29,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   bool _alreadySelectedMensa;
   final _widgetOptions = [
-    Text('Index 0: Current Dishes'),
+    CurrentDishes(),
     Text('Index 1: Favourites'),
     AddMensa(),
   ];

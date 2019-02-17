@@ -28,6 +28,7 @@ dependencies:
 
   google_maps_flutter: ^0.2.0+2
   
+  flutter_svg: ^0.10.3
   
 
 dev_dependencies:
@@ -49,6 +50,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
    - images/sad.png
+   - assets/burger.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

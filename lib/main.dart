@@ -6,8 +6,11 @@ import './add_mensa.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './maps/mensa_selector_list.dart';
 import './current_dishes.dart';
+import 'package:flutter/rendering.dart';
 
 void main() {
+  debugPaintSizeEnabled = false;
+
   runApp(MaterialApp(
       title: 'First Route',
       // TODO: theme: ThemeData(primaryColor: Colors.purple),
@@ -91,11 +94,14 @@ class _MyHomePageState extends State<MyHomePage> {
               title: Text("Select Mensa"),
               content: Text(
                   "Welcome to Open Mensa Germany :) \nI can take you to the place where you can select the Mensas you're interested in."),
-                  actions: <Widget>[
-                    FlatButton(child: Text('Let\'s go'), onPressed: () {
-                      Navigator.pushNamed(context, '/mensa_selector');
-                    },)
-                  ],
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Let\'s go'),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/mensa_selector');
+                  },
+                )
+              ],
             ));
   }
 

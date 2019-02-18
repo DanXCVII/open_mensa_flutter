@@ -117,3 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 }
+
+  Future<SharedPreferences> getPrefs() async {
+    return await SharedPreferences.getInstance();
+  }

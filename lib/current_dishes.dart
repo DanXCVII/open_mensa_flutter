@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import './fetch_data.dart';
+import 'main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'add_mensa.dart';
 
 class CurrentDishes extends StatefulWidget {
   @override
@@ -14,27 +18,44 @@ class CurrentDishesState extends State<CurrentDishes> {
     print('CurrentDishesState');
     return Scaffold(
         backgroundColor: Colors.grey[100],
-        body: ListView(children: <Widget>[
-          createDishCard(
-              '2019-02-15',
-              'Spaghetti mit Schinken-Käse-Sahnesoße und Reibekäse',
-              'Angebote',
-              {'students': 2.25, 'pupils': 5.00, 'others': 5.00},
-              ['enthält Schweinefleisch', 'vegetarisch'],
-              context),
-          createDishCard(
-              '2019-02-15',
-              'Spaghetti mit Schinken-Käse-Sahnesoße und Reibekäse',
-              'Angebote',
-              {'students': 2.25, 'pupils': 5.00, 'others': 5.00},
-              ['enthält Schweinefleisch', 'vegetarisch'],
-              context),
-        ]));
+        body: FutureBuilder<ListView>(
+            future: showDishes(context),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data;
+              } else if (snapshot.hasError) {
+                return Center(child: Text("Fehlermeldung: ${snapshot.error}"));
+              }
+              return Center(child: CircularProgressIndicator());
+            }));
   }
 }
 
-Widget createDishCard(String date, String dishName, String category,
-    Map<String, double> prices, List<String> notes, BuildContext context) {
+Future<ListView> showDishes(BuildContext context) async {
+  SharedPreferences prefs = await getPrefs();
+  DishesRawData snapshot =
+      await fetchMeals(getMensaId(prefs.getStringList('selectedMensas')[0]));
+  print(snapshot.dishRaw);
+
+  if (snapshot.dishRaw.isEmpty) {
+    throw Exception('No DISHES found');
+  }
+  return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemCount: getMealsCount(snapshot.dishRaw, 0),
+      itemBuilder: (BuildContext _context, int i) {
+        return createDishCard(
+            snapshot.dishRaw[0]['meals'][i]['name'],
+            snapshot.dishRaw[0]['meals'][i]['category'],
+            snapshot.dishRaw[0]['meals'][i]['prices'],
+            snapshot.dishRaw[0]['meals'][i]['notes'],
+            context);
+      });
+}
+
+/// Dynamics are actually doubles but can't be further specified.
+Widget createDishCard(String dishName, String category,
+    Map<String, dynamic> priceGroup, List<dynamic> notes, BuildContext context) {
   double width = MediaQuery.of(context).size.width;
 
   return Stack(children: <Widget>[
@@ -70,9 +91,8 @@ Widget createDishCard(String date, String dishName, String category,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   IconButton(
-                      icon: Icon(Icons.favorite_border,
-                          color: Colors
-                              .white), // TODO: If saved to favourites: Icon is favorite and not only border
+                      icon: Icon(Icons.favorite_border, color: Colors.white),
+                      // TODO: If saved to favourites: Icon is favorite and not only border
                       onPressed: () {}),
                   Padding(
                     padding: const EdgeInsets.only(left: 12.0, right: 12.0),
@@ -80,92 +100,30 @@ Widget createDishCard(String date, String dishName, String category,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Text(
-                            // TODO: Center properly. When device in landscape mode, it's not correctly centered right now
-                            dishName,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18.0,
-                                color: Colors.white),
+                          Center(
+                            child: Text(
+                              // TODO: Center properly. When device in landscape mode, it's not correctly centered right now
+                              dishName,
+                              textAlign: TextAlign.center,
+
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.0,
+                                  color: Colors.white),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Divider(),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              Column(
-                                children: <Widget>[
-                                  Text(
-                                    'students:',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.white),
-                                  ),
-                                  Text(
-                                    '2.30€',
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.white),
-                                  )
-                                ],
-                              ),
-                              Container(
-                                width: 1,
-                                height: 28,
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        right: BorderSide(
-                                            color: Theme.of(context)
-                                                .dividerColor))),
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Text(
-                                    'students:',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.white),
-                                  ),
-                                  Text(
-                                    '2.30€',
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.white),
-                                  )
-                                ],
-                              ),
-                              Container(
-                                width: 1,
-                                height: 28,
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        right: BorderSide(
-                                            color: Theme.of(context)
-                                                .dividerColor))),
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Text(
-                                    'students:',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.white),
-                                  ),
-                                  Text(
-                                    '2.30€',
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.white),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
+                          createRowPrices(priceGroup, context),
                           Padding(
                             padding:
                                 const EdgeInsets.only(top: 12.0, bottom: 5.0),
-                            child: Text('Angebote',
+                            child: Text(category,
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontStyle: FontStyle
-                                        .italic)), // TODO: Unten rechts.
+                                    fontStyle: FontStyle.italic)),
                           ),
                         ]),
                   ),
@@ -182,7 +140,7 @@ Widget createDishCard(String date, String dishName, String category,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           SvgPicture.asset(
-            'assets/fish.svg',
+            'assets/burger.svg',
             semanticsLabel: 'Acme Logo',
             height: 80,
           ),
@@ -190,4 +148,83 @@ Widget createDishCard(String date, String dishName, String category,
       ),
     ),
   ]);
+}
+
+/// the dynamic of priceGroup hashMap is double but can't be further specified because
+/// it's the data from the mensa API.
+Row createRowPrices(Map<String, dynamic> priceGroup, BuildContext context) { 
+  List<Widget> groupList = [];
+  if (priceGroup['students'] != null) {
+    groupList.add(createColumnPrice('students', priceGroup['students']));
+  }
+  if (priceGroup['employees'] != null) {
+    groupList.add(getVerticalDivider(context));
+    groupList.add(createColumnPrice('employees', priceGroup['employees']));
+  }
+  if (priceGroup['pupils'] != null || priceGroup['others'] != null) {
+    groupList.add(getVerticalDivider(context));
+    if (priceGroup['pupils'] != null) {
+      groupList.add(createColumnPrice('others', priceGroup['pupils']));
+    } else {
+      groupList.add(createColumnPrice('others', priceGroup['others']));
+    }
+  }
+
+  return Row(
+    children: groupList,
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  );
+}
+
+Widget getVerticalDivider(BuildContext context) {
+  return Container(
+    width: 1,
+    height: 28,
+    decoration: BoxDecoration(
+        border:
+            Border(right: BorderSide(color: Theme.of(context).dividerColor))),
+  );
+}
+
+Column createColumnPrice(String group, double price) {
+  return Column(
+    children: <Widget>[
+      Text(
+        '$group:',
+        style: TextStyle(fontSize: 12, color: Colors.white),
+      ),
+      Text(
+        '$price€',
+        style: TextStyle(fontSize: 20, color: Colors.white),
+      )
+    ],
+  );
+}
+
+Widget displayNoMensaSelected() {
+  return Center(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(
+          Icons.restaurant,
+          size: 70,
+        ),
+        Text('Index 1: Favourites'),
+      ],
+    ),
+  );
+}
+
+// TODO: think about how to manage it with the getters.
+String getDateDishes(List<dynamic> dishesRaw, int dayFromToday) {
+  return dishesRaw[dayFromToday]['date'];
+}
+
+bool isOpenDishes(List<dynamic> dishesRaw, int dayFromToday) {
+  return dishesRaw[dayFromToday]['closed'];
+}
+
+int getMealsCount(List<dynamic> dishesRaw, int dayFromToday) {
+  return dishesRaw[dayFromToday]['meals'].length;
 }

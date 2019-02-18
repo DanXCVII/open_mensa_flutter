@@ -11,7 +11,7 @@ class CheckableMensaList extends StatefulWidget {
 
   @override
   CheckableMensaListState createState() => CheckableMensaListState(
-      mensaList: fetchPost(latlng['lat'].toString(), latlng['lng'].toString()));
+      mensaList: fetchMensas(latlng['lat'].toString(), latlng['lng'].toString()));
 }
 
 class CheckableMensaListState extends State<CheckableMensaList> {
@@ -58,14 +58,13 @@ class CheckableMensaListState extends State<CheckableMensaList> {
     MensaList snapshot = await fMensaList;
     final prefs = await SharedPreferences.getInstance();
 
-    if (snapshot.mensas.isEmpty || snapshot.mensas == null) {
+    if (snapshot.mensas.isEmpty) {
       throw Exception('No Mensa found');
     }
 
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (BuildContext _context, int i) {
-          print('OMGGGGG');
           if (i.isOdd && i < snapshot.mensas.length * 2) {
             return const Divider();
           }

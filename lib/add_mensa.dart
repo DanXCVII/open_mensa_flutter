@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import './maps/static_map_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'main.dart';
 
 class AddMensa extends StatefulWidget {
   AddMensa({Key key}) : super(key: key);
@@ -52,6 +53,7 @@ class _AddMensaState extends State<AddMensa> {
       return noMensaSelected();
     } else {
       return ListView.builder(
+          // TODO: Make items rearrangeable
           itemCount: mensas.length,
           itemBuilder: (BuildContext _context, int i) {
             return Dismissible(
@@ -102,10 +104,6 @@ class _AddMensaState extends State<AddMensa> {
     return fullMensaInfo.split('&&')[1].split('&&&')[0];
   }
 
-  Future<SharedPreferences> getPrefs() async {
-    return await SharedPreferences.getInstance();
-  }
-
   Widget noMensaSelected() {
     return Center(
         child: Text(
@@ -113,4 +111,8 @@ class _AddMensaState extends State<AddMensa> {
       style: TextStyle(color: Colors.grey[700]),
     ));
   }
+}
+
+String getMensaId(String fullMensaInfo) {
+  return fullMensaInfo.split('&')[0];
 }

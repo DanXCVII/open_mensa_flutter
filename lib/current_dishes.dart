@@ -6,19 +6,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'add_mensa.dart';
 
 class CurrentDishes extends StatefulWidget {
+  Drawer drawer;
+  CurrentDishes({@required this.drawer});
+
   @override
   State<StatefulWidget> createState() {
-    return CurrentDishesState();
+    return CurrentDishesState(myDrawer: drawer);
   }
 }
 
 class CurrentDishesState extends State<CurrentDishes> {
+  Drawer myDrawer;
+  CurrentDishesState({@required this.myDrawer});
+
   @override
   Widget build(BuildContext context) {
     print('CurrentDishesState');
     return Scaffold(
         backgroundColor: Colors.grey[100],
-        body: FutureBuilder<ListView>(
+        drawer: myDrawer,
+        body: FutureBuilder<CustomScrollView>(
             future: showDishes(context),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -31,7 +38,7 @@ class CurrentDishesState extends State<CurrentDishes> {
   }
 }
 
-Future<ListView> showDishes(BuildContext context) async {
+Future<CustomScrollView> showDishes(BuildContext context) async {
   SharedPreferences prefs = await getPrefs();
   DishesRawData snapshot =
       await fetchMeals(getMensaId(prefs.getStringList('selectedMensas')[0]));
@@ -40,22 +47,39 @@ Future<ListView> showDishes(BuildContext context) async {
   if (snapshot.dishRaw.isEmpty) {
     throw Exception('No DISHES found');
   }
-  return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: getMealsCount(snapshot.dishRaw, 0),
-      itemBuilder: (BuildContext _context, int i) {
-        return createDishCard(
-            snapshot.dishRaw[0]['meals'][i]['name'],
-            snapshot.dishRaw[0]['meals'][i]['category'],
-            snapshot.dishRaw[0]['meals'][i]['prices'],
-            snapshot.dishRaw[0]['meals'][i]['notes'],
-            context);
-      });
+  return CustomScrollView(slivers: <Widget>[
+    SliverAppBar(
+      expandedHeight: 150.0,
+      floating: false,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text("Current Dishes"),
+      ),
+    ),
+    SliverList(delegate: SliverChildListDelegate(getAllDishCards(snapshot, context)))
+  ]);
+}
+
+List<Widget> getAllDishCards(DishesRawData snapshot, BuildContext context) {
+  List<Widget> output = [];
+  for (int i = 0; i < getMealsCount(snapshot.dishRaw, 0); i++) {
+    output.add(createDishCard(
+        snapshot.dishRaw[0]['meals'][i]['name'],
+        snapshot.dishRaw[0]['meals'][i]['category'],
+        snapshot.dishRaw[0]['meals'][i]['prices'],
+        snapshot.dishRaw[0]['meals'][i]['notes'],
+        context));
+  }
+  return output;
 }
 
 /// Dynamics are actually doubles but can't be further specified.
-Widget createDishCard(String dishName, String category,
-    Map<String, dynamic> priceGroup, List<dynamic> notes, BuildContext context) {
+Widget createDishCard(
+    String dishName,
+    String category,
+    Map<String, dynamic> priceGroup,
+    List<dynamic> notes,
+    BuildContext context) {
   double width = MediaQuery.of(context).size.width;
 
   return Stack(children: <Widget>[
@@ -152,7 +176,7 @@ Widget createDishCard(String dishName, String category,
 
 /// the dynamic of priceGroup hashMap is double but can't be further specified because
 /// it's the data from the mensa API.
-Row createRowPrices(Map<String, dynamic> priceGroup, BuildContext context) { 
+Row createRowPrices(Map<String, dynamic> priceGroup, BuildContext context) {
   List<Widget> groupList = [];
   if (priceGroup['students'] != null) {
     groupList.add(createColumnPrice('students', priceGroup['students']));

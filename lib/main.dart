@@ -22,67 +22,116 @@ void main() {
       }));
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
+class DrawerItem {
+  String title;
+  IconData icon;
+  DrawerItem(this.title, this.icon);
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
-  bool _alreadySelectedMensa;
-  final _widgetOptions = [
-    CurrentDishes(),
-    Center(child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Icon(Icons.favorite_border, size: 70,),
-        Text('Index 1: Favourites'),
-      ],
-    )),
-    AddMensa(),
+class MyHomePage extends StatefulWidget {
+  final drawerItems = [
+    DrawerItem("Fragment 1", Icons.restaurant),
+    DrawerItem("Fragment 2", Icons.favorite),
+    DrawerItem("Fragment 3", Icons.edit_location)
   ];
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    checkIfMensaSelected(context);
+  State<StatefulWidget> createState() {
+    return new _MyHomePageState();
+  }
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _selectedDrawerIndex = 0;
+
+  _getDrawerItemWidget(int pos) {
+    switch (pos) {
+      case 0:
+        return CurrentDishes(drawer: buildDrawer());
+      case 1:
+        return new Center(
+            // Not finished Screen with the favourite dishes
+            child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              Icons.favorite_border,
+              size: 70,
+            ),
+            Text('Index 1: Favourites'),
+          ],
+        ));
+      case 2:
+        return AddMensa();
+
+      default:
+        return new Text("Error");
+    }
+  }
+
+  Drawer buildDrawer() {
+    var drawerOptions = <Widget>[];
+    for (var i = 0; i < widget.drawerItems.length; i++) {
+      var d = widget.drawerItems[i];
+      drawerOptions.add(new ListTile(
+        leading: new Icon(d.icon),
+        title: new Text(d.title),
+        selected: i == _selectedDrawerIndex,
+        onTap: () => _onSelectItem(i),
+      ));
+    }
+    return Drawer(
+        child: new Column(
+          children: <Widget>[
+            new UserAccountsDrawerHeader(
+                accountName: new Text("John Doe"), accountEmail: null),
+            new Column(children: drawerOptions)
+          ],
+        ),
+      );
+  }
+
+  _onSelectItem(int index) {
+    setState(() => _selectedDrawerIndex = index);
+    Navigator.of(context).pop(); // close the drawer
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Open Mensa'),
+    var drawerOptions = <Widget>[];
+    for (var i = 0; i < widget.drawerItems.length; i++) {
+      var d = widget.drawerItems[i];
+      drawerOptions.add(new ListTile(
+        leading: new Icon(d.icon),
+        title: new Text(d.title),
+        selected: i == _selectedDrawerIndex,
+        onTap: () => _onSelectItem(i),
+      ));
+    }
+    return new Scaffold(
+      appBar: new AppBar(
+        // here we display the title corresponding to the fragment
+        // you can instead choose to have a static title
+        title: new Text(widget.drawerItems[_selectedDrawerIndex].title),
       ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+      drawer: new Drawer(
+        child: new Column(
+          children: <Widget>[
+            new UserAccountsDrawerHeader(
+                accountName: new Text("John Doe"), accountEmail: null),
+            new Column(children: drawerOptions)
+          ],
+        ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Icon(Icons.restaurant),
-              activeIcon: Icon(Icons.restaurant, color: Colors.grey),
-              title: Text('Dishes'),
-              backgroundColor: Colors.blue),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border),
-              activeIcon: Icon(Icons.favorite, color: Colors.pink[400]),
-              title: Text('Favourites'),
-              backgroundColor: Colors.brown[700]),
-          BottomNavigationBarItem(
-              activeIcon: Icon(Icons.edit_location, color: Colors.red),
-              icon: Icon(Icons.edit_location),
-              title: Text('Mensas'),
-              backgroundColor: Colors.green[700]),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.shifting,
-      ),
+      body: _getDrawerItemWidget(_selectedDrawerIndex),
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: Maybe not good practise to do async activity in the init state
+    super.initState();
+    checkIfMensaSelected(context);
   }
 
   checkIfMensaSelected(BuildContext context) async {
@@ -110,14 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ));
   }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 }
 
-  Future<SharedPreferences> getPrefs() async {
-    return await SharedPreferences.getInstance();
-  }
+Future<SharedPreferences> getPrefs() async {
+  return await SharedPreferences.getInstance();
+}

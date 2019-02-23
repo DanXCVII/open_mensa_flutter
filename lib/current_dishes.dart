@@ -2,30 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import './fetch_data.dart';
 import 'main.dart';
+import "dart:async";
 import 'package:shared_preferences/shared_preferences.dart';
 import 'add_mensa.dart';
 
 class CurrentDishes extends StatefulWidget {
-  Drawer drawer;
-  CurrentDishes({@required this.drawer});
+  Drawer myDrawer;
+  CurrentDishes({@required this.myDrawer});
 
   @override
   State<StatefulWidget> createState() {
-    return CurrentDishesState(myDrawer: drawer);
+    return CurrentDishesState(myDrawer: myDrawer);
   }
 }
 
 class CurrentDishesState extends State<CurrentDishes> {
   Drawer myDrawer;
   CurrentDishesState({@required this.myDrawer});
+  List<Widget> dishCardsDay0;
+  List<Widget> dishCardsDay1;
+  List<Widget> dishCardsDay2;
+  List<Widget> dishCardsDay3;
+  List<Widget> dishCardsDay4;
+
+  @override
+  void initState() {
+    super.initState();
+    initAllDishesData(context).then((result) {
+      setState(() {});
+    });
+  }
+
+  void reload() {
+    setState(() {
+      initAllDishesData(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    print('CurrentDishesState');
     return Scaffold(
-        backgroundColor: Colors.grey[100],
+        backgroundColor: Colors.white,
         drawer: myDrawer,
-        body: FutureBuilder<CustomScrollView>(
+        body: FutureBuilder<Widget>(
             future: showDishes(context),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -36,41 +55,183 @@ class CurrentDishesState extends State<CurrentDishes> {
               return Center(child: CircularProgressIndicator());
             }));
   }
-}
 
-Future<CustomScrollView> showDishes(BuildContext context) async {
-  SharedPreferences prefs = await getPrefs();
-  DishesRawData snapshot =
-      await fetchMeals(getMensaId(prefs.getStringList('selectedMensas')[0]));
-  print(snapshot.dishRaw);
+  initAllDishesData(BuildContext context) async {
+    SharedPreferences prefs = await getPrefs();
+    DishesRawData snapshot =
+        await fetchMeals(getMensaId(prefs.getStringList('selectedMensas')[0]));
 
-  if (snapshot.dishRaw.isEmpty) {
-    throw Exception('No DISHES found');
+    try {
+      dishCardsDay0 = await getAllDishCardsDay(snapshot, context, 0);
+    } catch (e) {
+      print("${e.toString()} Fehlermeldung");
+    }
+    try {
+      dishCardsDay1 = await getAllDishCardsDay(snapshot, context, 1);
+    } catch (e) {
+      return;
+    }
+    try {
+      dishCardsDay2 = await getAllDishCardsDay(snapshot, context, 2);
+    } catch (e) {
+      return;
+    }
+    try {
+      dishCardsDay3 = await getAllDishCardsDay(snapshot, context, 3);
+    } catch (e) {
+      return;
+    }
+    try {
+      dishCardsDay4 = await getAllDishCardsDay(snapshot, context, 4);
+    } catch (e) {
+      return;
+    }
   }
-  return CustomScrollView(slivers: <Widget>[
-    SliverAppBar(
-      expandedHeight: 150.0,
-      floating: false,
-      pinned: true,
-      flexibleSpace: FlexibleSpaceBar(
-        title: Text("Current Dishes"),
-      ),
-    ),
-    SliverList(delegate: SliverChildListDelegate(getAllDishCards(snapshot, context)))
-  ]);
+
+  List<Tab> getTabs() {
+    List<Tab> output = [];
+    if (dishCardsDay0 != null) {
+      output.add(Tab(text: "Today"));
+      if (dishCardsDay1 != null) {
+        output.add(Tab(text: "Tomorrow"));
+        if (dishCardsDay2 != null) {
+          output.add(Tab(text: "Wednesday"));
+          if (dishCardsDay3 != null) {
+            output.add(Tab(text: "Thursday"));
+            if (dishCardsDay4 != null) {
+              output.add(Tab(text: "Friday"));
+            }
+          }
+        }
+      }
+    }
+    return output;
+  }
+
+  List<ListView> getTabsData() {
+    List<ListView> output = [];
+    if (dishCardsDay0 != []) {
+      output.add(ListView(children: dishCardsDay0));
+      if (dishCardsDay1 != []) {
+        output.add(ListView(children: dishCardsDay1));
+        if (dishCardsDay2 != []) {
+          output.add(ListView(children: dishCardsDay2));
+          if (dishCardsDay3 != []) {
+            output.add(ListView(children: dishCardsDay3));
+            if (dishCardsDay4 != []) {
+              output.add(ListView(children: dishCardsDay4));
+            }
+          }
+        }
+      }
+    }
+    return output;
+  }
+
+  // Change method to collect data of the mensa you want (index)
+  Future<Widget> showDishes(BuildContext context) async {
+    SharedPreferences prefs = await getPrefs();
+    DishesRawData snapshot =
+        await fetchMeals(getMensaId(prefs.getStringList('selectedMensas')[0]));
+    List<ListView> tabsData = getTabsData();
+    List<Tab> tabs = getTabs();
+    String mensaName = getMensaName(prefs.getStringList('selectedMensas')[0]);
+
+    if (tabs == []) {
+      return Center(
+        child: Text("neeee"),
+      );
+    }
+
+    if (snapshot.dishRaw.isEmpty) {
+      throw Exception('No DISHES found');
+    }
+    return DefaultTabController(
+      length: tabs.length,
+      child: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverAppBar(
+                expandedHeight: 200.0,
+                floating: false,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                    centerTitle: true,
+                    title: Text(mensaName,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.0,
+                        )),
+                    background: Image.network(
+                      "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+                      fit: BoxFit.cover,
+                    )),
+              ),
+              SliverPersistentHeader(
+                delegate: _SliverAppBarDelegate(
+                  TabBar(
+                    labelColor: Colors.black87,
+                    unselectedLabelColor: Colors.grey,
+                    tabs: tabs,
+                  ),
+                ),
+                pinned: false,
+              ),
+            ];
+          },
+          body: TabBarView(
+            children: tabsData,
+          )),
+    );
+  }
 }
 
-List<Widget> getAllDishCards(DishesRawData snapshot, BuildContext context) {
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return new Container(
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
+  }
+}
+
+Future<List<Widget>> getAllDishCardsDay(
+    DishesRawData dishesRawD, BuildContext context, int day) {
+  var completer = new Completer<List<Widget>>();
   List<Widget> output = [];
-  for (int i = 0; i < getMealsCount(snapshot.dishRaw, 0); i++) {
-    output.add(createDishCard(
-        snapshot.dishRaw[0]['meals'][i]['name'],
-        snapshot.dishRaw[0]['meals'][i]['category'],
-        snapshot.dishRaw[0]['meals'][i]['prices'],
-        snapshot.dishRaw[0]['meals'][i]['notes'],
-        context));
+
+  for (int i = 0; i < getMealsCount(dishesRawD.dishRaw, day); i++) {
+    String icon = getIconName(
+        "${dishesRawD.dishRaw[day]['meals'][i]['category']}${dishesRawD.dishRaw[day]['meals'][i]['name']}${dishesRawD.dishRaw[day]['meals'][i]['notes']}");
+    try {
+      output.add(createDishCard(
+          dishesRawD.dishRaw[day]['meals'][i]['name'],
+          dishesRawD.dishRaw[day]['meals'][i]['category'],
+          dishesRawD.dishRaw[day]['meals'][i]['prices'],
+          dishesRawD.dishRaw[day]['meals'][i]['notes'],
+          context,
+          icon,
+          getThemeColor(icon)));
+    } catch (e) {}
   }
-  return output;
+
+  completer.complete(output);
+  return completer.future;
 }
 
 /// Dynamics are actually doubles but can't be further specified.
@@ -79,7 +240,9 @@ Widget createDishCard(
     String category,
     Map<String, dynamic> priceGroup,
     List<dynamic> notes,
-    BuildContext context) {
+    BuildContext context,
+    String icon,
+    List<Color> themeData) {
   double width = MediaQuery.of(context).size.width;
 
   return Stack(children: <Widget>[
@@ -94,9 +257,10 @@ Widget createDishCard(
               borderRadius: BorderRadius.circular(15.0),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey,
-                  blurRadius: 20.0,
-                  spreadRadius: 5.0,
+                  // Shadow of the DishCard
+                  color: themeData[0],
+                  blurRadius: 15.0, // default 20.0
+                  spreadRadius: 1.5, // default 5.0
                   offset: Offset(10.0, 10.0),
                 ),
               ],
@@ -105,7 +269,7 @@ Widget createDishCard(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   gradient: LinearGradient(
-                    colors: [Colors.purple, Colors.deepPurple],
+                    colors: [themeData[0], themeData[1]],
                     begin: FractionalOffset.topLeft,
                     end: FractionalOffset.bottomRight,
                     stops: [0.0, 1.0],
@@ -160,15 +324,14 @@ Widget createDishCard(
     ),
     Padding(
       padding: EdgeInsets.only(top: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          SvgPicture.asset(
-            'assets/burger.svg',
-            semanticsLabel: 'Acme Logo',
-            height: 80,
-          ),
-        ],
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: Image.asset(
+          'images/$icon.png',
+          width: 100,
+          height: 80,
+          fit: BoxFit.contain,
+        ),
       ),
     ),
   ]);
@@ -251,4 +414,43 @@ bool isOpenDishes(List<dynamic> dishesRaw, int dayFromToday) {
 
 int getMealsCount(List<dynamic> dishesRaw, int dayFromToday) {
   return dishesRaw[dayFromToday]['meals'].length;
+}
+
+// Content of output List: [ColorFrom, ColorTo, Icon]
+String getIconName(String dishInfo) {
+  String dISHiNFO = dishInfo.toUpperCase();
+
+  if (dISHiNFO.contains('BURGER')) {
+    return 'burger';
+  } else if (dISHiNFO.contains('PIZZA')) {
+    return 'pizza';
+  } else if (dISHiNFO.contains('FISCH') || dISHiNFO.contains('LACHS')) {
+    return 'fish';
+  } else if (dISHiNFO.contains('SPAGHETTI') ||
+      dISHiNFO.contains('NUDEL')) // Maybe not adding the image at nudeln..
+  {
+    return 'spaghetti';
+  } else if (dISHiNFO.contains('POMMES')) {
+    return 'pommes';
+  } else {
+    return 'forkSpoon';
+  }
+}
+
+List<Color> getThemeColor(String dish) {
+  if (dish == 'burger') {
+    return [Colors.yellow, Colors.deepOrange];
+  } else if (dish == 'pizza') {
+    return [Colors.deepOrange, Colors.red];
+  } else if (dish == 'fish' || dish == 'lachs') {
+    return [Colors.lightBlue[900], Colors.blueAccent];
+  } else if (dish == 'spaghetti' ||
+      dish == 'nudel') // Maybe not adding the image at nudeln..
+  {
+    return [Colors.red[900], Colors.amber];
+  } else if (dish == 'pommes') {
+    return [Colors.amber, Colors.brown[700]];
+  } else {
+    return [Colors.orange[700], Colors.red[700]];
+  }
 }

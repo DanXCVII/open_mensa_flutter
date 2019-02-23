@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 Future<MensaList> fetchMensas(String lat, String lng) async {
   final response = await http.get(
-      'http://openmensa.org/api/v2/canteens?near[lat]=$lat&near[lng]=$lng&near[dist]=50');
+      'http://openmensa.org/api/v2/canteens?near[lat]=$lat&near[lng]=$lng&near[dist]=30');
 
   if (response.statusCode == 200) {
     print(

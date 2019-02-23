@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../fetch_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
+import '../current_dishes.dart';
 
 class CheckableMensaList extends StatefulWidget {
   // Map which contains the selected location of the user.
@@ -11,7 +12,8 @@ class CheckableMensaList extends StatefulWidget {
 
   @override
   CheckableMensaListState createState() => CheckableMensaListState(
-      mensaList: fetchMensas(latlng['lat'].toString(), latlng['lng'].toString()));
+      mensaList:
+          fetchMensas(latlng['lat'].toString(), latlng['lng'].toString()));
 }
 
 class CheckableMensaListState extends State<CheckableMensaList> {
@@ -39,7 +41,7 @@ class CheckableMensaListState extends State<CheckableMensaList> {
           ],
         ),
         body: FutureBuilder<ListView>(
-            future: createCheckedListView(mensaList),
+            future: createCheckedListView(mensaList), 
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return snapshot.data;
@@ -57,6 +59,7 @@ class CheckableMensaListState extends State<CheckableMensaList> {
   Future<ListView> createCheckedListView(Future<MensaList> fMensaList) async {
     MensaList snapshot = await fMensaList;
     final prefs = await SharedPreferences.getInstance();
+    List<CheckboxListTile> checkableMensaList = getCheckableMensaList(snapshot.mensas, prefs);
 
     if (snapshot.mensas.isEmpty) {
       throw Exception('No Mensa found');
@@ -70,33 +73,42 @@ class CheckableMensaListState extends State<CheckableMensaList> {
           }
           final int index = i ~/ 2;
           if (index < snapshot.mensas.length) {
-            return CheckboxListTile(
-                title: Text(snapshot.mensas[index]['name']),
-                value: checkPrefForMensa(prefs.getStringList('selectedMensas'),
-                    snapshot.mensas[index]['name']),
-                onChanged: (bool value) {
-                  setState(() {
-                    List<String> selectedMensas =
-                        prefs.getStringList('selectedMensas') ?? [];
-                    if (value) {
-                      selectedMensas.add("${snapshot.mensas[index]['id']}&" +
-                          "${snapshot.mensas[index]['name']}&&" +
-                          "${snapshot.mensas[index]['address']}&&&" +
-                          "${snapshot.mensas[index]['coordinates'][0]}&&&&" +
-                          "${snapshot.mensas[index]['coordinates'][1]}");
-                      prefs.setStringList('selectedMensas', selectedMensas);
-                    } else {
-                      selectedMensas.remove("${snapshot.mensas[index]['id']}&" +
-                          "${snapshot.mensas[index]['name']}&&" +
-                          "${snapshot.mensas[index]['address']}&&&" +
-                          "${snapshot.mensas[index]['coordinates'][0]}&&&&" +
-                          "${snapshot.mensas[index]['coordinates'][1]}");
-                      prefs.setStringList('selectedMensas', selectedMensas);
-                    }
-                  });
-                });
+            return checkableMensaList[index];
           }
         });
+  }
+
+  List<CheckboxListTile> getCheckableMensaList(
+      List<dynamic> mensas, SharedPreferences prefs) {
+    List<CheckboxListTile> mList = new List<CheckboxListTile>();
+    for (int index = 0; index < mensas.length; index++)
+      mList.add(CheckboxListTile(
+          title: Text(mensas[index]['name']),
+          value: checkPrefForMensa(
+              prefs.getStringList('selectedMensas'), mensas[index]['name']),
+          onChanged: (bool value) {
+            setState(() {
+              List<String> selectedMensas =
+                  prefs.getStringList('selectedMensas') ?? [];
+              if (value) {
+                selectedMensas.add("${mensas[index]['id']}&" +
+                    "${mensas[index]['name']}&&" +
+                    "${mensas[index]['address']}&&&" +
+                    "${mensas[index]['coordinates'][0]}&&&&" +
+                    "${mensas[index]['coordinates'][1]}");
+                prefs.setStringList('selectedMensas', selectedMensas);
+              } else {
+                selectedMensas.remove("${mensas[index]['id']}&" +
+                    "${mensas[index]['name']}&&" +
+                    "${mensas[index]['address']}&&&" +
+                    "${mensas[index]['coordinates'][0]}&&&&" +
+                    "${mensas[index]['coordinates'][1]}");
+                prefs.setStringList('selectedMensas', selectedMensas);
+              }
+              
+            });
+          }));
+          return mList;
   }
 
   Widget displayNoMensaFoundMessage(BuildContext context) {

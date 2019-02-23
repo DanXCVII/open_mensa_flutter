@@ -12,6 +12,7 @@ void main() {
   debugPaintSizeEnabled = false;
 
   runApp(MaterialApp(
+      showPerformanceOverlay: false,
       title: 'First Route',
       // TODO: theme: ThemeData(primaryColor: Colors.purple),
       initialRoute: '/',
@@ -45,9 +46,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedDrawerIndex = 0;
 
   _getDrawerItemWidget(int pos) {
+    Drawer drawer = buildDrawer();
     switch (pos) {
       case 0:
-        return CurrentDishes(drawer: buildDrawer());
+        return CurrentDishes(myDrawer: drawer);
       case 1:
         return new Center(
             // Not finished Screen with the favourite dishes
@@ -62,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ));
       case 2:
-        return AddMensa();
+        return AddMensa(myDrawer: drawer);
 
       default:
         return new Text("Error");
@@ -81,14 +83,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ));
     }
     return Drawer(
-        child: new Column(
-          children: <Widget>[
-            new UserAccountsDrawerHeader(
-                accountName: new Text("John Doe"), accountEmail: null),
-            new Column(children: drawerOptions)
-          ],
-        ),
-      );
+      child: new Column(
+        children: <Widget>[
+          new UserAccountsDrawerHeader(
+              accountName: new Text("John Doe"), accountEmail: null),
+          new Column(children: drawerOptions)
+        ],
+      ),
+    );
   }
 
   _onSelectItem(int index) {
@@ -109,11 +111,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ));
     }
     return new Scaffold(
-      appBar: new AppBar(
-        // here we display the title corresponding to the fragment
-        // you can instead choose to have a static title
-        title: new Text(widget.drawerItems[_selectedDrawerIndex].title),
-      ),
       drawer: new Drawer(
         child: new Column(
           children: <Widget>[

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import './maps/static_map_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart';
 
 class AddMensa extends StatefulWidget {
-  Drawer myDrawer;
+  final Drawer myDrawer;
   AddMensa({Key key, @required this.myDrawer}) : super(key: key);
 
   @override

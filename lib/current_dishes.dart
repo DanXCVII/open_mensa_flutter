@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import './fetch_data.dart';
 import 'main.dart';
 import "dart:async";
@@ -7,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'add_mensa.dart';
 
 class CurrentDishes extends StatefulWidget {
-  Drawer myDrawer;
+  final Drawer myDrawer;
   CurrentDishes({@required this.myDrawer});
 
   @override
@@ -48,7 +47,8 @@ class CurrentDishesState extends State<CurrentDishes> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) // TODO: Add all the building stuff and put the async tasks somewhere else
+   { 
     return Scaffold(
         backgroundColor: Colors.white,
         drawer: myDrawer,
@@ -316,7 +316,6 @@ class CurrentDishesState extends State<CurrentDishes> {
                           children: <Widget>[
                             Center(
                               child: Text(
-                                // TODO: Center properly. When device in landscape mode, it's not correctly centered right now
                                 dishName,
                                 textAlign: TextAlign.center,
 

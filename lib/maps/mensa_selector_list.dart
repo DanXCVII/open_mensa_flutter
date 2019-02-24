@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../fetch_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
-import '../current_dishes.dart';
 
 class CheckableMensaList extends StatefulWidget {
   // Map which contains the selected location of the user.

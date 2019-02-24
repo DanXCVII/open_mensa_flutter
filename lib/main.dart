@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import './fetch_data.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import './maps/static_map_screen.dart';
 import './add_mensa.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import './maps/mensa_selector_list.dart';
 import './current_dishes.dart';
 import 'package:flutter/rendering.dart';
 

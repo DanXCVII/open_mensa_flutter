@@ -46,25 +46,29 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedDrawerIndex = 0;
 
   _getDrawerItemWidget(int pos) {
-    Drawer drawer = buildDrawer();
+    Drawer myDrawer = buildDrawer();
     switch (pos) {
       case 0:
-        return CurrentDishes(myDrawer: drawer);
+        return CurrentDishes(myDrawer: myDrawer);
       case 1:
-        return new Center(
-            // Not finished Screen with the favourite dishes
-            child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Icon(
-              Icons.favorite_border,
-              size: 70,
-            ),
-            Text('Index 1: Favourites'),
-          ],
-        ));
+        return Scaffold(
+          appBar: AppBar(title: Text('Favourites'),),
+          drawer:myDrawer,
+          body: Center(
+              // Not finished Screen with the favourite dishes
+              child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(
+                Icons.favorite_border,
+                size: 70,
+              ),
+              Text('Index 1: favourites'),
+            ],
+          )),
+        );
       case 2:
-        return AddMensa(myDrawer: drawer);
+        return AddMensa(myDrawer: myDrawer);
 
       default:
         return new Text("Error");

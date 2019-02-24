@@ -24,18 +24,26 @@ class CurrentDishesState extends State<CurrentDishes> {
   List<Widget> dishCardsDay2;
   List<Widget> dishCardsDay3;
   List<Widget> dishCardsDay4;
+  String mensaName;
+  SharedPreferences prefs;
+  Map<String, bool> favorites = {};
 
   @override
   void initState() {
+    print("initState() called");
     super.initState();
-    initAllDishesData(context).then((result) {
-      setState(() {});
-    });
+    try {
+      initCurrentDishesData(context).then((result) {
+        setState(() {});
+      });
+    } catch (e) {
+      return;
+    }
   }
 
   void reload() {
     setState(() {
-      initAllDishesData(context);
+      initCurrentDishesData(context);
     });
   }
 
@@ -49,18 +57,30 @@ class CurrentDishesState extends State<CurrentDishes> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return snapshot.data;
-              } else if (snapshot.hasError) {
-                return Center(child: Text("Fehlermeldung: ${snapshot.error}"));
               }
+
+              /// TODO: NTH: Maybe handle the error somehow
+              /// else if (snapshot.hasError) {
+              /// return Center(child: CircularProgressIndicator());
+              /// }
               return Center(child: CircularProgressIndicator());
             }));
   }
 
-  initAllDishesData(BuildContext context) async {
-    SharedPreferences prefs = await getPrefs();
+  initCurrentDishesData(BuildContext context) async {
+    prefs = await getPrefs();
+    // making sure that the user already selected a mensa
+    try {
+      assert(prefs.getStringList('selectedMensas') != null);
+    } catch (e) {
+      return;
+    }
     DishesRawData snapshot =
         await fetchMeals(getMensaId(prefs.getStringList('selectedMensas')[0]));
 
+    mensaName = getMensaName(prefs.getStringList('selectedMensas')[0]);
+
+    // assigning the global variables with the dishCards.
     try {
       dishCardsDay0 = await getAllDishCardsDay(snapshot, context, 0);
     } catch (e) {
@@ -131,21 +151,25 @@ class CurrentDishesState extends State<CurrentDishes> {
   // Change method to collect data of the mensa you want (index)
   Future<Widget> showDishes(BuildContext context) async {
     SharedPreferences prefs = await getPrefs();
-    DishesRawData snapshot =
-        await fetchMeals(getMensaId(prefs.getStringList('selectedMensas')[0]));
-    List<ListView> tabsData = getTabsData();
-    List<Tab> tabs = getTabs();
-    String mensaName = getMensaName(prefs.getStringList('selectedMensas')[0]);
-
-    if (tabs == []) {
-      return Center(
-        child: Text("neeee"),
+    // Making sure that the user already selected mensas
+    try {
+      assert(prefs.getStringList('selectedMensas')[0] != null);
+    } catch (e) {
+      return Scaffold(
+        drawer: myDrawer,
+        appBar: AppBar(
+          title: Text('Current Dishes'),
+        ),
+        body: Center(
+          child: Text(
+              "You haven't selected any Mensa yet. Do so, by navigating to the add mensa mensu :)"),
+        ),
       );
     }
 
-    if (snapshot.dishRaw.isEmpty) {
-      throw Exception('No DISHES found');
-    }
+    List<ListView> tabsData = getTabsData();
+    List<Tab> tabs = getTabs();
+
     return DefaultTabController(
       length: tabs.length,
       child: NestedScrollView(
@@ -170,6 +194,7 @@ class CurrentDishesState extends State<CurrentDishes> {
               SliverPersistentHeader(
                 delegate: _SliverAppBarDelegate(
                   TabBar(
+                    isScrollable: true,
                     labelColor: Colors.black87,
                     unselectedLabelColor: Colors.grey,
                     tabs: tabs,
@@ -183,6 +208,159 @@ class CurrentDishesState extends State<CurrentDishes> {
             children: tabsData,
           )),
     );
+  }
+
+  Future<List<Widget>> getAllDishCardsDay(
+      DishesRawData dishesRawD, BuildContext context, int day) {
+    var completer = new Completer<List<Widget>>();
+    List<Widget> output = [];
+
+    for (int i = 0; i < getMealsCount(dishesRawD.dishRaw, day); i++) {
+      String icon = getIconName(
+          "${dishesRawD.dishRaw[day]['meals'][i]['category']}${dishesRawD.dishRaw[day]['meals'][i]['name']}${dishesRawD.dishRaw[day]['meals'][i]['notes']}");
+      try {
+        output.add(createDishCard(
+            dishesRawD.dishRaw[day]['meals'][i]['name'],
+            dishesRawD.dishRaw[day]['meals'][i]['category'],
+            dishesRawD.dishRaw[day]['meals'][i]['prices'],
+            dishesRawD.dishRaw[day]['meals'][i]['notes'],
+            context,
+            icon,
+            getThemeColor(icon),
+            prefs));
+      } catch (e) {}
+    }
+
+    completer.complete(output);
+    return completer.future;
+  }
+
+  Widget createDishCard(
+      String dishName,
+      String category,
+      Map<String, dynamic> priceGroup, // dynamic = double
+      List<dynamic> notes, // dynamic = String
+      BuildContext context,
+      String icon,
+      List<Color> themeData,
+      SharedPreferences prefs) {
+    double width = MediaQuery.of(context).size.width;
+
+    return Stack(children: <Widget>[
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(top: 50),
+            alignment: Alignment.topCenter,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                boxShadow: [
+                  BoxShadow(
+                    // Shadow of the DishCard
+                    color: themeData[0],
+                    blurRadius: 15.0, // default 20.0
+                    spreadRadius: 1.5, // default 5.0
+                    offset: Offset(10.0, 10.0),
+                  ),
+                ],
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    gradient: LinearGradient(
+                      colors: [themeData[0], themeData[1]],
+                      begin: FractionalOffset.topLeft,
+                      end: FractionalOffset.bottomRight,
+                      stops: [0.0, 1.0],
+                    )),
+                width: width * 0.9,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    IconButton(
+                        icon: checkFavorite(prefs, '$dishName&$category&&${notes.toString()}&&&$icon')
+                            ? Icon(Icons.favorite, color: Colors.pink)
+                            : Icon(Icons.favorite_border, color: Colors.white),
+                        // TODO: If saved to favourites: Icon is favorite and not only border
+                        onPressed: () {
+                          setState(() {
+                            try {
+                              // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED
+                              List<String> favs =
+                                  prefs.getStringList('favoriteDishes');
+                              if (favorites[dishName] == true) {
+                                favs.remove(
+                                    '$dishName&$category&&${notes.toString()}&&&$icon');
+                                prefs.setStringList('favoriteDishes', favs);
+                              } else {
+                                favs.add(
+                                    '$dishName&$category&&${notes.toString()}&&&$icon');
+                                prefs.setStringList('favoriteDishes', favs);
+
+                              }
+                            } catch (e) {
+                              favorites.addAll({dishName:true});
+                              prefs.setStringList('favoriteDishes', [
+                                '$dishName&$category&&${notes.toString()}&&&$icon'
+                              ]);
+                            }
+                          });
+                        }),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Center(
+                              child: Text(
+                                // TODO: Center properly. When device in landscape mode, it's not correctly centered right now
+                                dishName,
+                                textAlign: TextAlign.center,
+
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18.0,
+                                    color: Colors.white),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Divider(),
+                            ),
+                            createRowPrices(priceGroup, context),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 12.0, bottom: 5.0),
+                              child: Text(category,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontStyle: FontStyle.italic)),
+                            ),
+                          ]),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Image.asset(
+            'images/$icon.png',
+            width: 100,
+            height: 80,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+    ]);
   }
 }
 
@@ -208,133 +386,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
     return false;
   }
-}
-
-Future<List<Widget>> getAllDishCardsDay(
-    DishesRawData dishesRawD, BuildContext context, int day) {
-  var completer = new Completer<List<Widget>>();
-  List<Widget> output = [];
-
-  for (int i = 0; i < getMealsCount(dishesRawD.dishRaw, day); i++) {
-    String icon = getIconName(
-        "${dishesRawD.dishRaw[day]['meals'][i]['category']}${dishesRawD.dishRaw[day]['meals'][i]['name']}${dishesRawD.dishRaw[day]['meals'][i]['notes']}");
-    try {
-      output.add(createDishCard(
-          dishesRawD.dishRaw[day]['meals'][i]['name'],
-          dishesRawD.dishRaw[day]['meals'][i]['category'],
-          dishesRawD.dishRaw[day]['meals'][i]['prices'],
-          dishesRawD.dishRaw[day]['meals'][i]['notes'],
-          context,
-          icon,
-          getThemeColor(icon)));
-    } catch (e) {}
-  }
-
-  completer.complete(output);
-  return completer.future;
-}
-
-/// Dynamics are actually doubles but can't be further specified.
-Widget createDishCard(
-    String dishName,
-    String category,
-    Map<String, dynamic> priceGroup,
-    List<dynamic> notes,
-    BuildContext context,
-    String icon,
-    List<Color> themeData) {
-  double width = MediaQuery.of(context).size.width;
-
-  return Stack(children: <Widget>[
-    Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Container(
-          margin: EdgeInsets.only(top: 50),
-          alignment: Alignment.topCenter,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15.0),
-              boxShadow: [
-                BoxShadow(
-                  // Shadow of the DishCard
-                  color: themeData[0],
-                  blurRadius: 15.0, // default 20.0
-                  spreadRadius: 1.5, // default 5.0
-                  offset: Offset(10.0, 10.0),
-                ),
-              ],
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
-                  gradient: LinearGradient(
-                    colors: [themeData[0], themeData[1]],
-                    begin: FractionalOffset.topLeft,
-                    end: FractionalOffset.bottomRight,
-                    stops: [0.0, 1.0],
-                  )),
-              width: width * 0.9,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  IconButton(
-                      icon: Icon(Icons.favorite_border, color: Colors.white),
-                      // TODO: If saved to favourites: Icon is favorite and not only border
-                      onPressed: () {}),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Center(
-                            child: Text(
-                              // TODO: Center properly. When device in landscape mode, it's not correctly centered right now
-                              dishName,
-                              textAlign: TextAlign.center,
-
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18.0,
-                                  color: Colors.white),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Divider(),
-                          ),
-                          createRowPrices(priceGroup, context),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(top: 12.0, bottom: 5.0),
-                            child: Text(category,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontStyle: FontStyle.italic)),
-                          ),
-                        ]),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-    Padding(
-      padding: EdgeInsets.only(top: 10),
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: Image.asset(
-          'images/$icon.png',
-          width: 100,
-          height: 80,
-          fit: BoxFit.contain,
-        ),
-      ),
-    ),
-  ]);
 }
 
 /// the dynamic of priceGroup hashMap is double but can't be further specified because
@@ -432,6 +483,10 @@ String getIconName(String dishInfo) {
     return 'spaghetti';
   } else if (dISHiNFO.contains('POMMES')) {
     return 'pommes';
+  } else if (dISHiNFO.contains('GEFLÜGEL') ||
+      dISHiNFO.contains('HÄHNCHEN') ||
+      dISHiNFO.contains('PUTE')) {
+    return 'haehnchenBrust';
   } else {
     return 'forkSpoon';
   }
@@ -450,7 +505,23 @@ List<Color> getThemeColor(String dish) {
     return [Colors.red[900], Colors.amber];
   } else if (dish == 'pommes') {
     return [Colors.amber, Colors.brown[700]];
+  } else if (dish == 'haehnchenBrust') {
+    return [Colors.brown[700], Colors.deepOrange[900]];
   } else {
     return [Colors.orange[700], Colors.red[700]];
   }
+}
+
+bool checkFavorite(SharedPreferences prefs, String dishInfo) {
+  bool output = false;
+  try {
+    prefs.getStringList('favoriteDishes').forEach((dish) {
+      if (dish == dishInfo) {
+        output = true;
+      }
+    });
+  } catch (e) {
+    print(e);
+  }
+  return output;
 }

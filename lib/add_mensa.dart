@@ -122,11 +122,15 @@ class _AddMensaState extends State<AddMensa> {
   }
 
   Widget noMensaSelected() {
-    return Center(
-        child: Text(
-      'You haven\'t selected any mensa yet',
-      style: TextStyle(color: Colors.grey[700]),
-    ));
+    return Scaffold(
+      appBar: AppBar(title: Text("Add Mensa")),
+      drawer: myDrawer,
+      body: Center(
+          child: Text(
+        'You haven\'t selected any mensa yet',
+        style: TextStyle(color: Colors.grey[700]),
+      )),
+    );
   }
 }
 

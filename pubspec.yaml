@@ -57,6 +57,9 @@ flutter:
    - images/burger.png
    - images/sad.png
    - images/dishbackground.png
+   - images/haehnchenBrust.png
+   - images/unknownDish.png
+
    - images/background.jpg
    - assets/default.svg
    - assets/burger.svg

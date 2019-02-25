@@ -230,7 +230,7 @@ class CurrentDishesState extends State<CurrentDishes> {
             prefs));
       } catch (e) {}
     }
-
+    print('test');
     completer.complete(output);
     return completer.future;
   }

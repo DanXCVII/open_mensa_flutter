@@ -59,6 +59,14 @@ flutter:
    - images/dishbackground.png
    - images/haehnchenBrust.png
    - images/unknownDish.png
+   - images/yoghurt.png
+   - images/omlett.png
+   - images/sausage.png
+   - images/salat.png
+   - images/chili.png
+   - images/bacon.png
+   - images/pork.png
+   - images/schnitzel.png
 
    - images/background.jpg
    - assets/default.svg

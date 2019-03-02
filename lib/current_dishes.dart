@@ -47,8 +47,10 @@ class CurrentDishesState extends State<CurrentDishes> {
   }
 
   @override
-  Widget build(BuildContext context) // TODO: Add all the building stuff and put the async tasks somewhere else
-   { 
+  Widget build(
+      BuildContext
+          context) // TODO: Add all the building stuff and put the async tasks somewhere else
+  {
     return Scaffold(
         backgroundColor: Colors.white,
         drawer: myDrawer,
@@ -219,7 +221,7 @@ class CurrentDishesState extends State<CurrentDishes> {
       String icon = getIconName(
           "${dishesRawD.dishRaw[day]['meals'][i]['category']}${dishesRawD.dishRaw[day]['meals'][i]['name']}${dishesRawD.dishRaw[day]['meals'][i]['notes']}");
       try {
-        output.add(createDishCard(
+        output.add(Dishcard(
             dishesRawD.dishRaw[day]['meals'][i]['name'],
             dishesRawD.dishRaw[day]['meals'][i]['category'],
             dishesRawD.dishRaw[day]['meals'][i]['prices'],
@@ -230,21 +232,72 @@ class CurrentDishesState extends State<CurrentDishes> {
             prefs));
       } catch (e) {}
     }
-    print('test');
+
     completer.complete(output);
     return completer.future;
   }
+}
 
-  Widget createDishCard(
-      String dishName,
-      String category,
-      Map<String, dynamic> priceGroup, // dynamic = double
-      List<dynamic> notes, // dynamic = String
-      BuildContext context,
-      String icon,
-      List<Color> themeData,
-      SharedPreferences prefs) {
+class Dishcard extends StatefulWidget {
+  final String dishName;
+  final String category;
+  final Map<String, dynamic> priceGroup; // dynamic = double
+  final List<dynamic> notes; // dynamic = String
+  final BuildContext context;
+  final String icon;
+  final List<Color> themeData;
+  final SharedPreferences prefs;
+
+  Dishcard(
+      this.dishName,
+      this.category,
+      this.priceGroup, // dynamic = double
+      this.notes, // dynamic = String
+      this.context,
+      this.icon,
+      this.themeData,
+      this.prefs);
+
+  @override
+  State<StatefulWidget> createState() {
+    return DishcardState(
+        dishName,
+        category,
+        priceGroup, // dynamic = double
+        notes, // dynamic = String
+        context,
+        icon,
+        themeData,
+        prefs);
+  }
+}
+
+class DishcardState extends State<Dishcard> {
+  String dishName;
+  String category;
+  Map<String, dynamic> priceGroup; // dynamic = double
+  List<dynamic> notes; // dynamic = String
+  BuildContext context;
+  String icon;
+  List<Color> themeData;
+  SharedPreferences prefs;
+
+  DishcardState(
+      this.dishName,
+      this.category,
+      this.priceGroup, // dynamic = double
+      this.notes, // dynamic = String
+      this.context,
+      this.icon,
+      this.themeData,
+      this.prefs);
+
+  @override
+  Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+
+    bool _isFavorite = checkFavorite(
+        prefs, '$dishName&$category&&${notes.toString()}&&&$icon');
 
     return Stack(children: <Widget>[
       Column(
@@ -280,7 +333,7 @@ class CurrentDishesState extends State<CurrentDishes> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     IconButton(
-                        icon: checkFavorite(prefs, '$dishName&$category&&${notes.toString()}&&&$icon')
+                        icon: _isFavorite
                             ? Icon(Icons.favorite, color: Colors.pink)
                             : Icon(Icons.favorite_border, color: Colors.white),
                         // TODO: If saved to favourites: Icon is favorite and not only border
@@ -290,7 +343,7 @@ class CurrentDishesState extends State<CurrentDishes> {
                               // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED
                               List<String> favs =
                                   prefs.getStringList('favoriteDishes');
-                              if (favorites[dishName] == true) {
+                              if (_isFavorite) {
                                 favs.remove(
                                     '$dishName&$category&&${notes.toString()}&&&$icon');
                                 prefs.setStringList('favoriteDishes', favs);
@@ -298,10 +351,8 @@ class CurrentDishesState extends State<CurrentDishes> {
                                 favs.add(
                                     '$dishName&$category&&${notes.toString()}&&&$icon');
                                 prefs.setStringList('favoriteDishes', favs);
-
                               }
                             } catch (e) {
-                              favorites.addAll({dishName:true});
                               prefs.setStringList('favoriteDishes', [
                                 '$dishName&$category&&${notes.toString()}&&&$icon'
                               ]);
@@ -318,7 +369,6 @@ class CurrentDishesState extends State<CurrentDishes> {
                               child: Text(
                                 dishName,
                                 textAlign: TextAlign.center,
-
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18.0,
@@ -477,6 +527,7 @@ String getIconName(String dishInfo) {
   } else if (dISHiNFO.contains('FISCH') || dISHiNFO.contains('LACHS')) {
     return 'fish';
   } else if (dISHiNFO.contains('SPAGHETTI') ||
+      dISHiNFO.contains('PASTA') ||
       dISHiNFO.contains('NUDEL')) // Maybe not adding the image at nudeln..
   {
     return 'spaghetti';
@@ -486,6 +537,24 @@ String getIconName(String dishInfo) {
       dISHiNFO.contains('HÄHNCHEN') ||
       dISHiNFO.contains('PUTE')) {
     return 'haehnchenBrust';
+  } else if (dISHiNFO.contains('WURST')) {
+    return 'sausage';
+  } else if (dISHiNFO.contains('RÜHREI') ||
+      dISHiNFO.contains('SPIEGELEI') ||
+      dISHiNFO.contains('OMLET')) {
+    return 'omlett';
+  } else if (dISHiNFO.contains('JOGHURT')) {
+    return 'yoghurt';
+  } else if (dISHiNFO.contains('CHILI')) {
+    return 'chili';
+  } else if (dISHiNFO.contains('SALAT') || dISHiNFO.contains('VEGAN')) {
+    return 'salat';
+  } else if (dISHiNFO.contains('SPECK')) {
+    return 'bacon';
+  } else if (dISHiNFO.contains("SCHNITZEL")) {
+    return 'schnitzel';
+  } else if (dISHiNFO.contains('RIND') || dISHiNFO.contains('FLEISCH')) {
+    return 'pork';
   } else {
     return 'forkSpoon';
   }
@@ -496,16 +565,28 @@ List<Color> getThemeColor(String dish) {
     return [Colors.yellow, Colors.deepOrange];
   } else if (dish == 'pizza') {
     return [Colors.deepOrange, Colors.red];
-  } else if (dish == 'fish' || dish == 'lachs') {
+  } else if (dish == 'fish') {
     return [Colors.lightBlue[900], Colors.blueAccent];
-  } else if (dish == 'spaghetti' ||
-      dish == 'nudel') // Maybe not adding the image at nudeln..
-  {
+  } else if (dish == 'spaghetti') {
     return [Colors.red[900], Colors.amber];
   } else if (dish == 'pommes') {
     return [Colors.amber, Colors.brown[700]];
   } else if (dish == 'haehnchenBrust') {
     return [Colors.brown[700], Colors.deepOrange[900]];
+  } else if (dish == 'sausage') {
+    return [Colors.brown[900], Colors.brown[700]];
+  } else if (dish == 'omlett') {
+    return [Colors.yellow[900], Colors.yellow[600]];
+  } else if (dish == 'yoghurt') {
+    return [Colors.teal, Colors.cyan];
+  } else if (dish == 'salat') {
+    return [Colors.green[900], Colors.lightGreen[800]];
+  } else if (dish == 'chili') {
+    return [Colors.red[900], Colors.redAccent[700]];
+  } else if (dish == 'bacon') {
+    return [Colors.redAccent[400], Colors.deepOrange[800]];
+  } else if (dish == 'schnitzel') {
+    return [Colors.orange[800], Colors.brown[800]];
   } else {
     return [Colors.orange[700], Colors.red[700]];
   }

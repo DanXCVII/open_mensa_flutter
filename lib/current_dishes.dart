@@ -4,6 +4,7 @@ import 'main.dart';
 import "dart:async";
 import 'package:shared_preferences/shared_preferences.dart';
 import 'add_mensa.dart';
+import './dish.dart';
 
 class CurrentDishes extends StatefulWidget {
   final Drawer myDrawer;
@@ -243,9 +244,9 @@ class Dishcard extends StatefulWidget {
   final String category;
   final Map<String, dynamic> priceGroup; // dynamic = double
   final List<dynamic> notes; // dynamic = String
-  final BuildContext context;
   final String icon;
   final List<Color> themeData;
+  final BuildContext context;
   final SharedPreferences prefs;
 
   Dishcard(
@@ -516,7 +517,6 @@ int getMealsCount(List<dynamic> dishesRaw, int dayFromToday) {
   return dishesRaw[dayFromToday]['meals'].length;
 }
 
-// Content of output List: [ColorFrom, ColorTo, Icon]
 String getIconName(String dishInfo) {
   String dISHiNFO = dishInfo.toUpperCase();
 

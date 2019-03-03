@@ -1,56 +1,59 @@
 import 'package:flutter/material.dart';
 
 class Dish {
-  String dishName;
-  String category;
-  Map<String, double> priceGroup; // dynamic = double
-  List<String> notes; // dynamic = String
-  String icon;
-  List<Color> themeData;
+  String _dishName;
+  String _category;
+  Map<String, double> _priceGroup; // dynamic = double
+  List<String> _notes = []; // dynamic = String
+  String _icon;
+  List<Color> _themeData;
 
   Dish(Map<String, dynamic> dishRaw) {
-    print('in Dish constructor');
-    dishName = dishRaw['name'];
-    print('dishName');
-    category = dishRaw['category'];
-    print('category');
-    priceGroup.addAll({
+    _dishName = dishRaw['name'];
+    _category = dishRaw['category'];
+    _priceGroup = {
       'students': dishRaw['prices']['students'],
       'employees': dishRaw['prices']['employees'],
-      'others': dishRaw['prices']['others'],
-    });
-    print('priceGroup');
+      'others': dishRaw['prices']['others']
+    };
 
-    dishRaw['notes'].forEach((note) {
-      notes.add(note);
-    });
-    String icon = getIconName('${dishName}${category}${notes}');
-    getThemeColor(icon);
-    print('reached end of dish constructor');
+    _priceGroup['students'] ??= 0;
+    _priceGroup['employees'] ??= 0;
+    _priceGroup['others'] ??= 0;
+
+    try {
+      dishRaw['notes'].forEach((note) {
+        _notes.add(note);
+      });
+    } catch (e) {
+      print('no notes for this dish');
+    }
+    _icon = getIconName('${_dishName}${_category}${_notes}');
+    _themeData = getThemeColor(_icon);
   }
 
   String getDishName() {
-    return dishName;
+    return _dishName;
   }
 
   String getCategory() {
-    return category;
+    return _category;
   }
 
   String getIcon() {
-    return icon;
+    return _icon;
   }
 
   Map<String, double> getPriceGroup() {
-    return priceGroup;
+    return _priceGroup;
   }
 
   List<String> getNotes() {
-    return notes;
+    return _notes;
   }
 
   List<Color> getThemeData() {
-    return themeData;
+    return _themeData;
   }
 }
 

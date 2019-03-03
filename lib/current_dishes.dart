@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './fetch_data.dart';
 import 'main.dart';
-import "dart:async";
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'add_mensa.dart';
 import './dish.dart';
@@ -220,8 +220,8 @@ class CurrentDishesState extends State<CurrentDishes> {
 
     for (int i = 0; i < getMealsCount(dishesRawD.dishRaw, day); i++) {
       try {
-        output
-            .add(Dishcard(Dish(dishesRawD.dishRaw[day]['meals'][i]), context, prefs));
+        output.add(Dishcard(
+            Dish(dishesRawD.dishRaw[day]['meals'][i]), context, prefs));
       } catch (e) {}
     }
 
@@ -261,11 +261,6 @@ class DishcardState extends State<Dishcard> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    print('build method');
-    print(dish.getCategory());
-    print(dish.getDishName());
-    print(dish.getNotes().toString());
-    print(dish.getIcon());
 
     bool _isFavorite = checkFavorite(prefs,
         '${dish.getDishName()}&${dish.getCategory()}&&${dish.getNotes().toString()}&&&${dish.getIcon()}');
@@ -410,7 +405,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
 /// the dynamic of priceGroup hashMap is double but can't be further specified because
 /// it's the data from the mensa API.
-Row createRowPrices(Map<String, dynamic> priceGroup, BuildContext context) {
+Row createRowPrices(Map<String, double> priceGroup, BuildContext context) {
   List<Widget> groupList = [];
   if (priceGroup['students'] != null) {
     groupList.add(createColumnPrice('students', priceGroup['students']));

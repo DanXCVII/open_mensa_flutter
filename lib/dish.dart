@@ -1,60 +1,67 @@
 import 'package:flutter/material.dart';
 
 class Dish {
-  String _dishName;
-  String _category;
-  Map<String, double> _priceGroup; // dynamic = double
-  List<String> _notes = []; // dynamic = String
-  String _icon;
-  List<Color> _themeData;
+  String dishName;
+  String category;
+  Map<String, double> priceGroup; // dynamic = double
+  List<String> notes = []; // dynamic = String
+  String icon;
+  List<Color> themeData;
 
-  Dish(Map<String, dynamic> dishRaw) {
-    _dishName = dishRaw['name'];
-    _category = dishRaw['category'];
-    _priceGroup = {
-      'students': dishRaw['prices']['students'],
-      'employees': dishRaw['prices']['employees'],
-      'others': dishRaw['prices']['others']
-    };
+  Dish({
+    this.dishName,
+    this.category,
+    this.priceGroup,
+    this.notes,
+    this.icon,
+    this.themeData,
+  });
 
-    _priceGroup['students'] ??= 0;
-    _priceGroup['employees'] ??= 0;
-    _priceGroup['others'] ??= 0;
+  factory Dish.fromMap(Map<String, dynamic> dishRaw) => new Dish(
+      dishName: dishRaw['name'],
+      category: dishRaw['category'],
+      priceGroup: initPriceGroup(dishRaw),
+      notes: initNotes(dishRaw),
+      icon: getIconName(
+          '${dishRaw['name']}${dishRaw['category']}${initNotes(dishRaw).toString()}'),
+      themeData: getThemeColor(getIconName(
+          '${dishRaw['name']}${dishRaw['category']}${initNotes(dishRaw).toString()}')));
 
-    try {
-      dishRaw['notes'].forEach((note) {
-        _notes.add(note);
-      });
-    } catch (e) {
-      print('no notes for this dish');
-    }
-    _icon = getIconName('${_dishName}${_category}${_notes}');
-    _themeData = getThemeColor(_icon);
+  Map<String, dynamic> toMap() => {
+        "name": dishName,
+        "category": category,
+        "prices": {
+          'students': priceGroup['students'],
+          'employees': priceGroup['employees'],
+          'others': priceGroup['others'],
+        },
+        "notes": notes,
+      };
+}
+
+Map<String, double> initPriceGroup(Map<String, dynamic> dishRaw) {
+  Map<String, double> priceGroup = {
+    'students': dishRaw['prices']['students'],
+    'employees': dishRaw['prices']['employees'],
+    'others': dishRaw['prices']['others'],
+  };
+
+  priceGroup['students'] ??= 0;
+  priceGroup['employees'] ??= 0;
+  priceGroup['others'] ??= 0;
+  return priceGroup;
+}
+
+List<String> initNotes(Map<String, dynamic> dishRaw) {
+  List<String> notes = [];
+  try {
+    dishRaw['notes'].forEach((note) {
+      notes.add(note);
+    });
+  } catch (e) {
+    print('no notes for this dish');
   }
-
-  String getDishName() {
-    return _dishName;
-  }
-
-  String getCategory() {
-    return _category;
-  }
-
-  String getIcon() {
-    return _icon;
-  }
-
-  Map<String, double> getPriceGroup() {
-    return _priceGroup;
-  }
-
-  List<String> getNotes() {
-    return _notes;
-  }
-
-  List<Color> getThemeData() {
-    return _themeData;
-  }
+  return notes;
 }
 
 String getIconName(String dishInfo) {

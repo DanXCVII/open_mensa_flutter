@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'add_mensa.dart';
 import './dish.dart';
+import './database.dart';
 
 class CurrentDishes extends StatefulWidget {
   final Drawer myDrawer;
@@ -221,7 +222,7 @@ class CurrentDishesState extends State<CurrentDishes> {
     for (int i = 0; i < getMealsCount(dishesRawD.dishRaw, day); i++) {
       try {
         output.add(Dishcard(
-            Dish(dishesRawD.dishRaw[day]['meals'][i]), context, prefs));
+            Dish.fromMap(dishesRawD.dishRaw[day]['meals'][i]), context, prefs));
       } catch (e) {}
     }
 
@@ -263,9 +264,20 @@ class DishcardState extends State<Dishcard> {
     double width = MediaQuery.of(context).size.width;
 
     bool _isFavorite = checkFavorite(prefs,
-        '${dish.getDishName()}&${dish.getCategory()}&&${dish.getNotes().toString()}&&&${dish.getIcon()}');
+        '${dish.dishName}&${dish.category}&&${dish.notes.toString()}&&&${dish.icon}');
 
-    return Stack(children: <Widget>[
+    return FutureBuilder<dynamic>(
+        future: DBProvider.db.getDishByName(dish.dishName),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.hasData) {
+            bool _isFavoriteHERE;
+            print(_isFavoriteHERE);
+            if (snapshot.data == Null) {
+              _isFavoriteHERE = false;
+            } else {
+              _isFavoriteHERE = true;
+            }
+            return Stack(children: <Widget>[
       Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -278,7 +290,7 @@ class DishcardState extends State<Dishcard> {
                 boxShadow: [
                   BoxShadow(
                     // Shadow of the DishCard
-                    color: dish.getThemeData()[0],
+                    color: dish.themeData[1],
                     blurRadius: 15.0, // default 20.0
                     spreadRadius: 1.5, // default 5.0
                     offset: Offset(10.0, 10.0),
@@ -289,7 +301,7 @@ class DishcardState extends State<Dishcard> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15.0),
                     gradient: LinearGradient(
-                      colors: [dish.getThemeData()[0], dish.getThemeData()[1]],
+                      colors: [dish.themeData[0], dish.themeData[1]],
                       begin: FractionalOffset.topLeft,
                       end: FractionalOffset.bottomRight,
                       stops: [0.0, 1.0],
@@ -299,28 +311,22 @@ class DishcardState extends State<Dishcard> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     IconButton(
-                        icon: _isFavorite
+                        icon: _isFavoriteHERE
                             ? Icon(Icons.favorite, color: Colors.pink)
                             : Icon(Icons.favorite_border, color: Colors.white),
                         // TODO: If saved to favourites: Icon is favorite and not only border
                         onPressed: () {
                           setState(() {
                             try {
-                              // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED
-                              List<String> favs =
-                                  prefs.getStringList('favoriteDishes');
-                              if (_isFavorite) {
-                                favs.remove(
-                                    '${dish.getDishName()}&${dish.getCategory()}&&${dish.getNotes().toString()}&&&${dish.getIcon()}');
-                                prefs.setStringList('favoriteDishes', favs);
+                              // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED ?? maybe changed
+                              if (_isFavoriteHERE) {
+                                DBProvider.db.deleteDishByName(dish.dishName);
                               } else {
-                                favs.add(
-                                    '${dish.getDishName()}&${dish.getCategory()}&&${dish.getNotes().toString()}&&&${dish.getIcon()}');
-                                prefs.setStringList('favoriteDishes', favs);
+                                DBProvider.db.newDish(dish);
                               }
                             } catch (e) {
                               prefs.setStringList('favoriteDishes', [
-                                '${dish.getDishName()}&${dish.getCategory()}&&${dish.getNotes().toString()}&&&${dish.getIcon()}'
+                                '${dish.dishName}&${dish.category}&&${dish.notes.toString()}&&&${dish.icon}'
                               ]);
                             }
                           });
@@ -333,7 +339,7 @@ class DishcardState extends State<Dishcard> {
                           children: <Widget>[
                             Center(
                               child: Text(
-                                dish.getDishName(),
+                                dish.dishName,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -345,11 +351,12 @@ class DishcardState extends State<Dishcard> {
                               padding: const EdgeInsets.all(8.0),
                               child: Divider(),
                             ),
-                            createRowPrices(dish.getPriceGroup(), context),
+                            createRowPrices(dish.priceGroup,
+                                context), // set prices list looks different
                             Padding(
                               padding:
                                   const EdgeInsets.only(top: 12.0, bottom: 5.0),
-                              child: Text(dish.getCategory(),
+                              child: Text(dish.category,
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontStyle: FontStyle.italic)),
@@ -368,7 +375,7 @@ class DishcardState extends State<Dishcard> {
         child: Align(
           alignment: Alignment.topCenter,
           child: Image.asset(
-            'images/${dish.getIcon()}.png',
+            'images/${dish.icon}.png',
             width: 100,
             height: 80,
             fit: BoxFit.contain,
@@ -376,6 +383,12 @@ class DishcardState extends State<Dishcard> {
         ),
       ),
     ]);
+          } if(snapshot.hasError) {
+            return Center(child: Text(snapshot.error.toString()),);
+          } return CircularProgressIndicator();
+        });
+
+    
   }
 }
 
@@ -488,6 +501,7 @@ bool checkFavorite(SharedPreferences prefs, String dishInfo) {
     });
   } catch (e) {
     print(e);
+    print('wwooooww');
   }
   return output;
 }

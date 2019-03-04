@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../fetch_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// creates a checkable list of mensas near a given location
 class CheckableMensaList extends StatefulWidget {
   // Map which contains the selected location of the user.
   final Map<String, double> latlng;
@@ -16,7 +17,7 @@ class CheckableMensaList extends StatefulWidget {
 
 class CheckableMensaListState extends State<CheckableMensaList> {
   bool booo = false;
-  final Future<MensaList> mensaList;
+  final Future<MensaListRawData> mensaList;
 
   CheckableMensaListState({@required this.mensaList});
 
@@ -54,8 +55,8 @@ class CheckableMensaListState extends State<CheckableMensaList> {
             }));
   }
 
-  Future<ListView> createCheckedListView(Future<MensaList> fMensaList) async {
-    MensaList snapshot = await fMensaList;
+  Future<ListView> createCheckedListView(Future<MensaListRawData> fMensaList) async {
+    MensaListRawData snapshot = await fMensaList;
     final prefs = await SharedPreferences.getInstance();
     List<CheckboxListTile> checkableMensaList = getCheckableMensaList(snapshot.mensas, prefs);
 

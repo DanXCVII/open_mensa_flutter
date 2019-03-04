@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../fetch_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
 // creates a checkable list of mensas near a given location
 class CheckableMensaList extends StatefulWidget {
@@ -40,7 +41,7 @@ class CheckableMensaListState extends State<CheckableMensaList> {
           ],
         ),
         body: FutureBuilder<ListView>(
-            future: createCheckedListView(mensaList), 
+            future: createCheckedListView(mensaList),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return snapshot.data;
@@ -55,10 +56,12 @@ class CheckableMensaListState extends State<CheckableMensaList> {
             }));
   }
 
-  Future<ListView> createCheckedListView(Future<MensaListRawData> fMensaList) async {
+  Future<ListView> createCheckedListView(
+      Future<MensaListRawData> fMensaList) async {
     MensaListRawData snapshot = await fMensaList;
     final prefs = await SharedPreferences.getInstance();
-    List<CheckboxListTile> checkableMensaList = getCheckableMensaList(snapshot.mensas, prefs);
+    List<CheckboxListTile> checkableMensaList =
+        getCheckableMensaList(snapshot.mensas, prefs);
 
     if (snapshot.mensas.isEmpty) {
       throw Exception('No Mensa found');
@@ -104,10 +107,9 @@ class CheckableMensaListState extends State<CheckableMensaList> {
                     "${mensas[index]['coordinates'][1]}");
                 prefs.setStringList('selectedMensas', selectedMensas);
               }
-              
             });
           }));
-          return mList;
+    return mList;
   }
 
   Widget displayNoMensaFoundMessage(BuildContext context) {

@@ -1,12 +1,12 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+
 import './dish.dart';
 
 class DBProvider {
   DBProvider._();
+
   static final DBProvider db = DBProvider._();
 
   static Database _database;
@@ -39,7 +39,8 @@ class DBProvider {
   newFavDish(Dish newDish) async {
     final db = await database;
     String notes = convertNotesToSingleString(newDish.notes);
-    var res = await db.rawInsert("INSERT Into Favorites (dish_name, category, students_price, employees_price, others_price, notes)"
+    var res = await db.rawInsert(
+        "INSERT Into Favorites (dish_name, category, students_price, employees_price, others_price, notes)"
         " VALUES (\"${newDish.dishName}\","
         "\"${newDish.category}\","
         "${newDish.priceGroup['students']},"
@@ -53,14 +54,19 @@ class DBProvider {
     final db = await database;
     var res =
         await db.query("Favorites", where: "dish_name = ?", whereArgs: [name]);
-    return res.isNotEmpty ? Dish.fromMap(convertDBMapToDishMap(res.first)) : Null;
+    return res.isNotEmpty
+        ? Dish.fromMap(convertDBMapToDishMap(res.first))
+        : Null;
   }
 
   Future<List<Dish>> getAllFavDishes() async {
     final db = await database;
     var res = await db.query("Favorites");
-    List<Dish> list =
-        res.isNotEmpty ? res.map((dBDish) => Dish.fromMap(convertDBMapToDishMap(dBDish))).toList() : [];
+    List<Dish> list = res.isNotEmpty
+        ? res
+            .map((dBDish) => Dish.fromMap(convertDBMapToDishMap(dBDish)))
+            .toList()
+        : [];
     return list;
   }
 

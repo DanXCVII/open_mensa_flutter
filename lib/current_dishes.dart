@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import './fetch_data.dart';
-import 'main.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'add_mensa.dart';
+
+import './fetch_data.dart';
+import './main.dart';
+import './add_mensa.dart';
 import './dish.dart';
 import './database.dart';
 
 class CurrentDishes extends StatefulWidget {
   final Drawer myDrawer;
+
   CurrentDishes({@required this.myDrawer});
 
   @override
@@ -19,7 +21,9 @@ class CurrentDishes extends StatefulWidget {
 
 class CurrentDishesState extends State<CurrentDishes> {
   Drawer myDrawer;
+
   CurrentDishesState({@required this.myDrawer});
+
   List<Widget> dishCardsDay0;
   List<Widget> dishCardsDay1;
   List<Widget> dishCardsDay2;
@@ -56,18 +60,18 @@ class CurrentDishesState extends State<CurrentDishes> {
     return Container(
       decoration: BoxDecoration(color: Colors.white),
       child: FutureBuilder<Widget>(
-              future: showDishes(context),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return snapshot.data;
-                }
+          future: showDishes(context),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return snapshot.data;
+            }
 
-                /// TODO: NTH: Maybe handle the error somehow
-                /// else if (snapshot.hasError) {
-                /// return Center(child: CircularProgressIndicator());
-                /// }
-                return Center(child: CircularProgressIndicator());
-              }),
+            /// TODO: NTH: Maybe handle the error somehow
+            /// else if (snapshot.hasError) {
+            /// return Center(child: CircularProgressIndicator());
+            /// }
+            return Center(child: CircularProgressIndicator());
+          }),
     );
   }
 
@@ -345,8 +349,8 @@ class DishcardState extends State<Dishcard> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Divider(),
                                     ),
-                                    createRowPrices(dish.priceGroup,
-                                        context), // set prices list looks different
+                                    createRowPrices(dish.priceGroup, context),
+                                    // set prices list looks different
                                     Padding(
                                       padding: const EdgeInsets.only(
                                           top: 12.0, bottom: 5.0),
@@ -398,6 +402,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   double get minExtent => _tabBar.preferredSize.height;
+
   @override
   double get maxExtent => _tabBar.preferredSize.height;
 

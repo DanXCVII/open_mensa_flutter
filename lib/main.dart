@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/rendering.dart';
+import 'dart:async';
+
+import './favourite_dishes.dart';
+import './current_dishes.dart';
 import './maps/static_map_screen.dart';
 import './add_mensa.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import './current_dishes.dart';
-import 'package:flutter/rendering.dart';
-import './favourite_dishes.dart';
 
 void main() {
   debugPaintSizeEnabled = false;
@@ -12,6 +14,7 @@ void main() {
   runApp(MaterialApp(
       showPerformanceOverlay: false,
       title: 'First Route',
+
       /// TODO: Change the themeColor?
       /// theme: ThemeData(primaryColor: Colors.purple),
       initialRoute: '/',
@@ -25,6 +28,7 @@ void main() {
 class DrawerItem {
   String title;
   IconData icon;
+
   DrawerItem(this.title, this.icon);
 }
 
@@ -95,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    /// building the drawer again over here and not using the buidlDrawer() method 
+    /// building the drawer again over here and not using the buidlDrawer() method
     /// because it's good practise to put much in the build method
     var drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
@@ -134,20 +138,20 @@ class _MyHomePageState extends State<MyHomePage> {
     if (prefs.getStringList('selectedMensas') == null ||
         prefs.getStringList('selectedMensas').isEmpty) {
       showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text("Select Mensa"),
-              content: Text(
-                  "Welcome to Open Mensa Germany :) \nI can take you to the place where you can select the Mensas you're interested in."),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Let\'s go'),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/mensa_selector');
-                  },
-                )
-              ],
-            ));
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text("Select Mensa"),
+                content: Text(
+                    "Welcome to Open Mensa Germany :) \nI can take you to the place where you can select the Mensas you're interested in."),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Let\'s go'),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/mensa_selector');
+                    },
+                  )
+                ],
+              ));
     }
   }
 }

@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import './current_dishes.dart';
 import 'dart:async';
+
+import './current_dishes.dart';
 import './database.dart';
 import './dish.dart';
 
 class FavouriteDishes extends StatefulWidget {
   final Drawer myDrawer;
+
   FavouriteDishes({@required this.myDrawer});
 
   @override
   FavouriteDishesState createState() {
-    return FavouriteDishesState();
+    return FavouriteDishesState(myDrawer: myDrawer);
   }
 }
 
 class FavouriteDishesState extends State<FavouriteDishes> {
   final Drawer myDrawer;
+
   FavouriteDishesState({@required this.myDrawer});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-     // decoration: BoxDecoration(gradient: LinearGradient(
-     //                         colors: [Colors.red[900], Colors.pink[800]],
-     //                         begin: FractionalOffset.topLeft,
-     //                         end: FractionalOffset.bottomRight,
-     //                         stops: [0.0, 1.0],
-     //                       )),
+      // decoration: BoxDecoration(gradient: LinearGradient(
+      //                         colors: [Colors.red[900], Colors.pink[800]],
+      //                         begin: FractionalOffset.topLeft,
+      //                         end: FractionalOffset.bottomRight,
+      //                         stops: [0.0, 1.0],
+      //                       )),
       child: FutureBuilder<List<Widget>>(
           future: _getFavDishCards(context),
           builder: (context, snapshot) {
@@ -92,7 +93,3 @@ Future<List<Widget>> _getFavDishCards(BuildContext context) async {
   });
   return output;
 }
-
-void saveToFavorite(Dish dish) async {}
-
-Future<bool> checkIfFavorite(Dish dish) async {}

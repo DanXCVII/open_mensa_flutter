@@ -111,7 +111,6 @@ class CheckableMensaListState extends State<CheckableMensaList> {
   }
 
   Widget displayNoMensaFoundMessage(BuildContext context) {
-    print('Dekorierung gestartet');
     return Center(
         child: Column(
       children: <Widget>[

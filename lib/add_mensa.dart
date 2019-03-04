@@ -104,7 +104,7 @@ class _AddMensaState extends State<AddMensa> {
     } else {
       return CustomScrollView(slivers: <Widget>[
         SliverAppBar(
-          expandedHeight: 150.0,
+          expandedHeight: 200.0,
           floating: false,
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(

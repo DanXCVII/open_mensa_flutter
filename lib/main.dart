@@ -4,6 +4,7 @@ import './add_mensa.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './current_dishes.dart';
 import 'package:flutter/rendering.dart';
+import './favourite_dishes.dart';
 
 void main() {
   debugPaintSizeEnabled = false;
@@ -53,22 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         return CurrentDishes(myDrawer: myDrawer);
       case 1:
-        return Scaffold(
-          appBar: AppBar(title: Text('Favourites'),),
-          drawer:myDrawer,
-          body: Center(
-              // Not finished Screen with the favourite dishes
-              child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Icon(
-                Icons.favorite_border,
-                size: 70,
-              ),
-              Text('Index 1: favourites'),
-            ],
-          )),
-        );
+        return FavouriteDishes(myDrawer: myDrawer);
       case 2:
         return AddMensa(myDrawer: myDrawer);
 

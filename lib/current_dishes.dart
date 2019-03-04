@@ -88,7 +88,7 @@ class CurrentDishesState extends State<CurrentDishes> {
     try {
       dishCardsDay0 = await getAllDishCardsDay(snapshot, context, 0);
     } catch (e) {
-      print("${e.toString()} Fehlermeldung");
+      print("Fehlermeldung: ${e.toString()}");
     }
     try {
       dishCardsDay1 = await getAllDishCardsDay(snapshot, context, 1);
@@ -222,7 +222,7 @@ class CurrentDishesState extends State<CurrentDishes> {
     for (int i = 0; i < getMealsCount(dishesRawD.dishRaw, day); i++) {
       try {
         output.add(Dishcard(
-            Dish.fromMap(dishesRawD.dishRaw[day]['meals'][i]), context, prefs));
+            Dish.fromMap(dishesRawD.dishRaw[day]['meals'][i]), context));
       } catch (e) {}
     }
 
@@ -234,29 +234,25 @@ class CurrentDishesState extends State<CurrentDishes> {
 class Dishcard extends StatefulWidget {
   final Dish dish;
   final BuildContext context;
-  final SharedPreferences prefs;
 
   Dishcard(
     this.dish,
     this.context,
-    this.prefs,
   );
 
   @override
   State<StatefulWidget> createState() {
-    return DishcardState(dish, context, prefs);
+    return DishcardState(dish, context);
   }
 }
 
 class DishcardState extends State<Dishcard> {
   Dish dish;
   BuildContext context;
-  SharedPreferences prefs;
 
   DishcardState(
     this.dish,
     this.context,
-    this.prefs,
   );
 
   @override
@@ -264,7 +260,7 @@ class DishcardState extends State<Dishcard> {
     double width = MediaQuery.of(context).size.width;
 
     return FutureBuilder<dynamic>(
-        future: DBProvider.db.getDishByName(dish.dishName),
+        future: DBProvider.db.getFavDishByName(dish.dishName),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.hasData) {
             bool _isFavoriteHERE;
@@ -318,14 +314,13 @@ class DishcardState extends State<Dishcard> {
                                       // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED ?? maybe changed
                                       if (_isFavoriteHERE) {
                                         DBProvider.db
-                                            .deleteDishByName(dish.dishName);
+                                            .deleteFavDishByName(dish.dishName);
                                       } else {
-                                        DBProvider.db.newDish(dish);
+                                        DBProvider.db.newFavDish(dish);
                                       }
                                     } catch (e) {
-                                      prefs.setStringList('favoriteDishes', [
-                                        '${dish.dishName}&${dish.category}&&${dish.notes.toString()}&&&${dish.icon}'
-                                      ]);
+                                      print(
+                                          'pressed favorite button and error occured: $e');
                                     }
                                   });
                                 }),
@@ -388,7 +383,10 @@ class DishcardState extends State<Dishcard> {
               child: Text(snapshot.error.toString()),
             );
           }
-          return Center(child: CircularProgressIndicator());
+          return Container(
+            height: 200,
+            child: Center(child: CircularProgressIndicator()),
+          );
         });
   }
 }

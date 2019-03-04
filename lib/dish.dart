@@ -65,7 +65,6 @@ List<String> initNotes(Map<String, dynamic> dishRaw) {
 }
 
 String getIconName(String dishInfo) {
-  print('getICONNAME');
   String dISHiNFO = dishInfo.toUpperCase();
 
   if (dISHiNFO.contains('BURGER')) {

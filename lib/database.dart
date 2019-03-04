@@ -36,7 +36,7 @@ class DBProvider {
     });
   }
 
-  newDish(Dish newDish) async {
+  newFavDish(Dish newDish) async {
     final db = await database;
     String notes = convertNotesToSingleString(newDish.notes);
     var res = await db.rawInsert("INSERT Into Favorites (dish_name, category, students_price, employees_price, others_price, notes)"
@@ -49,22 +49,22 @@ class DBProvider {
     return res;
   }
 
-  getDishByName(String name) async {
+  getFavDishByName(String name) async {
     final db = await database;
     var res =
         await db.query("Favorites", where: "dish_name = ?", whereArgs: [name]);
     return res.isNotEmpty ? Dish.fromMap(convertDBMapToDishMap(res.first)) : Null;
   }
 
-  getAllDishes() async {
+  Future<List<Dish>> getAllFavDishes() async {
     final db = await database;
-    var res = await db.query("Client");
+    var res = await db.query("Favorites");
     List<Dish> list =
         res.isNotEmpty ? res.map((dBDish) => Dish.fromMap(convertDBMapToDishMap(dBDish))).toList() : [];
     return list;
   }
 
-  deleteDishByName(String name) async {
+  deleteFavDishByName(String name) async {
     final db = await database;
     db.delete("Favorites", where: "dish_name = ?", whereArgs: [name]);
   }

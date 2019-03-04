@@ -11,7 +11,8 @@ void main() {
   runApp(MaterialApp(
       showPerformanceOverlay: false,
       title: 'First Route',
-      // TODO: theme: ThemeData(primaryColor: Colors.purple),
+      /// TODO: Change the themeColor?
+      /// theme: ThemeData(primaryColor: Colors.purple),
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(),
@@ -42,6 +43,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedDrawerIndex = 0;
 
+  /// Initializing the drawer with:
+  /// -currentDishes
+  /// -favorites
+  /// -mensaSelctor
   _getDrawerItemWidget(int pos) {
     Drawer myDrawer = buildDrawer();
     switch (pos) {
@@ -73,6 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Drawer buildDrawer() {
+    // creating the list of items shown by the drawer
     var drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
       var d = widget.drawerItems[i];
@@ -83,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onTap: () => _onSelectItem(i),
       ));
     }
+    // creating and returning the drawer with the userAccountHeader
     return Drawer(
       child: new Column(
         children: <Widget>[
@@ -94,6 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  // When drawer item gets selected
   _onSelectItem(int index) {
     setState(() => _selectedDrawerIndex = index);
     Navigator.of(context).pop(); // close the drawer
@@ -101,6 +109,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    /// building the drawer again over here and not using the buidlDrawer() method 
+    /// because it's good practise to put much in the build method
     var drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
       var d = widget.drawerItems[i];
@@ -129,19 +139,15 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: Maybe not good practise to do async activity in the init state
     super.initState();
-    checkIfMensaSelected(context);
+    checkIfMensaSelectedAlert(context);
   }
 
-  checkIfMensaSelected(BuildContext context) async {
+  /// checking if a mensa is selected and otherwise showing an alert.
+  checkIfMensaSelectedAlert(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getStringList('selectedMensas') == null ||
         prefs.getStringList('selectedMensas').isEmpty) {
-      showAlert(context);
-    }
-  }
-
-  showAlert(BuildContext context) {
-    showDialog(
+      showDialog(
         context: context,
         builder: (context) => AlertDialog(
               title: Text("Select Mensa"),
@@ -156,6 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               ],
             ));
+    }
   }
 }
 

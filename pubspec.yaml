@@ -69,6 +69,7 @@ flutter:
    - images/bacon.png
    - images/pork.png
    - images/schnitzel.png
+   - images/hearts.png
 
    - images/background.jpg
    - assets/default.svg

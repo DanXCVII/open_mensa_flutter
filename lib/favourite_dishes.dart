@@ -22,45 +22,58 @@ class FavouriteDishesState extends State<FavouriteDishes> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Widget>>(
-        future: _getFavDishCards(context),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data.isEmpty) {
-              print(snapshot.data);
-              return Scaffold(
-                appBar: AppBar(
-                  title: Text('Favourites'),
-                ),
-                drawer: myDrawer,
-                body: Center(
-                    // Not finished Screen with the favourite dishes
-                    child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Icon(
-                      Icons.favorite_border,
-                      size: 70,
+    return Container(
+     // decoration: BoxDecoration(gradient: LinearGradient(
+     //                         colors: [Colors.red[900], Colors.pink[800]],
+     //                         begin: FractionalOffset.topLeft,
+     //                         end: FractionalOffset.bottomRight,
+     //                         stops: [0.0, 1.0],
+     //                       )),
+      child: FutureBuilder<List<Widget>>(
+          future: _getFavDishCards(context),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              // If the user hasn't selected any favourite dishes yet
+              if (snapshot.data.isEmpty) {
+                print(snapshot.data);
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text('Favourites'),
+                  ),
+                  drawer: myDrawer,
+                  body: Center(
+                      child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(
+                        Icons.favorite_border,
+                        size: 70,
+                      ),
+                      Text('Index 1: favourites'),
+                    ],
+                  )),
+                );
+              }
+              // If the user has favourite dishes, show them:
+              return CustomScrollView(slivers: <Widget>[
+                SliverAppBar(
+                  expandedHeight: 200.0,
+                  floating: false,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Image.asset(
+                      'images/hearts.png',
+                      fit: BoxFit.cover,
                     ),
-                    Text('Index 1: favourites'),
-                  ],
-                )),
-              );
-            }
-            return CustomScrollView(slivers: <Widget>[
-              SliverAppBar(
-                expandedHeight: 200.0,
-                floating: false,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Text("Favourite Dishes"),
+                    title: Text("Favourite Dishes"),
+                  ),
                 ),
-              ),
-              SliverList(delegate: SliverChildListDelegate(snapshot.data))
-            ]);
-          }
-          return Center(child: CircularProgressIndicator());
-        });
+                SliverList(delegate: SliverChildListDelegate(snapshot.data))
+              ]);
+            }
+            return Center(child: CircularProgressIndicator());
+          }),
+    );
   }
 }
 

@@ -53,22 +53,22 @@ class CurrentDishesState extends State<CurrentDishes> {
       BuildContext
           context) // TODO: Add all the building stuff and put the async tasks somewhere else
   {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        drawer: myDrawer,
-        body: FutureBuilder<Widget>(
-            future: showDishes(context),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return snapshot.data;
-              }
+    return Container(
+      decoration: BoxDecoration(color: Colors.white),
+      child: FutureBuilder<Widget>(
+              future: showDishes(context),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data;
+                }
 
-              /// TODO: NTH: Maybe handle the error somehow
-              /// else if (snapshot.hasError) {
-              /// return Center(child: CircularProgressIndicator());
-              /// }
-              return Center(child: CircularProgressIndicator());
-            }));
+                /// TODO: NTH: Maybe handle the error somehow
+                /// else if (snapshot.hasError) {
+                /// return Center(child: CircularProgressIndicator());
+                /// }
+                return Center(child: CircularProgressIndicator());
+              }),
+    );
   }
 
   initCurrentDishesData(BuildContext context) async {

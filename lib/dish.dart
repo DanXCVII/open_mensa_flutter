@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class Dish {
   String dishName;
   String category;
-  Map<String, double> priceGroup; // dynamic = double
-  List<String> notes = []; // dynamic = String
+  Map<String, double> priceGroup;
+  List<String> notes = [];
   String icon;
   List<Color> themeData;
 
@@ -65,6 +65,7 @@ List<String> initNotes(Map<String, dynamic> dishRaw) {
 }
 
 String getIconName(String dishInfo) {
+  print('getICONNAME');
   String dISHiNFO = dishInfo.toUpperCase();
 
   if (dISHiNFO.contains('BURGER')) {
@@ -107,34 +108,35 @@ String getIconName(String dishInfo) {
   }
 }
 
+const Map<String, List<Color>> themeData = {
+  'burger': [Colors.yellow, Colors.deepOrange],
+  'pizza': [Colors.deepOrange, Colors.red],
+  'fish': [Color(0xFF01579B), Colors.blueAccent], // lightBlue[900]
+  'spaghetti': [Color(0xFFB71C1C), Colors.amber], // red[900]
+  'pommes': [Colors.amber, Color(0xFF5D4037)], // brown[700]
+  'haehnchenBrust': [
+    Color(0xFF5D4037),
+    Color(0xFFBF360C)
+  ], // brown[700], deepOrange[900]
+  'sausage': [Color(0xFF3E2723), Color(0xFF5D4037)], // brown[900], brown[700]
+  'omlett': [Color(0xFFF57F17), Color(0xFFFDD835)], // yellow[900], yellow[600]
+  'yoghurt': [Colors.teal, Colors.cyan],
+  'salat': [
+    Color(0xFF1B5E20),
+    Color(0xFF558B2F)
+  ], // green[900], lightGreen[800]
+  'chili': [Color(0xFFB71C1C), Color(0xFFD50000)], // red[900], redAccent[700]
+  'bacon': [
+    Color(0xFFFF1744),
+    Color(0xFFD84315)
+  ], // redAccent[400], deepOrange[800]
+  'schnitzel': [
+    Color(0xFFEF6C00),
+    Color(0xFF4E342E)
+  ], // orange[800], brown[800]
+  'default': [Color(0xFFF57C00), Color(0xFFD32F2F)], // orange[700], red[700]
+};
+
 List<Color> getThemeColor(String dish) {
-  if (dish == 'burger') {
-    return [Colors.yellow, Colors.deepOrange];
-  } else if (dish == 'pizza') {
-    return [Colors.deepOrange, Colors.red];
-  } else if (dish == 'fish') {
-    return [Colors.lightBlue[900], Colors.blueAccent];
-  } else if (dish == 'spaghetti') {
-    return [Colors.red[900], Colors.amber];
-  } else if (dish == 'pommes') {
-    return [Colors.amber, Colors.brown[700]];
-  } else if (dish == 'haehnchenBrust') {
-    return [Colors.brown[700], Colors.deepOrange[900]];
-  } else if (dish == 'sausage') {
-    return [Colors.brown[900], Colors.brown[700]];
-  } else if (dish == 'omlett') {
-    return [Colors.yellow[900], Colors.yellow[600]];
-  } else if (dish == 'yoghurt') {
-    return [Colors.teal, Colors.cyan];
-  } else if (dish == 'salat') {
-    return [Colors.green[900], Colors.lightGreen[800]];
-  } else if (dish == 'chili') {
-    return [Colors.red[900], Colors.redAccent[700]];
-  } else if (dish == 'bacon') {
-    return [Colors.redAccent[400], Colors.deepOrange[800]];
-  } else if (dish == 'schnitzel') {
-    return [Colors.orange[800], Colors.brown[800]];
-  } else {
-    return [Colors.orange[700], Colors.red[700]];
-  }
+  return themeData[dish] ?? themeData['default'];
 }

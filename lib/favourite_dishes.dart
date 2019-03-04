@@ -23,5 +23,5 @@ void saveToFavorite(Dish dish) async {
 }
 
 Future<bool> checkIfFavorite(Dish dish) async {
-
+  
 }

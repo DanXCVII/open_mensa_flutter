@@ -263,132 +263,133 @@ class DishcardState extends State<Dishcard> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
 
-    bool _isFavorite = checkFavorite(prefs,
-        '${dish.dishName}&${dish.category}&&${dish.notes.toString()}&&&${dish.icon}');
-
     return FutureBuilder<dynamic>(
         future: DBProvider.db.getDishByName(dish.dishName),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.hasData) {
             bool _isFavoriteHERE;
-            print(_isFavoriteHERE);
             if (snapshot.data == Null) {
               _isFavoriteHERE = false;
             } else {
               _isFavoriteHERE = true;
             }
             return Stack(children: <Widget>[
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(top: 50),
-            alignment: Alignment.topCenter,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-                boxShadow: [
-                  BoxShadow(
-                    // Shadow of the DishCard
-                    color: dish.themeData[1],
-                    blurRadius: 15.0, // default 20.0
-                    spreadRadius: 1.5, // default 5.0
-                    offset: Offset(10.0, 10.0),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(top: 50),
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15.0),
+                        boxShadow: [
+                          BoxShadow(
+                            // Shadow of the DishCard
+                            color: dish.themeData[1],
+                            blurRadius: 15.0, // default 20.0
+                            spreadRadius: 1.5, // default 5.0
+                            offset: Offset(10.0, 10.0),
+                          ),
+                        ],
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15.0),
+                            gradient: LinearGradient(
+                              colors: [dish.themeData[0], dish.themeData[1]],
+                              begin: FractionalOffset.topLeft,
+                              end: FractionalOffset.bottomRight,
+                              stops: [0.0, 1.0],
+                            )),
+                        width: width * 0.9,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            IconButton(
+                                icon: _isFavoriteHERE
+                                    ? Icon(Icons.favorite, color: Colors.pink)
+                                    : Icon(Icons.favorite_border,
+                                        color: Colors.white),
+                                // TODO: If saved to favourites: Icon is favorite and not only border
+                                onPressed: () {
+                                  setState(() {
+                                    try {
+                                      // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED ?? maybe changed
+                                      if (_isFavoriteHERE) {
+                                        DBProvider.db
+                                            .deleteDishByName(dish.dishName);
+                                      } else {
+                                        DBProvider.db.newDish(dish);
+                                      }
+                                    } catch (e) {
+                                      prefs.setStringList('favoriteDishes', [
+                                        '${dish.dishName}&${dish.category}&&${dish.notes.toString()}&&&${dish.icon}'
+                                      ]);
+                                    }
+                                  });
+                                }),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 12.0, right: 12.0),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Center(
+                                      child: Text(
+                                        dish.dishName,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18.0,
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Divider(),
+                                    ),
+                                    createRowPrices(dish.priceGroup,
+                                        context), // set prices list looks different
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 12.0, bottom: 5.0),
+                                      child: Text(dish.category,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontStyle: FontStyle.italic)),
+                                    ),
+                                  ]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.0),
-                    gradient: LinearGradient(
-                      colors: [dish.themeData[0], dish.themeData[1]],
-                      begin: FractionalOffset.topLeft,
-                      end: FractionalOffset.bottomRight,
-                      stops: [0.0, 1.0],
-                    )),
-                width: width * 0.9,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    IconButton(
-                        icon: _isFavoriteHERE
-                            ? Icon(Icons.favorite, color: Colors.pink)
-                            : Icon(Icons.favorite_border, color: Colors.white),
-                        // TODO: If saved to favourites: Icon is favorite and not only border
-                        onPressed: () {
-                          setState(() {
-                            try {
-                              // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED ?? maybe changed
-                              if (_isFavoriteHERE) {
-                                DBProvider.db.deleteDishByName(dish.dishName);
-                              } else {
-                                DBProvider.db.newDish(dish);
-                              }
-                            } catch (e) {
-                              prefs.setStringList('favoriteDishes', [
-                                '${dish.dishName}&${dish.category}&&${dish.notes.toString()}&&&${dish.icon}'
-                              ]);
-                            }
-                          });
-                        }),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Center(
-                              child: Text(
-                                dish.dishName,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.0,
-                                    color: Colors.white),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Divider(),
-                            ),
-                            createRowPrices(dish.priceGroup,
-                                context), // set prices list looks different
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 12.0, bottom: 5.0),
-                              child: Text(dish.category,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontStyle: FontStyle.italic)),
-                            ),
-                          ]),
-                    ),
-                  ],
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Image.asset(
+                    'images/${dish.icon}.png',
+                    width: 100,
+                    height: 80,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
-            ),
-          ),
-        ],
-      ),
-      Padding(
-        padding: EdgeInsets.only(top: 10),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Image.asset(
-            'images/${dish.icon}.png',
-            width: 100,
-            height: 80,
-            fit: BoxFit.contain,
-          ),
-        ),
-      ),
-    ]);
-          } if(snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()),);
-          } return CircularProgressIndicator();
+            ]);
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
+          return Center(child: CircularProgressIndicator());
         });
-
-    
   }
 }
 
@@ -501,7 +502,6 @@ bool checkFavorite(SharedPreferences prefs, String dishInfo) {
     });
   } catch (e) {
     print(e);
-    print('wwooooww');
   }
   return output;
 }

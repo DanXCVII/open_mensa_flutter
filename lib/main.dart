@@ -16,7 +16,7 @@ void main() {
       title: 'First Route',
 
       /// TODO: Change the themeColor?
-      /// theme: ThemeData(primaryColor: Colors.purple),
+      theme: ThemeData(primaryColor: Colors.orange[800]),
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(),
@@ -84,8 +84,15 @@ class _MyHomePageState extends State<MyHomePage> {
       child: new Column(
         children: <Widget>[
           new UserAccountsDrawerHeader(
-              accountName: new Text("John Doe"), accountEmail: null),
-          new Column(children: drawerOptions)
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('images/hat.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              accountName: new Text("John Doe"),
+              accountEmail: null),
+          Column(children: drawerOptions)
         ],
       ),
     );
@@ -116,7 +123,14 @@ class _MyHomePageState extends State<MyHomePage> {
         child: new Column(
           children: <Widget>[
             new UserAccountsDrawerHeader(
-                accountName: new Text("John Doe"), accountEmail: null),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('images/hat.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                accountName: new Text("John Doe"),
+                accountEmail: null),
             new Column(children: drawerOptions)
           ],
         ),

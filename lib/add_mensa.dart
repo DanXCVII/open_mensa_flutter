@@ -26,16 +26,7 @@ class _AddMensaState extends State<AddMensa> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        drawer: myDrawer,
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.green[700],
-          onPressed: () {
-            Navigator.pushNamed(context, '/mensa_selector');
-          },
-          child: Icon(Icons.add),
-        ),
-        body: FutureBuilder<SharedPreferences>(
+    return FutureBuilder<SharedPreferences>(
             future: getPrefs(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -53,7 +44,7 @@ class _AddMensaState extends State<AddMensa> {
               return (Center(
                 child: CircularProgressIndicator(),
               ));
-            }));
+            });
   }
 
   List<Widget> getMensaList(SharedPreferences prefs) {
@@ -110,6 +101,7 @@ class _AddMensaState extends State<AddMensa> {
           floating: false,
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(
+            background: Image.asset('images/earth.png', fit: BoxFit.fitWidth),
             title: Text("Current Dishes"),
           ),
         ),

@@ -194,8 +194,8 @@ class CurrentDishesState extends State<CurrentDishes> {
                           color: Colors.white,
                           fontSize: 16.0,
                         )),
-                    background: Image.network(
-                      "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+                    background: Image.asset(
+                      "images/mensaLandscape.png",
                       fit: BoxFit.cover,
                     )),
               ),

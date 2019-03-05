@@ -30,7 +30,12 @@ dependencies:
 
   google_maps_flutter: ^0.2.0+2
   
-  flutter_svg: ^0.10.3
+  flutter_launcher_icons: ^0.7.0
+
+flutter_icons:
+  image_path: "icon/dish.png"
+  android: true
+  ios: true
   
 
 dev_dependencies:
@@ -70,14 +75,6 @@ flutter:
    - images/pork.png
    - images/schnitzel.png
    - images/hearts.png
-
-   - images/background.jpg
-   - assets/default.svg
-   - assets/burger.svg
-   - assets/spaghetti.svg
-   - assets/pizza.svg
-   - assets/fish.svg
-   - assets/pommes.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

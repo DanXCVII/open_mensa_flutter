@@ -388,7 +388,7 @@ class DishcardState extends State<Dishcard> {
             );
           }
           return Container(
-            height: 200,
+            height: 229, // Don't change 229😅
             child: Center(child: CircularProgressIndicator()),
           );
         });

@@ -26,25 +26,34 @@ class _AddMensaState extends State<AddMensa> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<SharedPreferences>(
-            future: getPrefs(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data.getStringList('selectedMensas') == null ||
-                    snapshot.data.getStringList('selectedMensas').length == 0) {
-                  print('data ist null!!!');
-                  return noMensaSelected();
-                } else {
-                  mensas = snapshot.data.getStringList('selectedMensas');
-                  return mensaList(snapshot.data);
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.orange[700],
+          onPressed: () {
+            Navigator.pushNamed(context, '/mensa_selector');
+          },
+          child: Icon(Icons.add),
+),
+      body: FutureBuilder<SharedPreferences>(
+              future: getPrefs(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data.getStringList('selectedMensas') == null ||
+                      snapshot.data.getStringList('selectedMensas').length == 0) {
+                    print('data ist null!!!');
+                    return noMensaSelected();
+                  } else {
+                    mensas = snapshot.data.getStringList('selectedMensas');
+                    return mensaList(snapshot.data);
+                  }
+                } else if (snapshot.hasError) {
+                  return Text('Fehlermeldung${snapshot.error}');
                 }
-              } else if (snapshot.hasError) {
-                return Text('Fehlermeldung${snapshot.error}');
-              }
-              return (Center(
-                child: CircularProgressIndicator(),
-              ));
-            });
+                return (Center(
+                  child: CircularProgressIndicator(),
+                ));
+              }),
+    );
   }
 
   List<Widget> getMensaList(SharedPreferences prefs) {

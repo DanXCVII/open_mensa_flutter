@@ -7,7 +7,6 @@ import './fetch_data.dart';
 import './main.dart';
 import './add_mensa.dart';
 import './dish.dart';
-import './database.dart';
 
 class CurrentDishes extends StatefulWidget {
   final Drawer myDrawer;
@@ -236,8 +235,6 @@ class CurrentDishesState extends State<CurrentDishes> {
   }
 }
 
-
-
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar);
 
@@ -261,53 +258,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
     return false;
   }
-}
-
-/// the dynamic of priceGroup hashMap is double but can't be further specified because
-/// it's the data from the mensa API.
-Row createRowPrices(Map<String, double> priceGroup, BuildContext context) {
-  List<Widget> groupList = [];
-  if (priceGroup['students'] != null) {
-    groupList.add(createColumnPrice('students', priceGroup['students']));
-  }
-  if (priceGroup['employees'] != null) {
-    groupList.add(getVerticalDivider(context));
-    groupList.add(createColumnPrice('employees', priceGroup['employees']));
-  }
-  if (priceGroup['others'] != null) {
-    groupList.add(getVerticalDivider(context));
-    groupList.add(createColumnPrice('others', priceGroup['others']));
-  }
-
-  return Row(
-    children: groupList,
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  );
-}
-
-Widget getVerticalDivider(BuildContext context) {
-  return Container(
-    width: 1,
-    height: 28,
-    decoration: BoxDecoration(
-        border:
-            Border(right: BorderSide(color: Theme.of(context).dividerColor))),
-  );
-}
-
-Column createColumnPrice(String group, double price) {
-  return Column(
-    children: <Widget>[
-      Text(
-        '$group:',
-        style: TextStyle(fontSize: 12, color: Colors.white),
-      ),
-      Text(
-        '$price€',
-        style: TextStyle(fontSize: 20, color: Colors.white),
-      )
-    ],
-  );
 }
 
 Widget displayNoMensaSelected() {

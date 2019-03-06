@@ -34,9 +34,9 @@ class DrawerItem {
 
 class MyHomePage extends StatefulWidget {
   final drawerItems = [
-    DrawerItem("Fragment 1", Icons.restaurant),
-    DrawerItem("Fragment 2", Icons.favorite),
-    DrawerItem("Fragment 3", Icons.edit_location)
+    DrawerItem("Current Dishes", Icons.restaurant),
+    DrawerItem("Favorites", Icons.favorite),
+    DrawerItem("Selected Mensas", Icons.edit_location)
   ];
 
   @override

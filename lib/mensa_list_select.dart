@@ -53,9 +53,9 @@ class CheckableMensaListState extends State<CheckableMensaList> {
                 )
               ],
             ),
-            /*body: Expanded(
-              child: !snapshot.hasData ? Center(child: CircularProgressIndicator()) : createCheckedListView(snapshot.data)
-            ),*/
+            body: snapshot.hasData
+                ? ListWidget(items: snapshot.data)
+                : Center(child: CircularProgressIndicator()),
           );
         },
       );

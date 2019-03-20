@@ -7,6 +7,7 @@ import './favourite_dishes.dart';
 import './current_dishes.dart';
 import './maps/static_map_screen.dart';
 import './add_mensa.dart';
+import './mensa_list_select.dart';
 
 void main() {
   debugPaintSizeEnabled = false;
@@ -21,6 +22,7 @@ void main() {
       routes: {
         '/': (context) => MyHomePage(),
         '/mensa_selector': (context) => MapGenerator(),
+        '/mensa_list': (context) => CheckableMensaList()
         // '/mensa_selector/list': (context) => RandomWords(latlng: ,),
       }));
 }

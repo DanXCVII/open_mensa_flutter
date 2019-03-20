@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import './fetch_data.dart';
+import 'dart:convert';
 
 import './main.dart';
 
@@ -26,30 +28,40 @@ class _AddMensaState extends State<AddMensa> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<SharedPreferences>(
-            future: getPrefs(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data.getStringList('selectedMensas') == null ||
-                    snapshot.data.getStringList('selectedMensas').length == 0) {
-                  print('data ist null!!!');
-                  return noMensaSelected();
-                } else {
-                  mensas = snapshot.data.getStringList('selectedMensas');
-                  return mensaList(snapshot.data);
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.orange[700],
+          onPressed: () {
+            Navigator.pushNamed(context, '/mensa_list');
+          },
+          child: Icon(Icons.add),
+),
+      body: FutureBuilder<SharedPreferences>(
+              future: getPrefs(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data.getStringList('selectedMensas') == null ||
+                      snapshot.data.getStringList('selectedMensas').length == 0) {
+                    print('data ist null!!!');
+                    return noMensaSelected();
+                  } else {
+                    mensas = snapshot.data.getStringList('selectedMensas');
+                    return mensaList(snapshot.data);
+                  }
+                } else if (snapshot.hasError) {
+                  return Text('Fehlermeldung${snapshot.error}');
                 }
-              } else if (snapshot.hasError) {
-                return Text('Fehlermeldung${snapshot.error}');
-              }
-              return (Center(
-                child: CircularProgressIndicator(),
-              ));
-            });
+                return (Center(
+                  child: CircularProgressIndicator(),
+                ));
+              }),
+    );
   }
 
   List<Widget> getMensaList(SharedPreferences prefs) {
     List<Widget> mensaWidgetList = [];
     for (int i = 0; i < mensas.length; i++) {
+      Canteen canteen = Canteen.fromJson(json.decode(mensas[i]));
       mensaWidgetList.add(Dismissible(
         key: Key(mensas[i]),
         onDismissed: (direction) {
@@ -63,10 +75,12 @@ class _AddMensaState extends State<AddMensa> {
           child: ListTile(
             title: Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(getMensaName(mensas[i]))),
+                child: Text(canteen.name)
+            ),
             subtitle: Padding(
                 padding: EdgeInsets.only(bottom: 8.0),
-                child: Text(getMensaAddress(mensas[i]))),
+                child: Text(canteen.address)
+            ),
             trailing: IconButton(
               icon: Icon(Icons.directions),
               onPressed: () {

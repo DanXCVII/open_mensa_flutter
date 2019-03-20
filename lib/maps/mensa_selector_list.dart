@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../fetch_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'dart:convert';
 
 // creates a checkable list of mensas near a given location
 class CheckableMensaList extends StatefulWidget {
@@ -18,7 +19,7 @@ class CheckableMensaList extends StatefulWidget {
 
 class CheckableMensaListState extends State<CheckableMensaList> {
   bool booo = false;
-  final Future<MensaListRawData> mensaList;
+  final Future<List<Canteen>> mensaList;
 
   CheckableMensaListState({@required this.mensaList});
 
@@ -57,24 +58,24 @@ class CheckableMensaListState extends State<CheckableMensaList> {
   }
 
   Future<ListView> createCheckedListView(
-      Future<MensaListRawData> fMensaList) async {
-    MensaListRawData snapshot = await fMensaList;
+      Future<List<Canteen>> fMensaList) async {
+    List<Canteen> snapshot = await fMensaList;
     final prefs = await SharedPreferences.getInstance();
     List<CheckboxListTile> checkableMensaList =
-        getCheckableMensaList(snapshot.mensas, prefs);
+    getCheckableMensaList(snapshot, prefs);
 
-    if (snapshot.mensas.isEmpty) {
+    if (snapshot.isEmpty) {
       throw Exception('No Mensa found');
     }
 
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (BuildContext _context, int i) {
-          if (i.isOdd && i < snapshot.mensas.length * 2) {
+          if (i.isOdd && i < snapshot.length * 2) {
             return const Divider();
           }
           final int index = i ~/ 2;
-          if (index < snapshot.mensas.length) {
+          if (index < snapshot.length) {
             return checkableMensaList[index];
           }
         });
@@ -83,52 +84,46 @@ class CheckableMensaListState extends State<CheckableMensaList> {
   List<CheckboxListTile> getCheckableMensaList(
       List<dynamic> mensas, SharedPreferences prefs) {
     List<CheckboxListTile> mList = new List<CheckboxListTile>();
-    for (int index = 0; index < mensas.length; index++)
+    for (int index = 0; index < mensas.length; index++) {
+      String canteen = json.encode(mensas[index].toJson());
       mList.add(CheckboxListTile(
-          title: Text(mensas[index]['name']),
+          title: Text(mensas[index].name),
           value: checkPrefForMensa(
-              prefs.getStringList('selectedMensas'), mensas[index]['name']),
+              prefs.getStringList('selectedMensas'), canteen),
           onChanged: (bool value) {
             setState(() {
               List<String> selectedMensas =
                   prefs.getStringList('selectedMensas') ?? [];
               if (value) {
-                selectedMensas.add("${mensas[index]['id']}&" +
-                    "${mensas[index]['name']}&&" +
-                    "${mensas[index]['address']}&&&" +
-                    "${mensas[index]['coordinates'][0]}&&&&" +
-                    "${mensas[index]['coordinates'][1]}");
+                selectedMensas.add(canteen);
                 prefs.setStringList('selectedMensas', selectedMensas);
               } else {
-                selectedMensas.remove("${mensas[index]['id']}&" +
-                    "${mensas[index]['name']}&&" +
-                    "${mensas[index]['address']}&&&" +
-                    "${mensas[index]['coordinates'][0]}&&&&" +
-                    "${mensas[index]['coordinates'][1]}");
+                selectedMensas.remove(canteen);
                 prefs.setStringList('selectedMensas', selectedMensas);
               }
             });
           }));
+    }
     return mList;
   }
 
   Widget displayNoMensaFoundMessage(BuildContext context) {
     return Center(
         child: Column(
-      children: <Widget>[
-        Image.asset(
-          'images/sad.png',
-          width: 128.0,
-          height: 128.0,
-          color: Colors.grey[600],
-        ),
-        Text(
-          'Unfortunately no mensas found',
-          style: TextStyle(color: Colors.grey[600]),
-        ),
-      ],
-      mainAxisAlignment: MainAxisAlignment.center,
-    ));
+          children: <Widget>[
+            Image.asset(
+              'images/sad.png',
+              width: 128.0,
+              height: 128.0,
+              color: Colors.grey[600],
+            ),
+            Text(
+              'Unfortunately no mensas found',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.center,
+        ));
   }
 
   bool checkPrefForMensa(List<String> mensaList, String mensaName) {

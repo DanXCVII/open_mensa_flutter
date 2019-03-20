@@ -92,12 +92,23 @@ class _AddMensaState extends State<AddMensa> {
         background: Container(
           color: Colors.red[800],
           alignment: Alignment.centerRight,
-          child: Padding(
-              padding: EdgeInsets.only(right: 18.0),
-              child: Icon(
-                Icons.delete,
-                color: Colors.white,
-              )),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(left: 18.0),
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  )),
+              Padding(
+                  padding: EdgeInsets.only(right: 18.0),
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  )),
+            ],
+          ),
         ),
       ));
     }

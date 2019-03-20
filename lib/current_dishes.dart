@@ -6,9 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './dish_card.dart';
 import './fetch_data.dart';
 import './main.dart';
-import './add_mensa.dart';
+//import './add_mensa.dart';
 import './dish.dart';
-import './database.dart';
+//import './database.dart';
 
 class CurrentDishes extends StatefulWidget {
   final Drawer myDrawer;

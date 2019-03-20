@@ -5,7 +5,6 @@ import 'dart:async';
 
 import './favourite_dishes.dart';
 import './current_dishes.dart';
-import './maps/static_map_screen.dart';
 import './add_mensa.dart';
 import './mensa_list_select.dart';
 
@@ -21,7 +20,7 @@ void main() {
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(),
-        '/mensa_selector': (context) => MapGenerator(),
+        //'/mensa_selector': (context) => MapGenerator(),
         '/mensa_list': (context) => CheckableMensaList()
         // '/mensa_selector/list': (context) => RandomWords(latlng: ,),
       }));
@@ -92,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   fit: BoxFit.cover,
                 ),
               ),
-              accountName: new Text("John Doe"),
+              accountName: new Text("OpenMensa"),
               accountEmail: null),
           Column(children: drawerOptions)
         ],
@@ -131,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                accountName: new Text("John Doe"),
+                accountName: new Text("OpenMensa"),
                 accountEmail: null),
             new Column(children: drawerOptions)
           ],
@@ -163,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   FlatButton(
                     child: Text('Let\'s go'),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/mensa_selector');
+                      Navigator.pushNamed(context, '/mensa_list');
                     },
                   )
                 ],

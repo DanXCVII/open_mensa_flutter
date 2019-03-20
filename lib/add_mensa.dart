@@ -127,7 +127,7 @@ class _AddMensaState extends State<AddMensa> {
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(
             background: Image.asset('images/earth.png', fit: BoxFit.fitWidth),
-            title: Text("Current Dishes"),
+            title: Text("Selected Canteens"),
           ),
         ),
         SliverList(delegate: SliverChildListDelegate(getMensaList(prefs)))

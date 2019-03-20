@@ -75,6 +75,7 @@ class CheckableMensaListState extends State<CheckableMensaList> {
           )
         ],
       ),
+      body: ListWidget(items: listOfCanteens,),
     );
   }
 }

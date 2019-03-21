@@ -314,16 +314,3 @@ int getMealsCount(List<dynamic> dishesRaw, int dayFromToday) {
   return dishesRaw[dayFromToday]['meals'].length;
 }
 
-bool checkFavorite(SharedPreferences prefs, String dishInfo) {
-  bool output = false;
-  try {
-    prefs.getStringList('favoriteDishes').forEach((dish) {
-      if (dish == dishInfo) {
-        output = true;
-      }
-    });
-  } catch (e) {
-    print(e);
-  }
-  return output;
-}

@@ -6,7 +6,6 @@ class Dish {
   Map<String, double> priceGroup;
   List<String> notes = [];
   String icon;
-  bool favorite;
   List<Color> themeData;
 
   Dish({

@@ -91,9 +91,12 @@ Map<String, dynamic> convertDBMapToDishMap(Map<String, dynamic> dBMap) {
 
 String convertNotesToSingleString(List<String> notes) {
   String output = "";
-  notes.forEach((note) {
-    output = output + "$note#";
-  });
+  if (notes == null) {
+    return output;
+  }
+  for (int i = 0; i < notes.length; i++) {
+    output = output + "${notes[i]}#";
+  }
 
   return output;
 }

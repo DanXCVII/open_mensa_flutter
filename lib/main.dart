@@ -135,6 +135,15 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: _getDrawerItemWidget(_selectedDrawerIndex),
+      floatingActionButton: _selectedDrawerIndex == 2
+          ? FloatingActionButton(
+              backgroundColor: Colors.orange[700],
+              onPressed: () {
+                Navigator.pushNamed(context, '/mensa_list');
+              },
+              child: Icon(Icons.add),
+            )
+          : null,
     );
   }
 

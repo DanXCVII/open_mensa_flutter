@@ -26,12 +26,12 @@ class CurrentDishesState extends State<CurrentDishes> {
   Drawer myDrawer;
 
   CurrentDishesState({@required this.myDrawer});
+  List<List<Widget>> dishCardDays = [];
 
-  List<Widget> dishCardsDay0;
-  List<Widget> dishCardsDay1;
-  List<Widget> dishCardsDay2;
-  List<Widget> dishCardsDay3;
-  List<Widget> dishCardsDay4;
+  // TODO: make the 'days' list from the meal data, so that the correct days are added, and
+  // only the days available get added.
+  List<String> days = ["Today", "Tomorrow", "Wednesday", "Thursday", "Friday"];
+
   String mensaName;
   SharedPreferences prefs;
   Map<String, bool> favorites = {};
@@ -94,51 +94,23 @@ class CurrentDishesState extends State<CurrentDishes> {
         cant.name; //getMensaName(prefs.getStringList('selectedMensas')[0]);
 
     // assigning the global variables with the dishCards.
+
     try {
-      dishCardsDay0 = await getAllDishCardsDay(snapshot, context, 0);
-      dishCardsDay0.add(Container(
-        height: 20.0,
-      ));
+      for (int i = 0; i < days.length; i++) {
+        List<Widget> _dishCards =
+            await getAllDishCardsDay(snapshot, context, i);
+        dishCardDays.add(_dishCards);
+      }
     } catch (e) {
       print("Fehlermeldung: ${e.toString()}");
-    }
-    try {
-      dishCardsDay1 = await getAllDishCardsDay(snapshot, context, 1);
-    } catch (e) {
-      return;
-    }
-    try {
-      dishCardsDay2 = await getAllDishCardsDay(snapshot, context, 2);
-    } catch (e) {
-      return;
-    }
-    try {
-      dishCardsDay3 = await getAllDishCardsDay(snapshot, context, 3);
-    } catch (e) {
-      return;
-    }
-    try {
-      dishCardsDay4 = await getAllDishCardsDay(snapshot, context, 4);
-    } catch (e) {
-      return;
     }
   }
 
   List<Tab> getTabs() {
     List<Tab> output = [];
-    if (dishCardsDay0 != null) {
-      output.add(Tab(text: "Today"));
-      if (dishCardsDay1 != null) {
-        output.add(Tab(text: "Tomorrow"));
-        if (dishCardsDay2 != null) {
-          output.add(Tab(text: "Wednesday"));
-          if (dishCardsDay3 != null) {
-            output.add(Tab(text: "Thursday"));
-            if (dishCardsDay4 != null) {
-              output.add(Tab(text: "Friday"));
-            }
-          }
-        }
+    for (int i = 0; i < days.length; i++) {
+      if (dishCardDays[i] != null) {
+        output.add(Tab(text: days[i]));
       }
     }
     return output;
@@ -146,19 +118,9 @@ class CurrentDishesState extends State<CurrentDishes> {
 
   List<ListView> getTabsData() {
     List<ListView> output = [];
-    if (dishCardsDay0 != []) {
-      output.add(ListView(children: dishCardsDay0));
-      if (dishCardsDay1 != []) {
-        output.add(ListView(children: dishCardsDay1));
-        if (dishCardsDay2 != []) {
-          output.add(ListView(children: dishCardsDay2));
-          if (dishCardsDay3 != []) {
-            output.add(ListView(children: dishCardsDay3));
-            if (dishCardsDay4 != []) {
-              output.add(ListView(children: dishCardsDay4));
-            }
-          }
-        }
+    for (int i = 0; i < days.length; i++) {
+      if (dishCardDays[i] != null) {
+        output.add(ListView(children: dishCardDays[i]));
       }
     }
     return output;
@@ -234,7 +196,8 @@ class CurrentDishesState extends State<CurrentDishes> {
     for (int i = 0; i < getMealsCount(dishesRawD.dishRaw, day); i++) {
       try {
         Dish dish = Dish.fromMap(dishesRawD.dishRaw[day]['meals'][i]);
-        dynamic favoriteData = await DBProvider.db.getFavDishByName(dish.dishName);
+        dynamic favoriteData =
+            await DBProvider.db.getFavDishByName(dish.dishName);
         bool _isFavorite = false;
         if (favoriteData == Null) {
           _isFavorite = false;

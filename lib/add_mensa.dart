@@ -126,7 +126,7 @@ class _AddMensaState extends State<AddMensa> {
           floating: false,
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(
-            background: Image.asset('images/earth.png', fit: BoxFit.fitWidth),
+            background: Image.asset('images/earth.png', fit: BoxFit.cover),
             title: Text("Selected Canteens"),
           ),
         ),

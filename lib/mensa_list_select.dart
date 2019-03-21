@@ -20,7 +20,6 @@ class CheckableMensaListState extends State<CheckableMensaList> {
   // TODO once loaded, save canteens to this variable to not so often access the mensa api
   List<Canteen> listOfCanteens = [];
 
-  // final Future<List<Canteen>> mensaList;
   TextEditingController controller = new TextEditingController();
 
   //CheckableMensaListState();

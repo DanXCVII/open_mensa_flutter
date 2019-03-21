@@ -20,9 +20,7 @@ void main() {
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(),
-        //'/mensa_selector': (context) => MapGenerator(),
         '/mensa_list': (context) => CheckableMensaList()
-        // '/mensa_selector/list': (context) => RandomWords(latlng: ,),
       }));
 }
 

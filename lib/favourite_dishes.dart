@@ -88,9 +88,12 @@ Future<List<Widget>> _getFavDishCards(BuildContext context) async {
   Future<List<Dish>> favs = DBProvider.db.getAllFavDishes();
   favs.then((favs) {
     favs.forEach((favDish) {
-      output.add(Dishcard(favDish, context));
+      print(favs);
+      output.add(Dishcard(favDish, context, true));
     });
     return output;
   });
+  print('------');
+  print(favs.toString());
   return output;
 }

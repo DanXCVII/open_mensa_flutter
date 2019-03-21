@@ -6,6 +6,7 @@ class Dish {
   Map<String, double> priceGroup;
   List<String> notes = [];
   String icon;
+  bool favorite;
   List<Color> themeData;
 
   Dish({
@@ -21,7 +22,6 @@ class Dish {
       dishName: dishRaw['name'],
       category: dishRaw['category'],
       priceGroup: initPriceGroup(dishRaw),
-      notes: initNotes(dishRaw),
       icon: getIconName(
           '${dishRaw['name']}${dishRaw['category']}${initNotes(dishRaw).toString()}'),
       themeData: getThemeColor(getIconName(

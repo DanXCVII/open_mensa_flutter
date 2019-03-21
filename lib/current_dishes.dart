@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './dish_card.dart';
+import './database.dart';
 import './fetch_data.dart';
 import './main.dart';
 //import './add_mensa.dart';
@@ -87,15 +88,17 @@ class CurrentDishesState extends State<CurrentDishes> {
     }
     var a = prefs.getStringList('selectedMensas')[0];
     Canteen cant = Canteen.fromJson(json.decode(a));
-    DishesRawData snapshot =
-        await fetchMeals(cant.id);
+    DishesRawData snapshot = await fetchMeals(cant.id);
 
-    mensaName = cant.name; //getMensaName(prefs.getStringList('selectedMensas')[0]);
+    mensaName =
+        cant.name; //getMensaName(prefs.getStringList('selectedMensas')[0]);
 
     // assigning the global variables with the dishCards.
     try {
       dishCardsDay0 = await getAllDishCardsDay(snapshot, context, 0);
-      dishCardsDay0.add(Container(height: 20.0,));
+      dishCardsDay0.add(Container(
+        height: 20.0,
+      ));
     } catch (e) {
       print("Fehlermeldung: ${e.toString()}");
     }
@@ -230,8 +233,16 @@ class CurrentDishesState extends State<CurrentDishes> {
 
     for (int i = 0; i < getMealsCount(dishesRawD.dishRaw, day); i++) {
       try {
-        output.add(Dishcard(
-            Dish.fromMap(dishesRawD.dishRaw[day]['meals'][i]), context));
+        Dish dish = Dish.fromMap(dishesRawD.dishRaw[day]['meals'][i]);
+        dynamic favoriteData = await DBProvider.db.getFavDishByName(dish.dishName);
+        bool _isFavorite = false;
+        if (favoriteData == Null) {
+          _isFavorite = false;
+        } else {
+          _isFavorite = true;
+        }
+        print(_isFavorite);
+        output.add(Dishcard(dish, context, _isFavorite));
       } catch (e) {}
     }
 
@@ -239,8 +250,6 @@ class CurrentDishesState extends State<CurrentDishes> {
     return completer.future;
   }
 }
-
-
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar);

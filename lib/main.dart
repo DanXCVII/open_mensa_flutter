@@ -162,9 +162,9 @@ class _MyHomePageState extends State<MyHomePage> {
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
-                title: Text("Select Mensa"),
+                title: Text("Select canteen"),
                 content: Text(
-                    "Welcome to Open Mensa Germany :) \nI can take you to the place where you can select the Mensas you're interested in."),
+                    "Welcome to OpenMensa Germany :) \nI can take you to the place where you can select the Mensas you're interested in."),
                 actions: <Widget>[
                   FlatButton(
                     child: Text('Let\'s go'),

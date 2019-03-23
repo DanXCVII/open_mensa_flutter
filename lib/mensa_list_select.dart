@@ -37,7 +37,7 @@ class CheckableMensaListState extends State<CheckableMensaList> {
           }
           return Scaffold(
             appBar: AppBar(
-              title: Text('Select your Canteens'),
+              title: Text('Select your canteens'),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.search),
@@ -61,7 +61,7 @@ class CheckableMensaListState extends State<CheckableMensaList> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select your Canteens'),
+        title: Text('Select your canteens'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
@@ -119,7 +119,7 @@ class ListWidgetState extends State<ListWidget> {
         getCheckableMensaList(canteenList, prefs);
 
     if (canteenList.isEmpty) {
-      throw Exception('No Mensa found');
+      throw Exception('No canteen found');
     }
 
     return ListView.builder(
@@ -187,7 +187,7 @@ Widget displayNoMensaFoundMessage(BuildContext context) {
         color: Colors.grey[600],
       ),
       Text(
-        'Unfortunately no mensas found',
+        'Unfortunately no canteens found',
         style: TextStyle(color: Colors.grey[600]),
       ),
     ],

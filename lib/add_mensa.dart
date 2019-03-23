@@ -134,7 +134,7 @@ class _AddMensaState extends State<AddMensa> {
       drawer: myDrawer,
       body: Center(
           child: Text(
-        'You haven\'t selected any mensa yet',
+        'You haven\'t selected any canteen yet',
         style: TextStyle(color: Colors.grey[700]),
       )),
     );

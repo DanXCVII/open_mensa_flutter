@@ -215,7 +215,12 @@ class CanteenSearch extends SearchDelegate<Canteen> {
   Widget buildSuggestions(BuildContext context) {
     suggestion = query.isEmpty
         ? items
-        : items.where((Canteen target) => target.name.contains(query)).toList();
+        : items.where((Canteen target) {
+          String name = target.name.replaceAll("ß", "ss").toUpperCase();
+          String input = query.replaceAll("ß", "ss").toUpperCase();
+          return name.contains(input);
+        }
+        ).toList();
     if (items.isEmpty) {
       return displayNoMensaFoundMessage(context);
     }

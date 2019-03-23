@@ -89,9 +89,8 @@ class CurrentDishesState extends State<CurrentDishes> {
     var a = prefs.getStringList('selectedMensas')[0];
     Canteen cant = Canteen.fromJson(json.decode(a));
     DishesRawData snapshot = await fetchMeals(cant.id);
-
-    mensaName =
-        cant.name; //getMensaName(prefs.getStringList('selectedMensas')[0]);
+    days = getDays(snapshot);
+    mensaName = cant.name;
 
     // assigning the global variables with the dishCards.
 
@@ -314,3 +313,20 @@ int getMealsCount(List<dynamic> dishesRaw, int dayFromToday) {
   return dishesRaw[dayFromToday]['meals'].length;
 }
 
+List<String> getDays(DishesRawData drd) {
+  Map<int,String> dayMap = {
+    1: "Monday",
+    2: "Tuesday",
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday",
+    7: "Sunday"
+  };
+  List<String> days = [];
+  drd.dishRaw.forEach((item) {
+    DateTime date = DateTime.parse(item["date"]);
+    days.add(dayMap[date.weekday]);
+  });
+  return days;
+}

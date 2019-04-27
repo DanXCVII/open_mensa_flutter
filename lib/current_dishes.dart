@@ -98,7 +98,9 @@ class CurrentDishesState extends State<CurrentDishes> {
       for (int i = 0; i < days.length; i++) {
         List<Widget> _dishCards =
             await getAllDishCardsDay(snapshot, context, i);
+        _dishCards.add(SizedBox(height: 20));
         dishCardDays.add(_dishCards);
+
       }
     } catch (e) {
       print("Fehlermeldung: ${e.toString()}");

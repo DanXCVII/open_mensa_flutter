@@ -7,6 +7,7 @@ import './dish_card.dart';
 import './database.dart';
 import './fetch_data.dart';
 import './main.dart';
+
 //import './add_mensa.dart';
 import './dish.dart';
 //import './database.dart';
@@ -26,11 +27,12 @@ class CurrentDishesState extends State<CurrentDishes> {
   Drawer myDrawer;
 
   CurrentDishesState({@required this.myDrawer});
+
   List<List<Widget>> dishCardDays = [];
 
   // TODO: make the 'days' list from the meal data, so that the correct days are added, and
   // only the days available get added.
-  List<String> days = ["Today", "Tomorrow", "Wednesday", "Thursday", "Friday"];
+  List<String> days = [];//["Today", "Tomorrow", "Wednesday", "Thursday", "Friday"];
 
   String mensaName;
   SharedPreferences prefs;
@@ -98,9 +100,17 @@ class CurrentDishesState extends State<CurrentDishes> {
       for (int i = 0; i < days.length; i++) {
         List<Widget> _dishCards =
             await getAllDishCardsDay(snapshot, context, i);
+        if (_dishCards.length == 0) {
+          _dishCards.add(
+            Center(
+              child: Container(
+                child: Text("no data for this day"),
+              ),
+            ),
+          );
+        }
         _dishCards.add(SizedBox(height: 20));
         dishCardDays.add(_dishCards);
-
       }
     } catch (e) {
       print("Fehlermeldung: ${e.toString()}");
@@ -316,7 +326,7 @@ int getMealsCount(List<dynamic> dishesRaw, int dayFromToday) {
 }
 
 List<String> getDays(DishesRawData drd) {
-  Map<int,String> dayMap = {
+  Map<int, String> dayMap = {
     1: "Monday",
     2: "Tuesday",
     3: "Wednesday",

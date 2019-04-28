@@ -186,38 +186,43 @@ class CurrentDishesState extends State<CurrentDishes> {
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                     centerTitle: true,
-                    title: Theme(
-                      data: ThemeData(
-                        canvasColor: Color(0xff459116),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                          value:
-                              dropdownValue == null ? mensaName : dropdownValue,
-                          onChanged: (String newValue) {
-                            print("##########");
-                            print(selectedCanteenNames.indexOf(newValue));
-                            initCurrentDishesData(context,
-                                    selectedCanteenNames.indexOf(newValue))
-                                .then((result) {
-                              setState(() {
-                                dropdownValue = newValue;
+                    title: Container(
+                      height: 20,
+                      child: Theme(
+                        data: ThemeData(
+                          brightness: Brightness.dark,
+                          canvasColor: Color(0xff459116),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                            value: dropdownValue == null
+                                ? mensaName
+                                : dropdownValue,
+                            onChanged: (String newValue) {
+                              print("##########");
+                              print(selectedCanteenNames.indexOf(newValue));
+                              initCurrentDishesData(context,
+                                      selectedCanteenNames.indexOf(newValue))
+                                  .then((result) {
+                                setState(() {
+                                  dropdownValue = newValue;
+                                });
                               });
-                            });
-                          },
-                          items: selectedCanteenNames
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                              ),
-                            );
-                          }).toList(),
+                            },
+                            items: selectedCanteenNames
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                ),
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
                     ),
@@ -387,4 +392,34 @@ List<String> getDays(DishesRawData drd) {
     days.add(dayMap[date.weekday]);
   });
   return days;
+}
+
+class CustomDropdownClipper extends CustomClipper<Path> {
+  Path getClip(Size size) {
+    final Path path = Path();
+    path.lineTo(0, size.height / 4);
+    path.lineTo(size.width, size.height / 4);
+    path.lineTo(size.width, size.height / 4 * 2);
+    path.lineTo(0, size.height / 4 * 2);
+    path.close();
+    return path;
+  }
+
+  bool shouldReclip(CustomDropdownClipper oldClipper) => false;
+}
+
+// clips a diamond shape
+class CustomStepsClipper extends CustomClipper<Path> {
+  Path getClip(Size size) {
+    final Path path = Path();
+    path.lineTo(size.width / 2, 0);
+    path.lineTo(size.width, size.height / 2);
+    path.lineTo(size.width / 2, size.height);
+    path.lineTo(0, size.height / 2);
+    path.lineTo(size.width / 2, 0);
+    path.close();
+    return path;
+  }
+
+  bool shouldReclip(CustomStepsClipper oldClipper) => false;
 }

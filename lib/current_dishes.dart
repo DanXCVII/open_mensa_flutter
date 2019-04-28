@@ -32,29 +32,26 @@ class CurrentDishesState extends State<CurrentDishes> {
 
   // TODO: make the 'days' list from the meal data, so that the correct days are added, and
   // only the days available get added.
-  List<String> days = [];//["Today", "Tomorrow", "Wednesday", "Thursday", "Friday"];
+  List<String> days = ["Today", "Tomorrow", "Wednesday", "Thursday", "Friday"];
 
   String mensaName;
   SharedPreferences prefs;
+  List<String> selectedCanteenNames = [];
+
   Map<String, bool> favorites = {};
+  String dropdownValue;
 
   @override
   void initState() {
     print("initState() called");
     super.initState();
     try {
-      initCurrentDishesData(context).then((result) {
+      initCurrentDishesData(context, -1).then((result) {
         setState(() {});
       });
     } catch (e) {
       return;
     }
-  }
-
-  void reload() {
-    setState(() {
-      initCurrentDishesData(context);
-    });
   }
 
   @override
@@ -80,15 +77,33 @@ class CurrentDishesState extends State<CurrentDishes> {
     );
   }
 
-  initCurrentDishesData(BuildContext context) async {
-    prefs = await getPrefs();
+  initCurrentDishesData(BuildContext context, int index) async {
+    prefs = (prefs == null ? await getPrefs() : prefs);
+    if (index == -1) {
+      index = (prefs.getInt("currentMensa") == null
+          ? 0
+          : prefs.getInt("currentMensa"));
+    } else {
+      prefs.setInt("currentMensa", index);
+    }
+
     // making sure that the user already selected a mensa
     try {
       assert(prefs.getStringList('selectedMensas') != null);
     } catch (e) {
       return;
     }
-    var a = prefs.getStringList('selectedMensas')[0];
+    List<String> selectedCanteens = prefs.getStringList('selectedMensas');
+    print("#########################");
+    print(selectedCanteens);
+    selectedCanteenNames = [];
+    selectedCanteens.forEach((ca) {
+      selectedCanteenNames.add(Canteen.fromJson(json.decode(ca)).name);
+    });
+    print(selectedCanteenNames);
+    var a = selectedCanteens[index];
+    print("### a ###");
+    print(a);
     Canteen cant = Canteen.fromJson(json.decode(a));
     DishesRawData snapshot = await fetchMeals(cant.id);
     days = getDays(snapshot);
@@ -97,6 +112,7 @@ class CurrentDishesState extends State<CurrentDishes> {
     // assigning the global variables with the dishCards.
 
     try {
+      dishCardDays = [];
       for (int i = 0; i < days.length; i++) {
         List<Widget> _dishCards =
             await getAllDishCardsDay(snapshot, context, i);
@@ -170,11 +186,41 @@ class CurrentDishesState extends State<CurrentDishes> {
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                     centerTitle: true,
-                    title: Text(mensaName,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                        )),
+                    title: Theme(
+                      data: ThemeData(
+                        canvasColor: Color(0xff459116),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                          value:
+                              dropdownValue == null ? mensaName : dropdownValue,
+                          onChanged: (String newValue) {
+                            print("##########");
+                            print(selectedCanteenNames.indexOf(newValue));
+                            initCurrentDishesData(context,
+                                    selectedCanteenNames.indexOf(newValue))
+                                .then((result) {
+                              setState(() {
+                                dropdownValue = newValue;
+                              });
+                            });
+                          },
+                          items: selectedCanteenNames
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
                     background: Image.asset(
                       "images/mensaLandscape.png",
                       fit: BoxFit.cover,

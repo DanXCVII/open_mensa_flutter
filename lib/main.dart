@@ -169,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   FlatButton(
                     child: Text('Let\'s go'),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/mensa_list');
+                      Navigator.popAndPushNamed(context, '/mensa_list');
                     },
                   )
                 ],

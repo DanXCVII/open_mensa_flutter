@@ -102,6 +102,8 @@ class CurrentDishesState extends State<CurrentDishes> {
       selectedCanteenNames.add(Canteen.fromJson(json.decode(ca)).name);
     });
     print(selectedCanteenNames);
+    // dirty fix for problem with only one canteen selected
+    index = selectedCanteens.length == 1 ? 0 : index;
     var a = selectedCanteens[index];
     print(a);
     print("### a ###");

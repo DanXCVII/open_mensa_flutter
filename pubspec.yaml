@@ -85,6 +85,9 @@ flutter:
    - images/choco.png
    - images/cauliflower.png
    - images/broccoli.png
+   - images/sheep.png
+   - images/egg.png
+   - images/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

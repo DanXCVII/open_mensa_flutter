@@ -41,7 +41,7 @@ class DishcardState extends State<Dishcard> {
                 boxShadow: [
                   BoxShadow(
                     // Shadow of the DishCard
-                    color: widget.dish.themeData[1],
+                    color: widget.dish.themeData.color[1],
                     blurRadius: 15.0, // default 20.0
                     spreadRadius: 1.5, // default 5.0
                     offset: Offset(10.0, 10.0),
@@ -52,7 +52,7 @@ class DishcardState extends State<Dishcard> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15.0),
                     gradient: LinearGradient(
-                      colors: [widget.dish.themeData[0], widget.dish.themeData[1]],
+                      colors: [widget.dish.themeData.color[0], widget.dish.themeData.color[1]],
                       begin: FractionalOffset.topLeft,
                       end: FractionalOffset.bottomRight,
                       stops: [0.0, 1.0],
@@ -128,7 +128,7 @@ class DishcardState extends State<Dishcard> {
         child: Align(
           alignment: Alignment.topCenter,
           child: Image.asset(
-            'images/${widget.dish.icon}.png',
+            'images/${widget.dish.themeData.iconName}.png',
             width: 100,
             height: 80,
             fit: BoxFit.contain,

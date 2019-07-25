@@ -5,28 +5,28 @@ class Dish {
   String category;
   Map<String, double> priceGroup;
   List<String> notes = [];
-  String icon;
-  List<Color> themeData;
+
+  MyThemeData themeData;
 
   Dish({
     this.dishName,
     this.category,
     this.priceGroup,
     this.notes,
-    this.icon,
     this.themeData,
   });
 
-  factory Dish.fromMap(Map<String, dynamic> dishRaw) => new Dish(
-      dishName: dishRaw['name'],
-      category: dishRaw['category'],
-      priceGroup: initPriceGroup(dishRaw),
-      icon: getIconName(
-          '${dishRaw['name']}${dishRaw['category']}${initNotes(dishRaw).toString()}'),
-      themeData: getThemeColor(getIconName(
-          '${dishRaw['name']}${dishRaw['category']}${initNotes(dishRaw).toString()}')));
+  factory Dish.fromMap(Map<String, dynamic> dishRaw) =>
+      new Dish(
+          dishName: dishRaw['name'],
+          category: dishRaw['category'],
+          priceGroup: initPriceGroup(dishRaw),
+          themeData: getIconName(
+              '${dishRaw['name']}${dishRaw['category']}${initNotes(dishRaw)
+                  .toString()}'));
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toMap() =>
+      {
         "name": dishName,
         "category": category,
         "prices": {
@@ -63,78 +63,80 @@ List<String> initNotes(Map<String, dynamic> dishRaw) {
   return notes;
 }
 
-String getIconName(String dishInfo) {
+MyThemeData getIconName(String dishInfo) {
   String dISHiNFO = dishInfo.toUpperCase();
 
-  if (dISHiNFO.contains('BURGER')) {
-    return 'burger';
-  } else if (dISHiNFO.contains('PIZZA')) {
-    return 'pizza';
-  } else if (dISHiNFO.contains('FISCH') || dISHiNFO.contains('LACHS')) {
-    return 'fish';
-  } else if (dISHiNFO.contains('SPAGHETTI') ||
-      dISHiNFO.contains('PASTA') ||
-      dISHiNFO.contains('NUDEL')) // Maybe not adding the image at nudeln..
-  {
-    return 'spaghetti';
-  } else if (dISHiNFO.contains('POMMES')) {
-    return 'pommes';
-  } else if (dISHiNFO.contains('GEFLÜGEL') ||
-      dISHiNFO.contains('HÄHNCHEN') ||
-      dISHiNFO.contains('PUTE')) {
-    return 'haehnchenBrust';
-  } else if (dISHiNFO.contains('WURST')) {
-    return 'sausage';
-  } else if (dISHiNFO.contains('RÜHREI') ||
-      dISHiNFO.contains('SPIEGELEI') ||
-      dISHiNFO.contains('OMLET')) {
-    return 'omlett';
-  } else if (dISHiNFO.contains('JOGHURT')) {
-    return 'yoghurt';
-  } else if (dISHiNFO.contains('CHILI')) {
-    return 'chili';
-  } else if (dISHiNFO.contains('SALAT') || dISHiNFO.contains('VEGAN')) {
-    return 'salat';
-  } else if (dISHiNFO.contains('SPECK')) {
-    return 'bacon';
-  } else if (dISHiNFO.contains("SCHNITZEL")) {
-    return 'schnitzel';
-  } else if (dISHiNFO.contains('RIND') || dISHiNFO.contains('FLEISCH')) {
-    return 'pork';
-  } else {
-    return 'forkSpoon';
-  }
+  MyThemeData theme = themeData['DEFAULT'];
+  themeData.keys.forEach((_key) {
+    if (dISHiNFO.contains(_key)) {
+      theme = themeData[_key];
+    }
+  });
+
+  return theme;
 }
 
-const Map<String, List<Color>> themeData = {
-  'burger': [Colors.yellow, Colors.deepOrange],
-  'pizza': [Colors.deepOrange, Colors.red],
-  'fish': [Color(0xFF01579B), Colors.blueAccent], // lightBlue[900]
-  'spaghetti': [Color(0xFFB71C1C), Colors.amber], // red[900]
-  'pommes': [Colors.amber, Color(0xFF5D4037)], // brown[700]
-  'haehnchenBrust': [
-    Color(0xFF5D4037),
-    Color(0xFFBF360C)
-  ], // brown[700], deepOrange[900]
-  'sausage': [Color(0xFF3E2723), Color(0xFF5D4037)], // brown[900], brown[700]
-  'omlett': [Color(0xFFF57F17), Color(0xFFFDD835)], // yellow[900], yellow[600]
-  'yoghurt': [Colors.teal, Colors.cyan],
-  'salat': [
-    Color(0xFF1B5E20),
-    Color(0xFF558B2F)
-  ], // green[900], lightGreen[800]
-  'chili': [Color(0xFFB71C1C), Color(0xFFD50000)], // red[900], redAccent[700]
-  'bacon': [
-    Color(0xFFFF1744),
-    Color(0xFFD84315)
-  ], // redAccent[400], deepOrange[800]
-  'schnitzel': [
-    Color(0xFFEF6C00),
-    Color(0xFF4E342E)
-  ], // orange[800], brown[800]
-  'default': [Color(0xFFF57C00), Color(0xFFD32F2F)], // orange[700], red[700]
+const Map<String, MyThemeData> themeData = {
+  'BURGER': MyThemeData('burger', [Colors.yellow, Colors.deepOrange]),
+  'PIZZA': MyThemeData('pizza', [Colors.deepOrange, Colors.red]),
+
+  'NUDEL': MyThemeData('spaghetti', [Color(0xFFB71C1C), Colors.amber]),
+  'PASTA': MyThemeData('spaghetti', [Color(0xFFB71C1C), Colors.amber]),
+  'SPAGHETTI': MyThemeData('spaghetti', [Color(0xFFB71C1C), Colors.amber]),
+
+  'POMMES': MyThemeData('pommes', [Colors.amber, Color(0xFF5D4037)]),
+
+  'HÄHNCHEN':
+  MyThemeData('haehnchenBrust', [Color(0xFF5D4037), Color(0xFFBF360C)]),
+  'GEFLÜGEL': MyThemeData(
+      'haehnchenBrust', [Color(0xFF5D4037), Color(0xFFBF360C)]),
+  'PUTE': MyThemeData('haehnchenBrust', [Color(0xFF5D4037), Color(0xFFBF360C)]),
+
+  'WURST': MyThemeData('sausage', [Color(0xFF3E2723), Color(0xFF5D4037)]),
+
+  'RÜHREI': MyThemeData('omlett', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  'SPIEGELEI': MyThemeData('omlett', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  'OMLET': MyThemeData('omlett', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+
+  'JOGHURT': MyThemeData('yoghurt', [Colors.teal, Colors.cyan]),
+  'SALAT': MyThemeData('salat', [Color(0xFF1B5E20), Color(0xFF558B2F)]),
+  'VEGAN': MyThemeData('salat', [Color(0xFF1B5E20), Color(0xFF558B2F)]),
+  'CHILI': MyThemeData('chili', [Color(0xFFB71C1C), Color(0xFFD50000)]),
+  'SPECK': MyThemeData('bacon', [Color(0xFFFF1744), Color(0xFFD84315)]),
+  'SCHNITZEL': MyThemeData('schnitzel', [Color(0xFFEF6C00), Color(0xFF4E342E)]),
+  'DEFAULT': MyThemeData('forkSpoon', [Color(0xFFF57C00), Color(0xFFD32F2F)]),
+  'RIND': MyThemeData('cow', [Color(0xFFEF6C00), Color(0xFF4E342E)]),
+
+  'FISCH': MyThemeData('fish', [Color(0xFF01579B), Colors.blueAccent]),
+  'LACHS': MyThemeData('fish', [Color(0xFF01579B), Colors.blueAccent]),
+
+  'KLOß': MyThemeData('dumpling', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  'KLÖSSE': MyThemeData('dumpling', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  'KLOSS': MyThemeData('dumpling', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+
+  'RÖSTI': MyThemeData('roesti', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  'PUFFER': MyThemeData('roesti', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+
+  'LASAGNE': MyThemeData('lasagne', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+
+  'BROCCOLI': MyThemeData('broccoli', [Color(0xFF1B5E20), Color(0xFF558B2F)]),
+
+  'BLUMENKOHL': MyThemeData('cauliflower', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+
+  'VANILLEPUDDING': MyThemeData('vanille', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+
+  'SCHOKOLADENPUDDING': MyThemeData('choco', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  'PUDDING': MyThemeData('cauliflower', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+
+  'MAULTASCHEN': MyThemeData('ravioli', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  'TASCHEN': MyThemeData('ravioli', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+
 };
 
-List<Color> getThemeColor(String dish) {
-  return themeData[dish] ?? themeData['default'];
+class MyThemeData {
+  final String iconName;
+  final List<Color> color;
+
+  const MyThemeData(this.iconName,
+      this.color,);
 }

@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './dish_card.dart';
 import './database.dart';
 import './fetch_data.dart';
+import './fetch_canteens.dart';
 import './main.dart';
 
 //import './add_mensa.dart';
@@ -102,8 +103,8 @@ class CurrentDishesState extends State<CurrentDishes> {
     });
     print(selectedCanteenNames);
     var a = selectedCanteens[index];
-    print("### a ###");
     print(a);
+    print("### a ###");
     Canteen cant = Canteen.fromJson(json.decode(a));
     DishesRawData snapshot = await fetchMeals(cant.id);
     days = getDays(snapshot);

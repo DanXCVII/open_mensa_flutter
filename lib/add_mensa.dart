@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import './fetch_data.dart';
+import './fetch_canteens.dart';
 import 'dart:convert';
 
 import './main.dart';

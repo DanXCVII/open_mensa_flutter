@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './fetch_data.dart';
+import './fetch_canteens.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -132,6 +132,7 @@ class ListWidgetState extends State<ListWidget> {
           if (index < canteenList.length) {
             return checkableMensaList[index];
           }
+          return null;
         });
   }
 

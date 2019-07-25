@@ -64,12 +64,12 @@ MyThemeData getIconName(String dishInfo) {
   String dISHiNFO = dishInfo.toUpperCase();
 
   MyThemeData theme = themeData['DEFAULT'];
-  themeData.keys.forEach((_key) {
+  for (final _key in themeData.keys) {
     if (dISHiNFO.contains(_key)) {
       theme = themeData[_key];
+      break;
     }
-  });
-
+  }
   return theme;
 }
 
@@ -97,26 +97,35 @@ const Map<String, MyThemeData> themeData = {
   'SCHNITZEL': MyThemeData('schnitzel', [Color(0xFFEF6C00), Color(0xFF4E342E)]),
   'DEFAULT': MyThemeData('forkSpoon', [Color(0xFFF57C00), Color(0xFFD32F2F)]),
   'RIND': MyThemeData('cow', [Color(0xFFEF6C00), Color(0xFF4E342E)]),
+  //
   'FISCH': MyThemeData('fish', [Color(0xFF01579B), Colors.blueAccent]),
   'LACHS': MyThemeData('fish', [Color(0xFF01579B), Colors.blueAccent]),
+  //
   'KLOß': MyThemeData('dumpling', [Color(0xFFD7B772), Color(0xFFA14400)]),
   'KLÖSSE': MyThemeData('dumpling', [Color(0xFFD7B772), Color(0xFFA14400)]),
   'KLOSS': MyThemeData('dumpling', [Color(0xFFD7B772), Color(0xFFA14400)]),
+  'KNÖDEL': MyThemeData('dumpling', [Color(0xFFD7B772), Color(0xFFA14400)]),
+  //
   'RÖSTI': MyThemeData('roesti', [Color(0xFFA76433), Color(0xFFEAB334)]),
   'PUFFER': MyThemeData('roesti', [Color(0xFFA76433), Color(0xFFEAB334)]),
+  //
   'LASAGNE': MyThemeData('lasagne', [Color(0xFFF57F17), Color(0xFFFDD835)]),
   'BROCCOLI': MyThemeData('broccoli', [Color(0xff107C28), Color(0xff60DA00)]),
   'BLUMENKOHL':
       MyThemeData('cauliflower', [Color(0xffB4B4B4), Color(0xff646464)]),
   'VANILLEPUDDING':
       MyThemeData('vanille', [Color(0xFFEEBC00), Color(0xFFFFCD1A)]),
+  //
   'SCHOKOLADENPUDDING':
       MyThemeData('choco', [Color(0xFF611D00), Color(0xFF9A4521)]),
   'PUDDING': MyThemeData('choco', [Color(0xFF611D00), Color(0xFF9A4521)]),
+  //
   'MAULTASCHEN': MyThemeData('ravioli', [Color(0xFFF57F17), Color(0xFFFDD835)]),
   'TASCHEN': MyThemeData('ravioli', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  //
   'LAMM': MyThemeData('sheep', [Color(0xffC0BD95), Color(0xff697064)]),
-  'SCHAAF': MyThemeData('sheep', [Color(0xffC0BD95), Color(0xff697064)]),
+  'SCHAF': MyThemeData('sheep', [Color(0xffC0BD95), Color(0xff697064)]),
+  //
   'EI': MyThemeData('egg', [Color(0xffC0BD95), Color(0xff697064)]),
 };
 

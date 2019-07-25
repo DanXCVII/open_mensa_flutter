@@ -110,12 +110,12 @@ const Map<String, MyThemeData> themeData = {
   'FISCH': MyThemeData('fish', [Color(0xFF01579B), Colors.blueAccent]),
   'LACHS': MyThemeData('fish', [Color(0xFF01579B), Colors.blueAccent]),
 
-  'KLOß': MyThemeData('dumpling', [Color(0xFFF57F17), Color(0xFFFDD835)]),
-  'KLÖSSE': MyThemeData('dumpling', [Color(0xFFF57F17), Color(0xFFFDD835)]),
-  'KLOSS': MyThemeData('dumpling', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  'KLOß': MyThemeData('dumpling', [Color(0xFFD7B772), Color(0xFFA14400)]),
+  'KLÖSSE': MyThemeData('dumpling', [Color(0xFFD7B772), Color(0xFFA14400)]),
+  'KLOSS': MyThemeData('dumpling', [Color(0xFFD7B772), Color(0xFFA14400)]),
 
-  'RÖSTI': MyThemeData('roesti', [Color(0xFFF57F17), Color(0xFFFDD835)]),
-  'PUFFER': MyThemeData('roesti', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  'RÖSTI': MyThemeData('roesti', [Color(0xFFA76433), Color(0xFFEAB334)]),
+  'PUFFER': MyThemeData('roesti', [Color(0xFFA76433), Color(0xFFEAB334)]),
 
   'LASAGNE': MyThemeData('lasagne', [Color(0xFFF57F17), Color(0xFFFDD835)]),
 
@@ -123,10 +123,10 @@ const Map<String, MyThemeData> themeData = {
 
   'BLUMENKOHL': MyThemeData('cauliflower', [Color(0xFFF57F17), Color(0xFFFDD835)]),
 
-  'VANILLEPUDDING': MyThemeData('vanille', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  'VANILLEPUDDING': MyThemeData('vanille', [Color(0xFFEEBC00), Color(0xFFFFCD1A)]),
 
-  'SCHOKOLADENPUDDING': MyThemeData('choco', [Color(0xFFF57F17), Color(0xFFFDD835)]),
-  'PUDDING': MyThemeData('cauliflower', [Color(0xFFF57F17), Color(0xFFFDD835)]),
+  'SCHOKOLADENPUDDING': MyThemeData('choco', [Color(0xFF611D00), Color(0xFF9A4521)]),
+  'PUDDING': MyThemeData('choco', [Color(0xFF611D00), Color(0xFF9A4521)]),
 
   'MAULTASCHEN': MyThemeData('ravioli', [Color(0xFFF57F17), Color(0xFFFDD835)]),
   'TASCHEN': MyThemeData('ravioli', [Color(0xFFF57F17), Color(0xFFFDD835)]),

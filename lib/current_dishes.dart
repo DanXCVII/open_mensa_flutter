@@ -188,51 +188,51 @@ class CurrentDishesState extends State<CurrentDishes> {
                 floating: false,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
-                    centerTitle: true,
-                    title: Container(
-                      height: 20,
-                      child: Theme(
-                        data: ThemeData(
-                          brightness: Brightness.dark,
-                          canvasColor: Color(0xff459116),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                            value: dropdownValue == null
-                                ? mensaName
-                                : dropdownValue,
-                            onChanged: (String newValue) {
-                              print("##########");
-                              print(selectedCanteenNames.indexOf(newValue));
-                              initCurrentDishesData(context,
-                                      selectedCanteenNames.indexOf(newValue))
-                                  .then((result) {
-                                setState(() {
-                                  dropdownValue = newValue;
-                                });
-                              });
-                            },
-                            items: selectedCanteenNames
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                ),
-                              );
-                            }).toList(),
+                  centerTitle: true,
+                  title: Container(
+                    height: 20,
+                    child: Theme(
+                      data: ThemeData(
+                        brightness: Brightness.dark,
+                        canvasColor: Color(0xff459116),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
                           ),
+                          value:
+                              dropdownValue == null ? mensaName : dropdownValue,
+                          onChanged: (String newValue) {
+                            print("##########");
+                            print(selectedCanteenNames.indexOf(newValue));
+                            initCurrentDishesData(context,
+                                    selectedCanteenNames.indexOf(newValue))
+                                .then((result) {
+                              setState(() {
+                                dropdownValue = newValue;
+                              });
+                            });
+                          },
+                          items: selectedCanteenNames
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
                     ),
-                    background: Image.asset(
-                      "images/mensaLandscape.png",
-                      fit: BoxFit.cover,
-                    )),
+                  ),
+                  background: Image.asset(
+                    "images/mensaLandscape.png",
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
               SliverPersistentHeader(
                 delegate: _SliverAppBarDelegate(

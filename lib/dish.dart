@@ -126,7 +126,7 @@ const Map<String, MyThemeData> themeData = {
   'LAMM': MyThemeData('sheep', [Color(0xffC0BD95), Color(0xff697064)]),
   'SCHAF': MyThemeData('sheep', [Color(0xffC0BD95), Color(0xff697064)]),
   //
-  'EI': MyThemeData('egg', [Color(0xffC0BD95), Color(0xff697064)]),
+  'EI': MyThemeData('egg', [Color(0xffFFC700), Color(0xffE35200)]),
 };
 
 class MyThemeData {

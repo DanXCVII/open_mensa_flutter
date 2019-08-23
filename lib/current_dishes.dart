@@ -33,7 +33,7 @@ class CurrentDishesState extends State<CurrentDishes> {
 
   // TODO: make the 'days' list from the meal data, so that the correct days are added, and
   // only the days available get added.
-  List<String> days = ["Today", "Tomorrow", "Wednesday", "Thursday", "Friday"];
+  List<String> days = [];
 
   String mensaName;
   SharedPreferences prefs;
@@ -84,6 +84,11 @@ class CurrentDishesState extends State<CurrentDishes> {
               List<ListView> tabsData = getTabsData();
               List<Tab> tabs = getTabs();
 
+              if (tabs.isEmpty || tabsData.isEmpty)
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+
               return DefaultTabController(
                 length: tabs.length,
                 child: NestedScrollView(
@@ -128,14 +133,14 @@ class CurrentDishesState extends State<CurrentDishes> {
                                     },
                                     items: selectedCanteenNames
                                         .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(
-                                          value,
-                                        ),
-                                      );
-                                    }).toList(),
+                                            (String value) =>
+                                                DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(
+                                                    value,
+                                                  ),
+                                                ))
+                                        .toList(),
                                   ),
                                 ),
                               ),
@@ -250,6 +255,11 @@ class CurrentDishesState extends State<CurrentDishes> {
       }
     }
     return output;
+  }
+
+  // Change method to collect data of the mensa you want (index)
+  Widget showDishes(BuildContext context, SharedPreferences prefs) {
+    // Making sure that the user already selected mensas
   }
 
   Future<List<Widget>> getAllDishCardsDay(

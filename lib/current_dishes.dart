@@ -36,7 +36,6 @@ class CurrentDishesState extends State<CurrentDishes> {
   List<String> days = [];
 
   String mensaName;
-  SharedPreferences prefs;
   List<String> selectedCanteenNames = [];
 
   Map<String, bool> favorites = {};
@@ -67,7 +66,8 @@ class CurrentDishesState extends State<CurrentDishes> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               try {
-                assert(prefs.getStringList('selectedMensas')[0] != null);
+                assert(
+                    snapshot.data.getStringList('selectedMensas')[0] != null);
               } catch (e) {
                 return Scaffold(
                   drawer: myDrawer,
@@ -180,7 +180,7 @@ class CurrentDishesState extends State<CurrentDishes> {
   }
 
   initCurrentDishesData(BuildContext context, int index) async {
-    prefs = (prefs == null ? await getPrefs() : prefs);
+    SharedPreferences prefs = await getPrefs();
     if (index == -1) {
       index = (prefs.getInt("currentMensa") == null
           ? 0

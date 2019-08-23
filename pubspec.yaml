@@ -26,16 +26,16 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  
+
   shared_preferences: ^0.5.1+1
-  
+
   flutter_launcher_icons: ^0.7.0
 
 flutter_icons:
   image_path: "icon/dish.png"
   android: true
   ios: true
-  
+
 
 dev_dependencies:
   flutter_test:
@@ -55,38 +55,40 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - images/spaghetti.png
-   - images/fish.png
-   - images/pommes.png
-   - images/forkSpoon.png
-   - images/pizza.png
-   - images/burger.png
-   - images/sad.png
-   - images/mensaLandscape.png
-   - images/haehnchenBrust.png
-   - images/unknownDish.png
-   - images/yoghurt.png
-   - images/omlett.png
-   - images/sausage.png
-   - images/salat.png
-   - images/chili.png
-   - images/bacon.png
-   - images/pork.png
-   - images/schnitzel.png
-   - images/hearts.png
-   - images/map.png
-   - images/earth.png
-   - images/hat.png
-   - images/vanille.png
-   - images/roesti.png
-   - images/lasagne.png
-   - images/dumpling.png
-   - images/cow.png
-   - images/choco.png
-   - images/cauliflower.png
-   - images/broccoli.png
-   - images/sheep.png
-   - images/egg.png
+    - images/bacon.png
+    - images/broccoli.png
+    - images/burger.png
+    - images/cauliflower.png
+    - images/chili.png
+    - images/choco.png
+    - images/cow.png
+    - images/dumpling.png
+    - images/earth.png
+    - images/egg.png
+    - images/fish.png
+    - images/forkSpoon.png
+    - images/haehnchenBrust.png
+    - images/hat.png
+    - images/hearts.png
+    - images/lasagne.png
+    - images/map.png
+    - images/mensaLandscape.png
+    - images/omlett.png
+    - images/pizza.png
+    - images/pommes.png
+    - images/pork.png
+    - images/ravioli.png
+    - images/roesti.png
+    - images/sad.png
+    - images/salat.png
+    - images/sausage.png
+    - images/schnitzel.png
+    - images/sheep.png
+    - images/spaghetti.png
+    - images/unknownDish.png
+    - images/vanille.png
+    - images/yoghurt.png
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -62,11 +62,107 @@ class CurrentDishesState extends State<CurrentDishes> {
   {
     return Container(
       decoration: BoxDecoration(color: Colors.white),
-      child: FutureBuilder<Widget>(
-          future: showDishes(context),
+      child: FutureBuilder<SharedPreferences>(
+          future: getPrefs(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return snapshot.data;
+              try {
+                assert(prefs.getStringList('selectedMensas')[0] != null);
+              } catch (e) {
+                return Scaffold(
+                  drawer: myDrawer,
+                  appBar: AppBar(
+                    title: Text('Current Dishes'),
+                  ),
+                  body: Center(
+                    child: Text(
+                        "You haven't selected any Mensa yet. Do so, by navigating to the add mensa mensu :)"),
+                  ),
+                );
+              }
+
+              List<ListView> tabsData = getTabsData();
+              List<Tab> tabs = getTabs();
+
+              return DefaultTabController(
+                length: tabs.length,
+                child: NestedScrollView(
+                    headerSliverBuilder:
+                        (BuildContext context, bool innerBoxIsScrolled) {
+                      return <Widget>[
+                        SliverAppBar(
+                          expandedHeight: 200.0,
+                          floating: false,
+                          pinned: true,
+                          flexibleSpace: FlexibleSpaceBar(
+                            centerTitle: true,
+                            title: Container(
+                              height: 20,
+                              child: Theme(
+                                data: ThemeData(
+                                  brightness: Brightness.dark,
+                                  canvasColor: Color(0xff459116),
+                                ),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
+                                    value: dropdownValue == null
+                                        ? mensaName
+                                        : dropdownValue,
+                                    onChanged: (String newValue) {
+                                      print("##########");
+                                      print(selectedCanteenNames
+                                          .indexOf(newValue));
+                                      initCurrentDishesData(
+                                              context,
+                                              selectedCanteenNames
+                                                  .indexOf(newValue))
+                                          .then((result) {
+                                        setState(() {
+                                          dropdownValue = newValue;
+                                        });
+                                      });
+                                    },
+                                    items: selectedCanteenNames
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            background: Image.asset(
+                              "images/mensaLandscape.png",
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        SliverPersistentHeader(
+                          delegate: _SliverAppBarDelegate(
+                            TabBar(
+                              isScrollable: true,
+                              labelColor: Colors.black87,
+                              unselectedLabelColor: Colors.grey,
+                              tabs: tabs,
+                            ),
+                          ),
+                          pinned: false,
+                        ),
+                      ];
+                    },
+                    body: TabBarView(
+                      children: tabsData,
+                    )),
+              );
             }
 
             /// TODO: NTH: Maybe handle the error somehow
@@ -154,103 +250,6 @@ class CurrentDishesState extends State<CurrentDishes> {
       }
     }
     return output;
-  }
-
-  // Change method to collect data of the mensa you want (index)
-  Future<Widget> showDishes(BuildContext context) async {
-    SharedPreferences prefs = await getPrefs();
-    // Making sure that the user already selected mensas
-    try {
-      assert(prefs.getStringList('selectedMensas')[0] != null);
-    } catch (e) {
-      return Scaffold(
-        drawer: myDrawer,
-        appBar: AppBar(
-          title: Text('Current Dishes'),
-        ),
-        body: Center(
-          child: Text(
-              "You haven't selected any Mensa yet. Do so, by navigating to the add mensa mensu :)"),
-        ),
-      );
-    }
-
-    List<ListView> tabsData = getTabsData();
-    List<Tab> tabs = getTabs();
-
-    return DefaultTabController(
-      length: tabs.length,
-      child: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              SliverAppBar(
-                expandedHeight: 200.0,
-                floating: false,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: true,
-                  title: Container(
-                    height: 20,
-                    child: Theme(
-                      data: ThemeData(
-                        brightness: Brightness.dark,
-                        canvasColor: Color(0xff459116),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                          value:
-                              dropdownValue == null ? mensaName : dropdownValue,
-                          onChanged: (String newValue) {
-                            print("##########");
-                            print(selectedCanteenNames.indexOf(newValue));
-                            initCurrentDishesData(context,
-                                    selectedCanteenNames.indexOf(newValue))
-                                .then((result) {
-                              setState(() {
-                                dropdownValue = newValue;
-                              });
-                            });
-                          },
-                          items: selectedCanteenNames
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  ),
-                  background: Image.asset(
-                    "images/mensaLandscape.png",
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              SliverPersistentHeader(
-                delegate: _SliverAppBarDelegate(
-                  TabBar(
-                    isScrollable: true,
-                    labelColor: Colors.black87,
-                    unselectedLabelColor: Colors.grey,
-                    tabs: tabs,
-                  ),
-                ),
-                pinned: false,
-              ),
-            ];
-          },
-          body: TabBarView(
-            children: tabsData,
-          )),
-    );
   }
 
   Future<List<Widget>> getAllDishCardsDay(

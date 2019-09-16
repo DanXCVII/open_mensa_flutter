@@ -20,6 +20,7 @@ dependencies:
   sqflite: ^1.1.0
   path: ^1.6.2
 
+
   flutter:
     sdk: flutter
 
@@ -63,16 +64,16 @@ flutter:
     - images/choco.png
     - images/cow.png
     - images/dumpling.png
-    - images/earth.png
+    - images/earth.jpg
     - images/egg.png
     - images/fish.png
     - images/forkSpoon.png
     - images/haehnchenBrust.png
-    - images/hat.png
-    - images/hearts.png
+    - images/ingredients.jpg
+    - images/pralines.jpg
     - images/lasagne.png
     - images/map.png
-    - images/mensaLandscape.png
+    - images/ingredientsRound.jpg
     - images/omlett.png
     - images/pizza.png
     - images/pommes.png

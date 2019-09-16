@@ -146,7 +146,7 @@ class CurrentDishesState extends State<CurrentDishes> {
                               ),
                             ),
                             background: Image.asset(
-                              "images/mensaLandscape.png",
+                              "images/ingredientsRound.jpg",
                               fit: BoxFit.cover,
                             ),
                           ),

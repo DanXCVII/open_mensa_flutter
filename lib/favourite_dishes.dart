@@ -63,7 +63,7 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                   pinned: true,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Image.asset(
-                      'images/hearts.png',
+                      'images/pralines.jpg',
                       fit: BoxFit.cover,
                     ),
                     title: Text("Favourite Dishes"),

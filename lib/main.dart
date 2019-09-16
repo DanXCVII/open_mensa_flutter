@@ -85,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
           new UserAccountsDrawerHeader(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('images/hat.png'),
+                  image: AssetImage('images/ingredients.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -124,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
             new UserAccountsDrawerHeader(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('images/hat.png'),
+                    image: AssetImage('images/ingredients.jpg'),
                     fit: BoxFit.cover,
                   ),
                 ),

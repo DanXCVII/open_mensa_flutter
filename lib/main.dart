@@ -16,7 +16,17 @@ void main() {
       title: 'First Route',
 
       /// TODO: Change the themeColor?
-      theme: ThemeData(primaryColor: Colors.orange[800]),
+      theme: ThemeData(
+        primaryColor: Colors.orange[900],
+        canvasColor: Color(0xff3F3B35),
+        brightness: Brightness.dark,
+        primaryTextTheme: TextTheme(body2: TextStyle(color: Colors.white)),
+        tabBarTheme: TabBarTheme(
+          labelColor: Colors.white,
+        ),
+        cardColor: Color(0xff312F2A),
+        accentColor: Colors.red,
+      ),
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(),
@@ -40,7 +50,7 @@ class MyHomePage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return new _MyHomePageState();
+    return _MyHomePageState();
   }
 }
 
@@ -62,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
         return AddMensa(myDrawer: myDrawer);
 
       default:
-        return new Text("Error");
+        return Text("Error");
     }
   }
 
@@ -71,25 +81,25 @@ class _MyHomePageState extends State<MyHomePage> {
     var drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
       var d = widget.drawerItems[i];
-      drawerOptions.add(new ListTile(
-        leading: new Icon(d.icon),
-        title: new Text(d.title),
+      drawerOptions.add(ListTile(
+        leading: Icon(d.icon),
+        title: Text(d.title),
         selected: i == _selectedDrawerIndex,
         onTap: () => _onSelectItem(i),
       ));
     }
     // creating and returning the drawer with the userAccountHeader
     return Drawer(
-      child: new Column(
+      child: Column(
         children: <Widget>[
-          new UserAccountsDrawerHeader(
+          UserAccountsDrawerHeader(
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('images/ingredients.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
-              accountName: new Text("OpenMensa"),
+              accountName: Text("OpenMensa"),
               accountEmail: null),
           Column(children: drawerOptions)
         ],
@@ -110,27 +120,28 @@ class _MyHomePageState extends State<MyHomePage> {
     var drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
       var d = widget.drawerItems[i];
-      drawerOptions.add(new ListTile(
-        leading: new Icon(d.icon),
-        title: new Text(d.title),
+      drawerOptions.add(ListTile(
+        leading: Icon(d.icon),
+        title: Text(d.title),
         selected: i == _selectedDrawerIndex,
         onTap: () => _onSelectItem(i),
       ));
     }
-    return new Scaffold(
-      drawer: new Drawer(
-        child: new Column(
+    return Scaffold(
+      backgroundColor: Colors.grey[350],
+      drawer: Drawer(
+        child: Column(
           children: <Widget>[
-            new UserAccountsDrawerHeader(
+            UserAccountsDrawerHeader(
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('images/ingredients.jpg'),
                     fit: BoxFit.cover,
                   ),
                 ),
-                accountName: new Text("OpenMensa"),
+                accountName: Text("OpenMensa"),
                 accountEmail: null),
-            new Column(children: drawerOptions)
+            Column(children: drawerOptions)
           ],
         ),
       ),
@@ -160,20 +171,23 @@ class _MyHomePageState extends State<MyHomePage> {
     if (prefs.getStringList('selectedMensas') == null ||
         prefs.getStringList('selectedMensas').isEmpty) {
       showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: Text("Select canteen"),
-                content: Text(
-                    "Welcome to OpenMensa Germany :) \nI can take you to the place where you can select the Mensas you're interested in."),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('Let\'s go'),
-                    onPressed: () {
-                      Navigator.popAndPushNamed(context, '/mensa_list');
-                    },
-                  )
-                ],
-              ));
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Select canteen"),
+          content: Text(
+              "Welcome to OpenMensa Germany :) \nI can take you to the place where you can select the Mensas you're interested in."),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Let\'s go'),
+              onPressed: () {
+                /// TODO: pushReplacementRout and set onWillPop to pushReplacement to fix the
+                /// issue that loadingIndicator is shown when a mensa is selected.
+                Navigator.popAndPushNamed(context, '/mensa_list');
+              },
+            )
+          ],
+        ),
+      );
     }
   }
 }

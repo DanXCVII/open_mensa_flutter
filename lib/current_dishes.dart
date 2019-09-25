@@ -60,7 +60,7 @@ class CurrentDishesState extends State<CurrentDishes> {
           context) // TODO: Add all the building stuff and put the async tasks somewhere else
   {
     return Container(
-      decoration: BoxDecoration(color: Colors.white),
+      color: Color(0xff3F3B35),
       child: FutureBuilder<SharedPreferences>(
           future: getPrefs(),
           builder: (context, snapshot) {
@@ -103,45 +103,39 @@ class CurrentDishesState extends State<CurrentDishes> {
                             centerTitle: true,
                             title: Container(
                               height: 20,
-                              child: Theme(
-                                data: ThemeData(
-                                  brightness: Brightness.dark,
-                                  canvasColor: Color(0xff459116),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                    ),
-                                    value: dropdownValue == null
-                                        ? mensaName
-                                        : dropdownValue,
-                                    onChanged: (String newValue) {
-                                      print("##########");
-                                      print(selectedCanteenNames
-                                          .indexOf(newValue));
-                                      initCurrentDishesData(
-                                              context,
-                                              selectedCanteenNames
-                                                  .indexOf(newValue))
-                                          .then((result) {
-                                        setState(() {
-                                          dropdownValue = newValue;
-                                        });
-                                      });
-                                    },
-                                    items: selectedCanteenNames
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) =>
-                                                DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Text(
-                                                    value,
-                                                  ),
-                                                ))
-                                        .toList(),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
                                   ),
+                                  value: dropdownValue == null
+                                      ? mensaName
+                                      : dropdownValue,
+                                  onChanged: (String newValue) {
+                                    print("##########");
+                                    print(
+                                        selectedCanteenNames.indexOf(newValue));
+                                    initCurrentDishesData(
+                                            context,
+                                            selectedCanteenNames
+                                                .indexOf(newValue))
+                                        .then((result) {
+                                      setState(() {
+                                        dropdownValue = newValue;
+                                      });
+                                    });
+                                  },
+                                  items: selectedCanteenNames
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) =>
+                                              DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(
+                                                  value,
+                                                ),
+                                              ))
+                                      .toList(),
                                 ),
                               ),
                             ),
@@ -155,8 +149,6 @@ class CurrentDishesState extends State<CurrentDishes> {
                           delegate: _SliverAppBarDelegate(
                             TabBar(
                               isScrollable: true,
-                              labelColor: Colors.black87,
-                              unselectedLabelColor: Colors.grey,
                               tabs: tabs,
                             ),
                           ),

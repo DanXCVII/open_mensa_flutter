@@ -39,15 +39,14 @@ class DBProvider {
   newFavDish(Dish newDish) async {
     final db = await database;
     String notes = convertNotesToSingleString(newDish.notes);
-    var res = await db.rawInsert(
-        "INSERT Into Favorites (dish_name, category, students_price, employees_price, others_price, notes)"
-        " VALUES (\"${newDish.dishName}\","
-        "\"${newDish.category}\","
-        "${newDish.priceGroup['students']},"
-        "${newDish.priceGroup['employees']},"
-        "${newDish.priceGroup['others']},"
-        "\"$notes\")");
-    return res;
+    await db.insert('Favorites', {
+      'dish_name': newDish.dishName,
+      'category': newDish.category,
+      'students_price': newDish.priceGroup['students'],
+      'employees_price': newDish.priceGroup['employees'],
+      'others_price': newDish.priceGroup['others'],
+      'notes': notes,
+    });
   }
 
   getFavDishByName(String name) async {

@@ -74,7 +74,9 @@ class CheckableMensaListState extends State<CheckableMensaList> {
           )
         ],
       ),
-      body: ListWidget(items: listOfCanteens,),
+      body: ListWidget(
+        items: listOfCanteens,
+      ),
     );
   }
 }
@@ -199,7 +201,23 @@ Widget displayNoMensaFoundMessage(BuildContext context) {
 class CanteenSearch extends SearchDelegate<Canteen> {
   List<Canteen> items = [];
   List<Canteen> suggestion = [];
+
   CanteenSearch({@required this.items});
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+    if (theme.brightness == Brightness.dark) {
+      return theme.copyWith(
+        primaryColor: Colors.grey[800],
+        primaryIconTheme:
+            theme.primaryIconTheme.copyWith(color: Colors.grey[200]),
+        primaryColorBrightness: Brightness.dark,
+        primaryTextTheme: theme.textTheme,
+      );
+    }
+    return super.appBarTheme(context);
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -217,11 +235,10 @@ class CanteenSearch extends SearchDelegate<Canteen> {
     suggestion = query.isEmpty
         ? items
         : items.where((Canteen target) {
-          String name = target.name.replaceAll("ß", "ss").toUpperCase();
-          String input = query.replaceAll("ß", "ss").toUpperCase();
-          return name.contains(input);
-        }
-        ).toList();
+            String name = target.name.replaceAll("ß", "ss").toUpperCase();
+            String input = query.replaceAll("ß", "ss").toUpperCase();
+            return name.contains(input);
+          }).toList();
     if (items.isEmpty) {
       return displayNoMensaFoundMessage(context);
     }

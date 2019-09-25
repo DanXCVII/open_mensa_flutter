@@ -24,35 +24,30 @@ class FavouriteDishesState extends State<FavouriteDishes> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // decoration: BoxDecoration(gradient: LinearGradient(
-      //                         colors: [Colors.red[900], Colors.pink[800]],
-      //                         begin: FractionalOffset.topLeft,
-      //                         end: FractionalOffset.bottomRight,
-      //                         stops: [0.0, 1.0],
-      //                       )),
+      color: Color(0xff3F3B35),
       child: FutureBuilder<List<Widget>>(
           future: _getFavDishCards(context),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               // If the user hasn't selected any favourite dishes yet
               if (snapshot.data.isEmpty) {
-                print(snapshot.data);
                 return Scaffold(
                   appBar: AppBar(
                     title: Text('Favourites'),
                   ),
                   drawer: myDrawer,
                   body: Center(
-                      child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(
-                        Icons.favorite_border,
-                        size: 70,
-                      ),
-                      Text('Index 1: favourites'),
-                    ],
-                  )),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.favorite_border,
+                          size: 70,
+                        ),
+                        Text('Index 1: favourites'),
+                      ],
+                    ),
+                  ),
                 );
               }
               // If the user has favourite dishes, show them:

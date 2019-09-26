@@ -30,11 +30,10 @@ class CurrentDishesState extends State<CurrentDishes> {
 
   CurrentDishesState({@required this.myDrawer});
 
-  List<List<Widget>> dishCardDays = [];
+  Map<String, List<Widget>> dishCardDays = {};
 
   // TODO: make the 'days' list from the meal data, so that the correct days are added, and
   // only the days available get added.
-  List<String> days = [];
 
   String mensaName;
   List<String> selectedCanteenNames = [];
@@ -67,7 +66,7 @@ class CurrentDishesState extends State<CurrentDishes> {
             if (snapshot.hasData) {
               try {
                 assert(
-                    snapshot.data.getStringList('selectedMensas')[0] != null);
+                    snapshot.data.getStringList('selectedCanteens')[0] != null);
               } catch (e) {
                 return Scaffold(
                   drawer: myDrawer,
@@ -76,13 +75,13 @@ class CurrentDishesState extends State<CurrentDishes> {
                   ),
                   body: Center(
                     child: Text(
-                        "You haven't selected any Mensa yet. Do so, by navigating to the add mensa mensu :)"),
+                        "You haven't selected any Canteen yet. Do so, by navigating to the add mensa mensu :)"),
                   ),
                 );
               }
 
-              List<ListView> tabsData = getTabsData();
               List<Tab> tabs = getTabs();
+              List<ListView> tabsData = getTabsData();
 
               if (tabs.isEmpty || tabsData.isEmpty)
                 return Center(
@@ -171,20 +170,18 @@ class CurrentDishesState extends State<CurrentDishes> {
   initCurrentDishesData(BuildContext context, int index) async {
     SharedPreferences prefs = await getPrefs();
     if (index == -1) {
-      index = (prefs.getInt("currentMensa") == null
+      index = (prefs.getInt("currentCanteen") == null
           ? 0
-          : prefs.getInt("currentMensa"));
+          : prefs.getInt("currentCanteen"));
     } else {
-      prefs.setInt("currentMensa", index);
+      prefs.setInt("currentCanteen", index);
     }
 
     // making sure that the user already selected selectedCanteen mensa
-    try {
-      assert(prefs.getStringList('selectedMensas') != null);
-    } catch (e) {
+    List<String> selectedCanteens = prefs.getStringList('selectedCanteens');
+    if (selectedCanteens == null || selectedCanteens.isEmpty) {
       return;
     }
-    List<String> selectedCanteens = prefs.getStringList('selectedMensas');
 
     selectedCanteenNames = [];
     selectedCanteens.forEach((ca) {
@@ -196,13 +193,13 @@ class CurrentDishesState extends State<CurrentDishes> {
     var selectedCanteen = selectedCanteens[index];
     Canteen cant = Canteen.fromJson(json.decode(selectedCanteen));
     DishesRawData snapshot = await fetchMeals(cant.id);
-    days = getDays(context, snapshot);
+    List<String> days = getDays(context, snapshot);
+
     mensaName = cant.name;
 
     // assigning the global variables with the dishCards.
 
     try {
-      dishCardDays = [];
       for (int i = 0; i < days.length; i++) {
         List<Widget> _dishCards =
             await getAllDishCardsDay(snapshot, context, i);
@@ -216,7 +213,7 @@ class CurrentDishesState extends State<CurrentDishes> {
           );
         }
         _dishCards.add(SizedBox(height: 20));
-        dishCardDays.add(_dishCards);
+        dishCardDays.addAll({days[i]: _dishCards});
       }
     } catch (e) {
       print("Error: ${e.toString()}");
@@ -225,9 +222,9 @@ class CurrentDishesState extends State<CurrentDishes> {
 
   List<Tab> getTabs() {
     List<Tab> output = [];
-    for (int i = 0; i < days.length; i++) {
-      if (dishCardDays[i] != null) {
-        output.add(Tab(text: days[i]));
+    for (String day in dishCardDays.keys) {
+      if (dishCardDays[day].isNotEmpty) {
+        output.add(Tab(text: day));
       }
     }
     return output;
@@ -235,9 +232,9 @@ class CurrentDishesState extends State<CurrentDishes> {
 
   List<ListView> getTabsData() {
     List<ListView> output = [];
-    for (int i = 0; i < days.length; i++) {
-      if (dishCardDays[i] != null) {
-        output.add(ListView(children: dishCardDays[i]));
+    for (String day in dishCardDays.keys) {
+      if (dishCardDays[day].isNotEmpty) {
+        output.add(ListView(children: dishCardDays[day]));
       }
     }
     return output;
@@ -299,54 +296,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   }
 }
 
-/// the dynamic of priceGroup hashMap is double but can't be further specified because
-/// it's the data from the mensa API.
-Row createRowPrices(Map<String, double> priceGroup, BuildContext context) {
-  List<Widget> groupList = [];
-  if (priceGroup['students'] != null) {
-    groupList.add(createColumnPrice('students', priceGroup['students']));
-  }
-  if (priceGroup['employees'] != null) {
-    groupList.add(getVerticalDivider(context));
-    groupList.add(createColumnPrice('employees', priceGroup['employees']));
-  }
-  if (priceGroup['others'] != null) {
-    groupList.add(getVerticalDivider(context));
-    groupList.add(createColumnPrice('others', priceGroup['others']));
-  }
-
-  return Row(
-    children: groupList,
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  );
-}
-
-Widget getVerticalDivider(BuildContext context) {
-  return Container(
-    width: 1,
-    height: 28,
-    decoration: BoxDecoration(
-        border:
-            Border(right: BorderSide(color: Theme.of(context).dividerColor))),
-  );
-}
-
-Column createColumnPrice(String group, double price) {
-  return Column(
-    children: <Widget>[
-      Text(
-        '$group:',
-        style: TextStyle(fontSize: 12, color: Colors.white),
-      ),
-      Text(
-        '$price€',
-        style: TextStyle(fontSize: 20, color: Colors.white),
-      )
-    ],
-  );
-}
-
-Widget displayNoMensaSelected() {
+Widget displayNoCanteenSelected() {
   return Center(
     child: Icon(
       Icons.restaurant,

@@ -67,7 +67,7 @@ class App extends StatelessWidget {
             initialRoute: '/',
             routes: {
               '/': (context) => MyHomePage(),
-              '/mensa_list': (context) => CheckableMensaList()
+              '/mensa_list': (context) => CheckableMensaList(),
             },
           );
         });
@@ -184,8 +184,8 @@ class _MyHomePageState extends State<MyHomePage> {
   /// checking if a mensa is selected and otherwise showing an alert.
   checkIfMensaSelectedAlert(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.getStringList('selectedMensas') == null ||
-        prefs.getStringList('selectedMensas').isEmpty) {
+    if (prefs.getStringList('selectedCanteens') == null ||
+        prefs.getStringList('selectedCanteens').isEmpty) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -196,9 +196,17 @@ class _MyHomePageState extends State<MyHomePage> {
             FlatButton(
               child: Text(S.of(context).hello + ', let\'s go'),
               onPressed: () {
-                /// TODO: pushReplacementRout and set onWillPop to pushReplacement to fix the
-                /// issue that loadingIndicator is shown when a mensa is selected.
-                Navigator.popAndPushNamed(context, '/mensa_list');
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WillPopScope(
+                              child: CheckableMensaList(),
+                              onWillPop: () async {
+                                Navigator.of(context).popAndPushNamed('/');
+                                return false;
+                              },
+                            )));
               },
             )
           ],

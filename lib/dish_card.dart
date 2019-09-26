@@ -7,7 +7,7 @@ import './generated/i18n.dart';
 class Dishcard extends StatefulWidget {
   final Dish dish;
   final BuildContext context;
-  var _isFavorite;
+  final _isFavorite;
 
   Dishcard(
     this.dish,
@@ -23,7 +23,6 @@ class Dishcard extends StatefulWidget {
 
 class DishcardState extends State<Dishcard> {
   bool _isFavorite;
-
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +52,10 @@ class DishcardState extends State<Dishcard> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15.0),
                     gradient: LinearGradient(
-                      colors: [widget.dish.themeData.color[0], widget.dish.themeData.color[1]],
+                      colors: [
+                        widget.dish.themeData.color[0],
+                        widget.dish.themeData.color[1]
+                      ],
                       begin: FractionalOffset.topLeft,
                       end: FractionalOffset.bottomRight,
                       stops: [0.0, 1.0],
@@ -74,10 +76,10 @@ class DishcardState extends State<Dishcard> {
                               if (widget._isFavorite) {
                                 DBProvider.db
                                     .deleteFavDishByName(widget.dish.dishName);
-                                widget._isFavorite = false;
+                                _isFavorite = false;
                               } else {
                                 DBProvider.db.newFavDish(widget.dish);
-                                widget._isFavorite = true;
+                                _isFavorite = true;
                               }
                             } catch (e) {
                               print(
@@ -105,7 +107,8 @@ class DishcardState extends State<Dishcard> {
                               padding: const EdgeInsets.all(8.0),
                               child: Divider(),
                             ),
-                            createRowPrices(widget.dish.priceGroup, widget.context),
+                            createRowPrices(
+                                widget.dish.priceGroup, widget.context),
                             // set prices list looks different
                             Padding(
                               padding:
@@ -143,15 +146,18 @@ class DishcardState extends State<Dishcard> {
 Row createRowPrices(Map<String, double> priceGroup, BuildContext context) {
   List<Widget> groupList = [];
   if (priceGroup['students'] != null) {
-    groupList.add(createColumnPrice(S.of(context).students, priceGroup['students']));
+    groupList
+        .add(createColumnPrice(S.of(context).students, priceGroup['students']));
   }
   if (priceGroup['employees'] != null) {
-    groupList.add(getVerticalDivider(context));
-    groupList.add(createColumnPrice(S.of(context).employees, priceGroup['employees']));
+    groupList.add(VerticalDivider());
+    groupList.add(
+        createColumnPrice(S.of(context).employees, priceGroup['employees']));
   }
   if (priceGroup['others'] != null) {
-    groupList.add(getVerticalDivider(context));
-    groupList.add(createColumnPrice(S.of(context).others, priceGroup['others']));
+    groupList.add(VerticalDivider());
+    groupList
+        .add(createColumnPrice(S.of(context).others, priceGroup['others']));
   }
 
   return Row(

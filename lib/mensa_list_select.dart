@@ -147,17 +147,17 @@ class ListWidgetState extends State<ListWidget> {
       mList.add(CheckboxListTile(
           title: Text(mensas[index].name),
           value:
-              checkPrefForMensa(prefs.getStringList('selectedMensas'), canteen),
+              checkPrefForMensa(prefs.getStringList('selectedCanteens'), canteen),
           onChanged: (bool value) {
             setState(() {
-              List<String> selectedMensas =
-                  prefs.getStringList('selectedMensas') ?? [];
+              List<String> selectedCanteens =
+                  prefs.getStringList('selectedCanteens') ?? [];
               if (value) {
-                selectedMensas.add(canteen);
-                prefs.setStringList('selectedMensas', selectedMensas);
+                selectedCanteens.add(canteen);
+                prefs.setStringList('selectedCanteens', selectedCanteens);
               } else {
-                selectedMensas.remove(canteen);
-                prefs.setStringList('selectedMensas', selectedMensas);
+                selectedCanteens.remove(canteen);
+                prefs.setStringList('selectedCanteens', selectedCanteens);
               }
             });
           }));

@@ -39,9 +39,9 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                 SliverList(
                     delegate: SliverChildListDelegate(snapshot.data.isEmpty
                         ? [Container(
-                            height: 200,
+                            height: MediaQuery.of(context).size.height/2,
                             child: Center(
-                              child: Icon(Icons.favorite),
+                              child: Icon(Icons.favorite_border, size: 80,),
                             ),
                           )]
                         : snapshot.data))

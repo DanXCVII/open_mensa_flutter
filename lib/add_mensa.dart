@@ -15,8 +15,6 @@ class AddMensa extends StatefulWidget {
 /// when a new mensa has been added.
 
 class _AddMensaState extends State<AddMensa> {
-  List<String> mensas;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,10 +24,10 @@ class _AddMensaState extends State<AddMensa> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<String> mensas =
-                  snapshot.data.getStringList('selectedMensas');
+                  snapshot.data.getStringList('selectedCanteens');
               bool noMensaSelected = mensas == null || mensas.length == 0;
 
-              mensas = snapshot.data.getStringList('selectedMensas');
+              mensas = snapshot.data.getStringList('selectedCanteens');
               return CustomScrollView(slivers: <Widget>[
                 SliverAppBar(
                   expandedHeight: 200.0,
@@ -44,7 +42,7 @@ class _AddMensaState extends State<AddMensa> {
                 SliverList(
                     delegate: SliverChildListDelegate(noMensaSelected
                         ? [noMensaSelectedText()]
-                        : getMensaList(snapshot.data)))
+                        : getMensaList(snapshot.data, mensas)))
               ]);
             } else if (snapshot.hasError) {
               return Text('add_mensa build Error: ${snapshot.error}');
@@ -56,7 +54,7 @@ class _AddMensaState extends State<AddMensa> {
     );
   }
 
-  List<Widget> getMensaList(SharedPreferences prefs) {
+  List<Widget> getMensaList(SharedPreferences prefs, mensas) {
     List<Widget> mensaWidgetList = [];
     for (int i = 0; i < mensas.length; i++) {
       Canteen canteen = Canteen.fromJson(json.decode(mensas[i]));
@@ -64,9 +62,9 @@ class _AddMensaState extends State<AddMensa> {
         key: Key(mensas[i]),
         onDismissed: (direction) {
           setState(() {
-            List<String> tmp = prefs.getStringList('selectedMensas');
+            List<String> tmp = prefs.getStringList('selectedCanteens');
             tmp.remove(mensas[i]);
-            prefs.setStringList('selectedMensas', tmp);
+            prefs.setStringList('selectedCanteens', tmp);
           });
         },
         child: Card(
@@ -112,7 +110,7 @@ class _AddMensaState extends State<AddMensa> {
     return mensaWidgetList;
   }
 
-  CustomScrollView mensaList(SharedPreferences prefs) {
+  CustomScrollView mensaList(SharedPreferences prefs, mensas) {
     if (mensas == null || mensas.length == 0) {
       return noMensaSelectedText();
     } else {
@@ -126,7 +124,8 @@ class _AddMensaState extends State<AddMensa> {
             title: Text("Selected Canteens"),
           ),
         ),
-        SliverList(delegate: SliverChildListDelegate(getMensaList(prefs)))
+        SliverList(
+            delegate: SliverChildListDelegate(getMensaList(prefs, mensas)))
       ]);
     }
   }
@@ -137,9 +136,10 @@ class _AddMensaState extends State<AddMensa> {
 
   Widget noMensaSelectedText() {
     return Container(
-        height: MediaQuery.of(context).size.height,
+        height: MediaQuery.of(context).size.height / 2,
         child: Center(
-          child: Text('You haven\'t selected any canteen'),
+          child: Text('You haven\'t selected any canteen',
+              style: TextStyle(fontSize: 18)),
         ));
   }
 }

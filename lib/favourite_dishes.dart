@@ -4,6 +4,7 @@ import 'dart:async';
 import './dish_card.dart';
 import './database.dart';
 import './dish.dart';
+import './generated/i18n.dart';
 
 class FavouriteDishes extends StatefulWidget {
   final Drawer myDrawer;
@@ -33,19 +34,13 @@ class FavouriteDishesState extends State<FavouriteDishes> {
               if (snapshot.data.isEmpty) {
                 return Scaffold(
                   appBar: AppBar(
-                    title: Text('Favourites'),
+                    title: Text(S.of(context).favorites),
                   ),
                   drawer: myDrawer,
                   body: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Icon(
-                          Icons.favorite_border,
-                          size: 70,
-                        ),
-                        Text('Index 1: favourites'),
-                      ],
+                    child: Icon(
+                      Icons.favorite_border,
+                      size: 70,
                     ),
                   ),
                 );
@@ -61,7 +56,7 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                       'images/pralines.jpg',
                       fit: BoxFit.cover,
                     ),
-                    title: Text("Favourite Dishes"),
+                    title: Text(S.of(context).favorite_dishes),
                   ),
                 ),
                 SliverList(delegate: SliverChildListDelegate(snapshot.data))
@@ -87,7 +82,5 @@ Future<List<Widget>> _getFavDishCards(BuildContext context) async {
     });
     return output;
   });
-  print('------');
-  print(favs.toString());
   return output;
 }

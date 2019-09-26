@@ -44,7 +44,6 @@ class CurrentDishesState extends State<CurrentDishes> {
 
   @override
   void initState() {
-    print("initState() called");
     super.initState();
     try {
       initCurrentDishesData(context, -1).then((result) {
@@ -114,9 +113,6 @@ class CurrentDishesState extends State<CurrentDishes> {
                                       ? mensaName
                                       : dropdownValue,
                                   onChanged: (String newValue) {
-                                    print("##########");
-                                    print(
-                                        selectedCanteenNames.indexOf(newValue));
                                     initCurrentDishesData(
                                             context,
                                             selectedCanteenNames
@@ -182,15 +178,14 @@ class CurrentDishesState extends State<CurrentDishes> {
       prefs.setInt("currentMensa", index);
     }
 
-    // making sure that the user already selected a mensa
+    // making sure that the user already selected selectedCanteen mensa
     try {
       assert(prefs.getStringList('selectedMensas') != null);
     } catch (e) {
       return;
     }
     List<String> selectedCanteens = prefs.getStringList('selectedMensas');
-    print("#########################");
-    print(selectedCanteens);
+
     selectedCanteenNames = [];
     selectedCanteens.forEach((ca) {
       selectedCanteenNames.add(Canteen.fromJson(json.decode(ca)).name);
@@ -198,10 +193,8 @@ class CurrentDishesState extends State<CurrentDishes> {
     print(selectedCanteenNames);
     // dirty fix for problem with only one canteen selected
     index = selectedCanteens.length == 1 ? 0 : index;
-    var a = selectedCanteens[index];
-    print(a);
-    print("### a ###");
-    Canteen cant = Canteen.fromJson(json.decode(a));
+    var selectedCanteen = selectedCanteens[index];
+    Canteen cant = Canteen.fromJson(json.decode(selectedCanteen));
     DishesRawData snapshot = await fetchMeals(cant.id);
     days = getDays(context, snapshot);
     mensaName = cant.name;
@@ -226,7 +219,7 @@ class CurrentDishesState extends State<CurrentDishes> {
         dishCardDays.add(_dishCards);
       }
     } catch (e) {
-      print("Fehlermeldung: ${e.toString()}");
+      print("Error: ${e.toString()}");
     }
   }
 
@@ -355,15 +348,9 @@ Column createColumnPrice(String group, double price) {
 
 Widget displayNoMensaSelected() {
   return Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Icon(
-          Icons.restaurant,
-          size: 70,
-        ),
-        Text('Index 1: Favourites'),
-      ],
+    child: Icon(
+      Icons.restaurant,
+      size: 70,
     ),
   );
 }

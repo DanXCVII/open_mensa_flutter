@@ -3,6 +3,7 @@ import './fetch_canteens.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'dart:convert';
+import './generated/i18n.dart';
 
 // creates a checkable list of all canteens
 class CheckableMensaList extends StatefulWidget {
@@ -37,11 +38,11 @@ class CheckableMensaListState extends State<CheckableMensaList> {
           }
           return Scaffold(
             appBar: AppBar(
-              title: Text('Select your canteens'),
+              title: Text(S.of(context).select_canteens),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.search),
-                  tooltip: 'Search',
+                  tooltip: S.of(context).search,
                   onPressed: !snapshot.hasData
                       ? null
                       : () {
@@ -61,11 +62,11 @@ class CheckableMensaListState extends State<CheckableMensaList> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select your canteens'),
+        title: Text(S.of(context).select_canteens),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
-            tooltip: 'Search',
+            tooltip: S.of(context).search,
             onPressed: () {
               showSearch(
                   context: context,
@@ -108,7 +109,7 @@ class ListWidgetState extends State<ListWidget> {
                   snapshot.data == null) {
                 return displayNoMensaFoundMessage(context);
               }
-              return Center(child: Text("Fehlermeldung: ${snapshot.error}"));
+              return Center(child: Text("mensaListSelect build error: ${snapshot.error}"));
             }
             return Center(child: CircularProgressIndicator());
           }),
@@ -190,7 +191,7 @@ Widget displayNoMensaFoundMessage(BuildContext context) {
         color: Colors.grey[600],
       ),
       Text(
-        'Unfortunately no canteens found',
+        S.of(context).no_canteens_found,
         style: TextStyle(color: Colors.grey[600]),
       ),
     ],

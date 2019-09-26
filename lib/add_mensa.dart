@@ -36,14 +36,13 @@ class _AddMensaState extends State<AddMensa> {
             if (snapshot.hasData) {
               if (snapshot.data.getStringList('selectedMensas') == null ||
                   snapshot.data.getStringList('selectedMensas').length == 0) {
-                print('data ist null!!!');
                 return noMensaSelected();
               } else {
                 mensas = snapshot.data.getStringList('selectedMensas');
                 return mensaList(snapshot.data);
               }
             } else if (snapshot.hasError) {
-              return Text('Fehlermeldung${snapshot.error}');
+              return Text('add_mensa build Error: ${snapshot.error}');
             }
             return (Center(
               child: CircularProgressIndicator(),

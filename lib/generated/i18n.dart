@@ -21,14 +21,30 @@ class S implements WidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
 
+  String get add_canteen => "Add canteen";
+  String get current_dishes => "Current Dishes";
+  String get employees => "Employees";
+  String get favorite_dishes => "Favorite Dishes";
+  String get favorites => "Favorites";
   String get friday => "Friday";
   String get hello => "Hello";
+  String get lets_go => "Let\\'s go";
   String get monday => "Monday";
+  String get no_canteen_selected => "No canteen selected yet";
+  String get no_canteens_found => "No canteens were found";
+  String get no_data_day => "No data for this day";
+  String get others => "Guests";
   String get saturday => "Saturday";
+  String get search => "Search";
+  String get select_canteen => "Select canteen";
+  String get select_canteens => "Select your canteens";
+  String get selected_canteens => "Selected canteens";
+  String get students => "Students";
   String get sunday => "Sunday";
   String get thursday => "Thursday";
   String get tuesday => "Tuesday";
   String get wednesday => "Wednesday";
+  String get welcome => "Welcome to OpenMensa Germany";
 }
 
 class $de extends S {
@@ -38,19 +54,51 @@ class $de extends S {
   TextDirection get textDirection => TextDirection.ltr;
 
   @override
-  String get sunday => "Sonntag";
+  String get favorites => "Favoriten";
   @override
   String get saturday => "Samstag";
   @override
-  String get tuesday => "Dienstag";
-  @override
-  String get wednesday => "Mittwoch";
+  String get favorite_dishes => "Lieblingsgerichte";
   @override
   String get thursday => "Donnerstag";
   @override
+  String get students => "Studenten";
+  @override
+  String get select_canteen => "Wähle eine Mensa aus";
+  @override
+  String get no_data_day => "keine Daten für diesen Tag";
+  @override
+  String get no_canteen_selected => "Keine Mensa ausgewählt";
+  @override
+  String get select_canteens => "Wähle Mensen aus";
+  @override
+  String get sunday => "Sonntag";
+  @override
+  String get search => "Suchen";
+  @override
+  String get tuesday => "Dienstag";
+  @override
+  String get selected_canteens => "Ausgewählte Mensen";
+  @override
+  String get no_canteens_found => "Keine Mensen gefunden";
+  @override
+  String get wednesday => "Mittwoch";
+  @override
   String get friday => "Freitag";
   @override
+  String get add_canteen => "Mensa hinzufügen";
+  @override
   String get hello => "Hallo";
+  @override
+  String get current_dishes => "Angebotene Gerichte";
+  @override
+  String get employees => "Mitarbeiter";
+  @override
+  String get welcome => "Willkommen OpenMensa Germany";
+  @override
+  String get lets_go => "Let\\'s go";
+  @override
+  String get others => "Gäste";
   @override
   String get monday => "Montag";
 }

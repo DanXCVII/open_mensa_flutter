@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './dish.dart';
 import './database.dart';
+import './generated/i18n.dart';
 
 class Dishcard extends StatefulWidget {
   final Dish dish;
@@ -142,15 +143,15 @@ class DishcardState extends State<Dishcard> {
 Row createRowPrices(Map<String, double> priceGroup, BuildContext context) {
   List<Widget> groupList = [];
   if (priceGroup['students'] != null) {
-    groupList.add(createColumnPrice('students', priceGroup['students']));
+    groupList.add(createColumnPrice(S.of(context).students, priceGroup['students']));
   }
   if (priceGroup['employees'] != null) {
     groupList.add(getVerticalDivider(context));
-    groupList.add(createColumnPrice('employees', priceGroup['employees']));
+    groupList.add(createColumnPrice(S.of(context).employees, priceGroup['employees']));
   }
   if (priceGroup['others'] != null) {
     groupList.add(getVerticalDivider(context));
-    groupList.add(createColumnPrice('others', priceGroup['others']));
+    groupList.add(createColumnPrice(S.of(context).others, priceGroup['others']));
   }
 
   return Row(

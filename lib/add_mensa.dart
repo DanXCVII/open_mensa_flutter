@@ -4,7 +4,6 @@ import './fetch_canteens.dart';
 import 'dart:convert';
 
 class AddMensa extends StatefulWidget {
-
   @override
   _AddMensaState createState() {
     return _AddMensaState();
@@ -16,7 +15,7 @@ class AddMensa extends StatefulWidget {
 /// when a new mensa has been added.
 
 class _AddMensaState extends State<AddMensa> {
-  List<String> canteens;
+  List<String> mensas;
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +25,27 @@ class _AddMensaState extends State<AddMensa> {
           future: SharedPreferences.getInstance(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              if (snapshot.data.getStringList('selectedMensas') == null ||
-                  snapshot.data.getStringList('selectedMensas').length == 0) {
-                return noMensaSelected();
-              } else {
-                canteens = snapshot.data.getStringList('selectedMensas');
-                return mensaList(snapshot.data);
-              }
+              List<String> mensas =
+                  snapshot.data.getStringList('selectedMensas');
+              bool noMensaSelected = mensas == null || mensas.length == 0;
+
+              mensas = snapshot.data.getStringList('selectedMensas');
+              return CustomScrollView(slivers: <Widget>[
+                SliverAppBar(
+                  expandedHeight: 200.0,
+                  floating: false,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background:
+                        Image.asset('images/earth.jpg', fit: BoxFit.cover),
+                    title: Text("Selected Canteens"),
+                  ),
+                ),
+                SliverList(
+                    delegate: SliverChildListDelegate(noMensaSelected
+                        ? [noMensaSelectedText()]
+                        : getMensaList(snapshot.data)))
+              ]);
             } else if (snapshot.hasError) {
               return Text('add_mensa build Error: ${snapshot.error}');
             }
@@ -45,14 +58,14 @@ class _AddMensaState extends State<AddMensa> {
 
   List<Widget> getMensaList(SharedPreferences prefs) {
     List<Widget> mensaWidgetList = [];
-    for (int i = 0; i < canteens.length; i++) {
-      Canteen canteen = Canteen.fromJson(json.decode(canteens[i]));
+    for (int i = 0; i < mensas.length; i++) {
+      Canteen canteen = Canteen.fromJson(json.decode(mensas[i]));
       mensaWidgetList.add(Dismissible(
-        key: Key(canteens[i]),
+        key: Key(mensas[i]),
         onDismissed: (direction) {
           setState(() {
             List<String> tmp = prefs.getStringList('selectedMensas');
-            tmp.remove(canteens[i]);
+            tmp.remove(mensas[i]);
             prefs.setStringList('selectedMensas', tmp);
           });
         },
@@ -100,8 +113,8 @@ class _AddMensaState extends State<AddMensa> {
   }
 
   CustomScrollView mensaList(SharedPreferences prefs) {
-    if (canteens == null || canteens.length == 0) {
-      return noMensaSelected();
+    if (mensas == null || mensas.length == 0) {
+      return noMensaSelectedText();
     } else {
       return CustomScrollView(slivers: <Widget>[
         SliverAppBar(
@@ -122,15 +135,12 @@ class _AddMensaState extends State<AddMensa> {
     return fullMensaInfo.split('&&')[1].split('&&&')[0];
   }
 
-  Widget noMensaSelected() {
-    return Scaffold(
-      appBar: AppBar(title: Text("Add Mensa")),
-      body: Center(
-          child: Text(
-        'You haven\'t selected any canteen yet',
-        style: TextStyle(color: Colors.grey[700]),
-      )),
-    );
+  Widget noMensaSelectedText() {
+    return Container(
+        height: MediaQuery.of(context).size.height,
+        child: Center(
+          child: Text('You haven\'t selected any canteen'),
+        ));
   }
 }
 

@@ -22,56 +22,55 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: _locale.stream,
-      initialData: Locale("en", ""),
-      builder: (context, snapshot) {
-        return MaterialApp(
-          locale: snapshot.data,
-          localizationsDelegates: [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate
-          ],
-          supportedLocales: S.delegate.supportedLocales,
-          localeResolutionCallback: (deviceLocale, supportedLocals) {
-            Locale myLocale = deviceLocale;
-            print(myLocale.languageCode + " " + myLocale.countryCode);
-            S.delegate.resolution(fallback: new Locale("en", ""));
-            if (initialized){
-              _locale.close();
+        stream: _locale.stream,
+        initialData: Locale("en", ""),
+        builder: (context, snapshot) {
+          return MaterialApp(
+            locale: snapshot.data,
+            localizationsDelegates: [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            localeResolutionCallback: (deviceLocale, supportedLocals) {
+              Locale myLocale = deviceLocale;
+              print(myLocale.languageCode + " " + myLocale.countryCode);
+              S.delegate.resolution(fallback: new Locale("en", ""));
+              if (initialized) {
+                _locale.close();
+                return myLocale;
+              } else {
+                print("initialized " + deviceLocale.languageCode);
+                _locale.add(Locale(deviceLocale.languageCode, ""));
+                initialized = true;
+              }
+              //setLocale(deviceLocale);
               return myLocale;
-            }
-            else{
-              print("initialized " + deviceLocale.languageCode);
-              _locale.add(Locale(deviceLocale.languageCode, ""));
-              initialized = true;
-            }
-            //setLocale(deviceLocale);
-            return myLocale;
-          },
-          showPerformanceOverlay: false,
-          title: 'First Route',
+            },
+            showPerformanceOverlay: false,
+            title: 'First Route',
 
-          /// TODO: Change the themeColor?
-          theme: ThemeData(
-            primaryColor: Colors.orange[900],
-            canvasColor: Color(0xff3F3B35),
-            brightness: Brightness.dark,
-            primaryTextTheme: TextTheme(body2: TextStyle(color: Colors.white)),
-            tabBarTheme: TabBarTheme(
-              labelColor: Colors.white,
+            /// TODO: Change the themeColor?
+            theme: ThemeData(
+              primaryColor: Colors.orange[900],
+              canvasColor: Color(0xff3F3B35),
+              brightness: Brightness.dark,
+              primaryTextTheme:
+                  TextTheme(body2: TextStyle(color: Colors.white)),
+              tabBarTheme: TabBarTheme(
+                labelColor: Colors.white,
+              ),
+              cardColor: Color(0xff312F2A),
+              accentColor: Colors.red,
             ),
-            cardColor: Color(0xff312F2A),
-            accentColor: Colors.red,
-          ),
-          initialRoute: '/',
-          routes: {
-            '/': (context) => MyHomePage(),
-            '/mensa_list': (context) => CheckableMensaList()
-          },
-        );
-      }
-    );
+            initialRoute: '/',
+            routes: {
+              '/': (context) => MyHomePage(),
+              '/mensa_list': (context) => CheckableMensaList()
+            },
+          );
+        });
   }
 }
 
@@ -103,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// -favorites
   /// -mensaSelctor
   _getDrawerItemWidget(int pos) {
-    Drawer myDrawer = buildDrawer();
+    Drawer myDrawer = _buildDrawer();
     switch (pos) {
       case 0:
         return CurrentDishes(myDrawer: myDrawer);
@@ -117,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Drawer buildDrawer() {
+  Drawer _buildDrawer() {
     // creating the list of items shown by the drawer
     var drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
@@ -158,34 +157,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     /// building the drawer again over here and not using the buidlDrawer() method
     /// because it's good practise to put much in the build method
-    var drawerOptions = <Widget>[];
-    for (var i = 0; i < widget.drawerItems.length; i++) {
-      var d = widget.drawerItems[i];
-      drawerOptions.add(ListTile(
-        leading: Icon(d.icon),
-        title: Text(d.title),
-        selected: i == _selectedDrawerIndex,
-        onTap: () => _onSelectItem(i),
-      ));
-    }
+
     return Scaffold(
       backgroundColor: Colors.grey[350],
-      drawer: Drawer(
-        child: Column(
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('images/ingredients.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                accountName: Text(S.of(context).hello),
-                accountEmail: null),
-            Column(children: drawerOptions)
-          ],
-        ),
-      ),
+      drawer: _buildDrawer(),
       body: _getDrawerItemWidget(_selectedDrawerIndex),
       floatingActionButton: _selectedDrawerIndex == 2
           ? FloatingActionButton(

@@ -11,45 +11,68 @@ import './mensa_list_select.dart';
 import './generated/i18n.dart';
 
 void main() {
-  debugPaintSizeEnabled = false;
+  runApp(App());
+}
 
-  /// TODO: correct locale selection
-  Locale myLocale = Locale("de", "");
+class App extends StatelessWidget {
+  final debugPaintSizeEnabled = false;
 
-  runApp(MaterialApp(
-    locale: myLocale,
-    localizationsDelegates: [S.delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate],
-    supportedLocales: S.delegate.supportedLocales,
-    localeResolutionCallback: (deviceLocale, supportedLocals){
-      myLocale = deviceLocale;
-      print(myLocale.languageCode+" "+myLocale.countryCode);
-      S.delegate.resolution(fallback: new Locale("de", ""));
-      return myLocale;
-    }
-        ,
-    showPerformanceOverlay: false,
-    title: 'First Route',
+  static StreamController _locale = StreamController<Locale>();
+  static bool initialized = false;
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: _locale.stream,
+      initialData: Locale("en", ""),
+      builder: (context, snapshot) {
+        return MaterialApp(
+          locale: snapshot.data,
+          localizationsDelegates: [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          localeResolutionCallback: (deviceLocale, supportedLocals) {
+            Locale myLocale = deviceLocale;
+            print(myLocale.languageCode + " " + myLocale.countryCode);
+            S.delegate.resolution(fallback: new Locale("en", ""));
+            if (initialized){
+              _locale.close();
+              return myLocale;
+            }
+            else{
+              print("initialized " + deviceLocale.languageCode);
+              _locale.add(Locale(deviceLocale.languageCode, ""));
+              initialized = true;
+            }
+            //setLocale(deviceLocale);
+            return myLocale;
+          },
+          showPerformanceOverlay: false,
+          title: 'First Route',
 
-    /// TODO: Change the themeColor?
-    theme: ThemeData(
-      primaryColor: Colors.orange[900],
-      canvasColor: Color(0xff3F3B35),
-      brightness: Brightness.dark,
-      primaryTextTheme: TextTheme(body2: TextStyle(color: Colors.white)),
-      tabBarTheme: TabBarTheme(
-        labelColor: Colors.white,
-      ),
-      cardColor: Color(0xff312F2A),
-      accentColor: Colors.red,
-    ),
-    initialRoute: '/',
-    routes: {
-      '/': (context) => MyHomePage(),
-      '/mensa_list': (context) => CheckableMensaList()
-    },
-  ));
+          /// TODO: Change the themeColor?
+          theme: ThemeData(
+            primaryColor: Colors.orange[900],
+            canvasColor: Color(0xff3F3B35),
+            brightness: Brightness.dark,
+            primaryTextTheme: TextTheme(body2: TextStyle(color: Colors.white)),
+            tabBarTheme: TabBarTheme(
+              labelColor: Colors.white,
+            ),
+            cardColor: Color(0xff312F2A),
+            accentColor: Colors.red,
+          ),
+          initialRoute: '/',
+          routes: {
+            '/': (context) => MyHomePage(),
+            '/mensa_list': (context) => CheckableMensaList()
+          },
+        );
+      }
+    );
+  }
 }
 
 class DrawerItem {

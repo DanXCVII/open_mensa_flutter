@@ -11,6 +11,7 @@ import './main.dart';
 
 //import './add_mensa.dart';
 import './dish.dart';
+import './generated/i18n.dart';
 //import './database.dart';
 
 class CurrentDishes extends StatefulWidget {
@@ -202,7 +203,7 @@ class CurrentDishesState extends State<CurrentDishes> {
     print("### a ###");
     Canteen cant = Canteen.fromJson(json.decode(a));
     DishesRawData snapshot = await fetchMeals(cant.id);
-    days = getDays(snapshot);
+    days = getDays(context, snapshot);
     mensaName = cant.name;
 
     // assigning the global variables with the dishCards.
@@ -380,15 +381,15 @@ int getMealsCount(List<dynamic> dishesRaw, int dayFromToday) {
   return dishesRaw[dayFromToday]['meals'].length;
 }
 
-List<String> getDays(DishesRawData drd) {
+List<String> getDays(context, DishesRawData drd) {
   Map<int, String> dayMap = {
-    1: "Monday",
-    2: "Tuesday",
-    3: "Wednesday",
-    4: "Thursday",
-    5: "Friday",
-    6: "Saturday",
-    7: "Sunday"
+    1: S.of(context).monday,
+    2: S.of(context).tuesday,
+    3: S.of(context).wednesday,
+    4: S.of(context).thursday,
+    5: S.of(context).friday,
+    6: S.of(context).saturday,
+    7: S.of(context).sunday,
   };
   List<String> days = [];
   drd.dishRaw.forEach((item) {

@@ -21,7 +21,14 @@ class S implements WidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
 
+  String get friday => "Friday";
   String get hello => "Hello";
+  String get monday => "Monday";
+  String get saturday => "Saturday";
+  String get sunday => "Sunday";
+  String get thursday => "Thursday";
+  String get tuesday => "Tuesday";
+  String get wednesday => "Wednesday";
 }
 
 class $de extends S {
@@ -31,7 +38,21 @@ class $de extends S {
   TextDirection get textDirection => TextDirection.ltr;
 
   @override
+  String get sunday => "Sonntag";
+  @override
+  String get saturday => "Samstag";
+  @override
+  String get tuesday => "Dienstag";
+  @override
+  String get wednesday => "Mittwoch";
+  @override
+  String get thursday => "Donnerstag";
+  @override
+  String get friday => "Freitag";
+  @override
   String get hello => "Hallo";
+  @override
+  String get monday => "Montag";
 }
 
 class $en extends S {

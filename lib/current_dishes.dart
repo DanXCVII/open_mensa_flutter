@@ -7,29 +7,19 @@ import './dish_card.dart';
 import './database.dart';
 import './fetch_data.dart';
 import './fetch_canteens.dart';
-import './main.dart';
 
-//import './add_mensa.dart';
 import './dish.dart';
 import './generated/i18n.dart';
-//import './database.dart';
 
 class CurrentDishes extends StatefulWidget {
-  final Drawer myDrawer;
-
-  CurrentDishes({@required this.myDrawer});
 
   @override
   State<StatefulWidget> createState() {
-    return CurrentDishesState(myDrawer: myDrawer);
+    return CurrentDishesState();
   }
 }
 
 class CurrentDishesState extends State<CurrentDishes> {
-  Drawer myDrawer;
-
-  CurrentDishesState({@required this.myDrawer});
-
   List<List<Widget>> dishCardDays = [];
 
   // TODO: make the 'days' list from the meal data, so that the correct days are added, and
@@ -62,21 +52,17 @@ class CurrentDishesState extends State<CurrentDishes> {
     return Container(
       color: Color(0xff3F3B35),
       child: FutureBuilder<SharedPreferences>(
-          future: getPrefs(),
+          future: SharedPreferences.getInstance(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              try {
-                assert(
-                    snapshot.data.getStringList('selectedMensas')[0] != null);
-              } catch (e) {
+              if (snapshot.data.getStringList('selectedMensas').isEmpty){
                 return Scaffold(
-                  drawer: myDrawer,
                   appBar: AppBar(
-                    title: Text('Current Dishes'),
+                    title: Text(S.of(context).current_dishes),
                   ),
                   body: Center(
                     child: Text(
-                        "You haven't selected any Mensa yet. Do so, by navigating to the add mensa mensu :)"),
+                        S.of(context).no_canteen_selected),
                   ),
                 );
               }
@@ -169,7 +155,7 @@ class CurrentDishesState extends State<CurrentDishes> {
   }
 
   initCurrentDishesData(BuildContext context, int index) async {
-    SharedPreferences prefs = await getPrefs();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     if (index == -1) {
       index = (prefs.getInt("currentMensa") == null
           ? 0
@@ -304,15 +290,15 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 Row createRowPrices(Map<String, double> priceGroup, BuildContext context) {
   List<Widget> groupList = [];
   if (priceGroup['students'] != null) {
-    groupList.add(createColumnPrice('students', priceGroup['students']));
+    groupList.add(createColumnPrice(S.of(context).students, priceGroup['students']));
   }
   if (priceGroup['employees'] != null) {
     groupList.add(getVerticalDivider(context));
-    groupList.add(createColumnPrice('employees', priceGroup['employees']));
+    groupList.add(createColumnPrice(S.of(context).employees, priceGroup['employees']));
   }
   if (priceGroup['others'] != null) {
     groupList.add(getVerticalDivider(context));
-    groupList.add(createColumnPrice('others', priceGroup['others']));
+    groupList.add(createColumnPrice(S.of(context).others, priceGroup['others']));
   }
 
   return Row(

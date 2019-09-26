@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './fetch_canteens.dart';
 import 'dart:convert';
+import './generated/i18n.dart';
 
 class AddMensa extends StatefulWidget {
   @override
@@ -25,11 +26,8 @@ class _AddMensaState extends State<AddMensa> {
           future: SharedPreferences.getInstance(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              List<String> mensas =
-                  snapshot.data.getStringList('selectedMensas');
-              bool noMensaSelected = mensas == null || mensas.length == 0;
-
               mensas = snapshot.data.getStringList('selectedMensas');
+              bool noMensaSelected = mensas == null || mensas.length == 0;
               return CustomScrollView(slivers: <Widget>[
                 SliverAppBar(
                   expandedHeight: 200.0,
@@ -38,7 +36,7 @@ class _AddMensaState extends State<AddMensa> {
                   flexibleSpace: FlexibleSpaceBar(
                     background:
                         Image.asset('images/earth.jpg', fit: BoxFit.cover),
-                    title: Text("Selected Canteens"),
+                    title: Text(S.of(context).selected_canteens),
                   ),
                 ),
                 SliverList(
@@ -123,7 +121,7 @@ class _AddMensaState extends State<AddMensa> {
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(
             background: Image.asset('images/earth.jpg', fit: BoxFit.cover),
-            title: Text("Selected Canteens"),
+            title: Text(S.of(context).selected_canteens),
           ),
         ),
         SliverList(delegate: SliverChildListDelegate(getMensaList(prefs)))
@@ -139,7 +137,7 @@ class _AddMensaState extends State<AddMensa> {
     return Container(
         height: MediaQuery.of(context).size.height,
         child: Center(
-          child: Text('You haven\'t selected any canteen'),
+          child: Text(S.of(context).no_canteen_selected),
         ));
   }
 }

@@ -3,16 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './fetch_canteens.dart';
 import 'dart:convert';
 
-import './main.dart';
-
 class AddMensa extends StatefulWidget {
-  final Drawer myDrawer;
-
-  AddMensa({Key key, @required this.myDrawer}) : super(key: key);
 
   @override
   _AddMensaState createState() {
-    return _AddMensaState(myDrawer: myDrawer);
+    return _AddMensaState();
   }
 }
 
@@ -21,24 +16,21 @@ class AddMensa extends StatefulWidget {
 /// when a new mensa has been added.
 
 class _AddMensaState extends State<AddMensa> {
-  List<String> mensas;
-  Drawer myDrawer;
-
-  _AddMensaState({@required this.myDrawer});
+  List<String> canteens;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Color(0xff3F3B35),
       child: FutureBuilder<SharedPreferences>(
-          future: getPrefs(),
+          future: SharedPreferences.getInstance(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data.getStringList('selectedMensas') == null ||
                   snapshot.data.getStringList('selectedMensas').length == 0) {
                 return noMensaSelected();
               } else {
-                mensas = snapshot.data.getStringList('selectedMensas');
+                canteens = snapshot.data.getStringList('selectedMensas');
                 return mensaList(snapshot.data);
               }
             } else if (snapshot.hasError) {
@@ -53,14 +45,14 @@ class _AddMensaState extends State<AddMensa> {
 
   List<Widget> getMensaList(SharedPreferences prefs) {
     List<Widget> mensaWidgetList = [];
-    for (int i = 0; i < mensas.length; i++) {
-      Canteen canteen = Canteen.fromJson(json.decode(mensas[i]));
+    for (int i = 0; i < canteens.length; i++) {
+      Canteen canteen = Canteen.fromJson(json.decode(canteens[i]));
       mensaWidgetList.add(Dismissible(
-        key: Key(mensas[i]),
+        key: Key(canteens[i]),
         onDismissed: (direction) {
           setState(() {
             List<String> tmp = prefs.getStringList('selectedMensas');
-            tmp.remove(mensas[i]);
+            tmp.remove(canteens[i]);
             prefs.setStringList('selectedMensas', tmp);
           });
         },
@@ -108,7 +100,7 @@ class _AddMensaState extends State<AddMensa> {
   }
 
   CustomScrollView mensaList(SharedPreferences prefs) {
-    if (mensas == null || mensas.length == 0) {
+    if (canteens == null || canteens.length == 0) {
       return noMensaSelected();
     } else {
       return CustomScrollView(slivers: <Widget>[
@@ -133,7 +125,6 @@ class _AddMensaState extends State<AddMensa> {
   Widget noMensaSelected() {
     return Scaffold(
       appBar: AppBar(title: Text("Add Mensa")),
-      drawer: myDrawer,
       body: Center(
           child: Text(
         'You haven\'t selected any canteen yet',

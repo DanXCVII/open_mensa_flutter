@@ -7,21 +7,13 @@ import './dish.dart';
 import './generated/i18n.dart';
 
 class FavouriteDishes extends StatefulWidget {
-  final Drawer myDrawer;
-
-  FavouriteDishes({@required this.myDrawer});
-
   @override
   FavouriteDishesState createState() {
-    return FavouriteDishesState(myDrawer: myDrawer);
+    return FavouriteDishesState();
   }
 }
 
 class FavouriteDishesState extends State<FavouriteDishes> {
-  final Drawer myDrawer;
-
-  FavouriteDishesState({@required this.myDrawer});
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,21 +22,6 @@ class FavouriteDishesState extends State<FavouriteDishes> {
           future: _getFavDishCards(context),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              // If the user hasn't selected any favourite dishes yet
-              if (snapshot.data.isEmpty) {
-                return Scaffold(
-                  appBar: AppBar(
-                    title: Text(S.of(context).favorites),
-                  ),
-                  drawer: myDrawer,
-                  body: Center(
-                    child: Icon(
-                      Icons.favorite_border,
-                      size: 70,
-                    ),
-                  ),
-                );
-              }
               // If the user has favourite dishes, show them:
               return CustomScrollView(slivers: <Widget>[
                 SliverAppBar(
@@ -59,7 +36,15 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                     title: Text(S.of(context).favorite_dishes),
                   ),
                 ),
-                SliverList(delegate: SliverChildListDelegate(snapshot.data))
+                SliverList(
+                    delegate: SliverChildListDelegate(snapshot.data.isEmpty
+                        ? [Container(
+                            height: 200,
+                            child: Center(
+                              child: Icon(Icons.favorite),
+                            ),
+                          )]
+                        : snapshot.data))
               ]);
             }
             return Center(child: CircularProgressIndicator());

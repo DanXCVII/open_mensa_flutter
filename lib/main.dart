@@ -107,9 +107,9 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         return CurrentDishes(myDrawer: myDrawer);
       case 1:
-        return FavouriteDishes(myDrawer: myDrawer);
+        return FavouriteDishes();
       case 2:
-        return AddMensa(myDrawer: myDrawer);
+        return AddMensa();
 
       default:
         return Text("Error");

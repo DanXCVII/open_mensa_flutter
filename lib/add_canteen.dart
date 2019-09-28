@@ -108,7 +108,6 @@ class _AddCanteenState extends State<AddCanteen> {
         ),
       ));
     }
-    print(canteenWidgetList.toString());
     return canteenWidgetList;
   }
 

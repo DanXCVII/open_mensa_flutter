@@ -189,23 +189,23 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (context) => AlertDialog(
           title: Text(S.of(context).select_canteen),
-          content: Text(
-              S.of(context).welcome),
+          content: Text(S.of(context).welcome),
           actions: <Widget>[
             FlatButton(
               child: Text(S.of(context).lets_go),
               onPressed: () {
-                Navigator.pop(context);
                 Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => WillPopScope(
-                              child: CheckableCanteenList(),
-                              onWillPop: () async {
-                                Navigator.of(context).popAndPushNamed('/');
-                                return false;
-                              },
-                            )));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => WillPopScope(
+                            child: CheckableCanteenList(),
+                            onWillPop: () async {
+                              Navigator.pop(context);
+                              Navigator.of(context).popAndPushNamed('/');
+                              return false;
+                            },
+                          )),
+                );
               },
             )
           ],

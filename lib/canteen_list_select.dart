@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'dart:convert';
 import './generated/i18n.dart';
+import 'current_dishes.dart';
 
 // creates a checkable list of all canteens
 class CheckableCanteenList extends StatefulWidget {
@@ -108,7 +109,9 @@ class ListWidgetState extends State<ListWidget> {
                   snapshot.data == null) {
                 return displayNoCanteenFoundMessage(context);
               }
-              return Center(child: Text("canteenListSelect build error: ${snapshot.error}"));
+              return Center(
+                  child:
+                      Text("canteenListSelect build error: ${snapshot.error}"));
             }
             return Center(child: CircularProgressIndicator());
           }),
@@ -145,8 +148,8 @@ class ListWidgetState extends State<ListWidget> {
       String canteen = json.encode(canteens[index].toJson());
       mList.add(CheckboxListTile(
           title: Text(canteens[index].name),
-          value:
-              checkPrefForCanteen(prefs.getStringList('selectedCanteens'), canteen),
+          value: checkPrefForCanteen(
+              prefs.getStringList('selectedCanteens'), canteen),
           onChanged: (bool value) {
             setState(() {
               List<String> selectedCanteens =

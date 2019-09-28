@@ -82,12 +82,6 @@ class DrawerItem {
 }
 
 class MyHomePage extends StatefulWidget {
-  final drawerItems = [
-    DrawerItem("Current Dishes", Icons.restaurant),
-    DrawerItem("Favorites", Icons.favorite),
-    DrawerItem("Selected Canteens", Icons.edit_location)
-  ];
-
   @override
   State<StatefulWidget> createState() {
     return _MyHomePageState();
@@ -115,11 +109,17 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Drawer _buildDrawer() {
+  Drawer _buildDrawer(context) {
+    List<DrawerItem> drawerItems = [
+      DrawerItem(S.of(context).current_dishes, Icons.restaurant),
+      DrawerItem(S.of(context).favorite_dishes, Icons.favorite),
+      DrawerItem(S.of(context).selected_canteens, Icons.edit_location)
+    ];
+
     // creating the list of items shown by the drawer
     var drawerOptions = <Widget>[];
-    for (var i = 0; i < widget.drawerItems.length; i++) {
-      var d = widget.drawerItems[i];
+    for (var i = 0; i < drawerItems.length; i++) {
+      var d = drawerItems[i];
       drawerOptions.add(ListTile(
         leading: Icon(d.icon),
         title: Text(d.title),
@@ -159,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       backgroundColor: Colors.grey[350],
-      drawer: _buildDrawer(),
+      drawer: _buildDrawer(context),
       body: _getDrawerItemWidget(_selectedDrawerIndex),
       floatingActionButton: _selectedDrawerIndex == 2
           ? FloatingActionButton(
@@ -188,12 +188,12 @@ class _MyHomePageState extends State<MyHomePage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text("Select canteen"),
+          title: Text(S.of(context).select_canteen),
           content: Text(
-              "Welcome to OpenCanteen Germany :) \nI can take you to the place where you can select the Canteens you're interested in."),
+              S.of(context).welcome),
           actions: <Widget>[
             FlatButton(
-              child: Text(S.of(context).hello + ', let\'s go'),
+              child: Text(S.of(context).lets_go),
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pushReplacement(

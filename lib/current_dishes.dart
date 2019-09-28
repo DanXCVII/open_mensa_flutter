@@ -193,7 +193,7 @@ class CurrentDishesState extends State<CurrentDishes> {
           _dishCards.add(
             Center(
               child: Container(
-                child: Text("no data for this day"),
+                child: Text(S.of(context).no_data_day),
               ),
             ),
           );

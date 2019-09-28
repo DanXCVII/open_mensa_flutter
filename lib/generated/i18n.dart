@@ -94,7 +94,7 @@ class $de extends S {
   @override
   String get employees => "Mitarbeiter";
   @override
-  String get welcome => "Willkommen OpenMensa Germany";
+  String get welcome => "Willkommen bei OpenMensa Germany";
   @override
   String get lets_go => "Let\\'s go";
   @override

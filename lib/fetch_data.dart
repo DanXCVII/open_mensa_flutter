@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-// fetching the meals of a mensa
+// fetching the meals of a canteen
 Future<DishesRawData> fetchMeals(String id) async {
   final response =
       await http.get('https://openmensa.org/api/v2/canteens/$id/meals');
   if (response.statusCode == 200) {
     print(
-        'Commander: We established a connection to the openMensaAPI to fetch the meals of canteen $id');
+        'Commander: We established a connection to the openCanteenAPI to fetch the meals of canteen $id');
     return DishesRawData.fromJson(json.decode(response.body));
   } else {
     throw Exception(

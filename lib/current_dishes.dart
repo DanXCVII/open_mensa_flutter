@@ -24,7 +24,7 @@ class CurrentDishesState extends State<CurrentDishes> {
   // TODO: make the 'days' list from the meal data, so that the correct days are added, and
   // only the days available get added.
 
-  String mensaName;
+  String canteenName;
   List<String> selectedCanteenNames = [];
 
   Map<String, bool> favorites = {};
@@ -96,7 +96,7 @@ class CurrentDishesState extends State<CurrentDishes> {
                                     fontSize: 18,
                                   ),
                                   value: dropdownValue == null
-                                      ? mensaName
+                                      ? canteenName
                                       : dropdownValue,
                                   onChanged: (String newValue) {
                                     initCurrentDishesData(
@@ -164,7 +164,7 @@ class CurrentDishesState extends State<CurrentDishes> {
       prefs.setInt("currentCanteen", index);
     }
 
-    // making sure that the user already selected selectedCanteen mensa
+    // making sure that the user already selected selectedCanteen canteen
     List<String> selectedCanteens = prefs.getStringList('selectedCanteens');
     if (selectedCanteens == null || selectedCanteens.isEmpty) {
       return;
@@ -182,7 +182,7 @@ class CurrentDishesState extends State<CurrentDishes> {
     DishesRawData snapshot = await fetchMeals(cant.id);
     List<String> days = getDays(context, snapshot);
 
-    mensaName = cant.name;
+    canteenName = cant.name;
 
     // assigning the global variables with the dishCards.
 
@@ -227,9 +227,9 @@ class CurrentDishesState extends State<CurrentDishes> {
     return output;
   }
 
-  // Change method to collect data of the mensa you want (index)
+  // Change method to collect data of the canteen you want (index)
   Widget showDishes(BuildContext context, SharedPreferences prefs) {
-    // Making sure that the user already selected mensas
+    // Making sure that the user already selected canteens
   }
 
   Future<List<Widget>> getAllDishCardsDay(

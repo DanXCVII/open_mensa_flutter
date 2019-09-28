@@ -4,18 +4,18 @@ import './fetch_canteens.dart';
 import 'dart:convert';
 import './generated/i18n.dart';
 
-class AddMensa extends StatefulWidget {
+class AddCanteen extends StatefulWidget {
   @override
-  _AddMensaState createState() {
-    return _AddMensaState();
+  _AddCanteenState createState() {
+    return _AddCanteenState();
   }
 }
 
 /// TODO: add initState method to not always reload the data. E.g. add
 /// a class variable of the output of the async method and call setState()
-/// when a new mensa has been added.
+/// when a new canteen has been added.
 
-class _AddMensaState extends State<AddMensa> {
+class _AddCanteenState extends State<AddCanteen> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,11 +24,11 @@ class _AddMensaState extends State<AddMensa> {
           future: SharedPreferences.getInstance(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              List<String> mensas =
+              List<String> canteens =
                   snapshot.data.getStringList('selectedCanteens');
-              bool noMensaSelected = mensas == null || mensas.length == 0;
+              bool noCanteenSelected = canteens == null || canteens.length == 0;
 
-              mensas = snapshot.data.getStringList('selectedCanteens');
+              canteens = snapshot.data.getStringList('selectedCanteens');
 
               return CustomScrollView(slivers: <Widget>[
                 SliverAppBar(
@@ -42,12 +42,12 @@ class _AddMensaState extends State<AddMensa> {
                   ),
                 ),
                 SliverList(
-                    delegate: SliverChildListDelegate(noMensaSelected
-                        ? [noMensaSelectedText()]
-                        : getMensaList(snapshot.data, mensas)))
+                    delegate: SliverChildListDelegate(noCanteenSelected
+                        ? [noCanteenSelectedText()]
+                        : getCanteenList(snapshot.data, canteens)))
               ]);
             } else if (snapshot.hasError) {
-              return Text('add_mensa build Error: ${snapshot.error}');
+              return Text('add_canteen build Error: ${snapshot.error}');
             }
             return (Center(
               child: CircularProgressIndicator(),
@@ -56,16 +56,16 @@ class _AddMensaState extends State<AddMensa> {
     );
   }
 
-  List<Widget> getMensaList(SharedPreferences prefs, mensas) {
-    List<Widget> mensaWidgetList = [];
-    for (int i = 0; i < mensas.length; i++) {
-      Canteen canteen = Canteen.fromJson(json.decode(mensas[i]));
-      mensaWidgetList.add(Dismissible(
-        key: Key(mensas[i]),
+  List<Widget> getCanteenList(SharedPreferences prefs, canteens) {
+    List<Widget> canteenWidgetList = [];
+    for (int i = 0; i < canteens.length; i++) {
+      Canteen canteen = Canteen.fromJson(json.decode(canteens[i]));
+      canteenWidgetList.add(Dismissible(
+        key: Key(canteens[i]),
         onDismissed: (direction) {
           setState(() {
             List<String> tmp = prefs.getStringList('selectedCanteens');
-            tmp.remove(mensas[i]);
+            tmp.remove(canteens[i]);
             prefs.setStringList('selectedCanteens', tmp);
           });
         },
@@ -80,7 +80,7 @@ class _AddMensaState extends State<AddMensa> {
             trailing: IconButton(
               icon: Icon(Icons.directions),
               onPressed: () {
-                // TODO: Add Directions to Mensa
+                // TODO: Add Directions to Canteen
               },
             ),
           ),
@@ -108,13 +108,13 @@ class _AddMensaState extends State<AddMensa> {
         ),
       ));
     }
-    print(mensaWidgetList.toString());
-    return mensaWidgetList;
+    print(canteenWidgetList.toString());
+    return canteenWidgetList;
   }
 
-  CustomScrollView mensaList(SharedPreferences prefs, mensas) {
-    if (mensas == null || mensas.length == 0) {
-      return noMensaSelectedText();
+  CustomScrollView canteenList(SharedPreferences prefs, canteens) {
+    if (canteens == null || canteens.length == 0) {
+      return noCanteenSelectedText();
     } else {
       return CustomScrollView(slivers: <Widget>[
         SliverAppBar(
@@ -127,16 +127,16 @@ class _AddMensaState extends State<AddMensa> {
           ),
         ),
         SliverList(
-            delegate: SliverChildListDelegate(getMensaList(prefs, mensas)))
+            delegate: SliverChildListDelegate(getCanteenList(prefs, canteens)))
       ]);
     }
   }
 
-  String getMensaAddress(String fullMensaInfo) {
-    return fullMensaInfo.split('&&')[1].split('&&&')[0];
+  String getCanteenAddress(String fullCanteenInfo) {
+    return fullCanteenInfo.split('&&')[1].split('&&&')[0];
   }
 
-  Widget noMensaSelectedText() {
+  Widget noCanteenSelectedText() {
     return Container(
         height: MediaQuery.of(context).size.height / 2,
         child: Center(
@@ -145,10 +145,10 @@ class _AddMensaState extends State<AddMensa> {
   }
 }
 
-String getMensaName(String fullMensaInfo) {
-  return fullMensaInfo.split('&&')[0].split('&')[1];
+String getCanteenName(String fullCanteenInfo) {
+  return fullCanteenInfo.split('&&')[0].split('&')[1];
 }
 
-String getMensaId(String fullMensaInfo) {
-  return fullMensaInfo.split('&')[0];
+String getCanteenId(String fullCanteenInfo) {
+  return fullCanteenInfo.split('&')[0];
 }

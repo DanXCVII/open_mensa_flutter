@@ -6,8 +6,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import './favourite_dishes.dart';
 import './current_dishes.dart';
-import './add_mensa.dart';
-import './mensa_list_select.dart';
+import './add_canteen.dart';
+import './canteen_list_select.dart';
 import './generated/i18n.dart';
 
 void main() {
@@ -67,7 +67,7 @@ class App extends StatelessWidget {
             initialRoute: '/',
             routes: {
               '/': (context) => MyHomePage(),
-              '/mensa_list': (context) => CheckableMensaList(),
+              '/canteen_list': (context) => CheckableCanteenList(),
             },
           );
         });
@@ -85,7 +85,7 @@ class MyHomePage extends StatefulWidget {
   final drawerItems = [
     DrawerItem("Current Dishes", Icons.restaurant),
     DrawerItem("Favorites", Icons.favorite),
-    DrawerItem("Selected Mensas", Icons.edit_location)
+    DrawerItem("Selected Canteens", Icons.edit_location)
   ];
 
   @override
@@ -100,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Initializing the drawer with:
   /// -currentDishes
   /// -favorites
-  /// -mensaSelctor
+  /// -canteenSelctor
   _getDrawerItemWidget(int pos) {
     switch (pos) {
       case 0:
@@ -108,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 1:
         return FavouriteDishes();
       case 2:
-        return AddMensa();
+        return AddCanteen();
 
       default:
         return Text("Error");
@@ -165,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ? FloatingActionButton(
               backgroundColor: Colors.orange[700],
               onPressed: () {
-                Navigator.pushNamed(context, '/mensa_list');
+                Navigator.pushNamed(context, '/canteen_list');
               },
               child: Icon(Icons.add),
             )
@@ -177,11 +177,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: Maybe not good practise to do async activity in the init state
     super.initState();
-    checkIfMensaSelectedAlert(context);
+    checkIfCanteenSelectedAlert(context);
   }
 
-  /// checking if a mensa is selected and otherwise showing an alert.
-  checkIfMensaSelectedAlert(BuildContext context) async {
+  /// checking if a canteen is selected and otherwise showing an alert.
+  checkIfCanteenSelectedAlert(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getStringList('selectedCanteens') == null ||
         prefs.getStringList('selectedCanteens').isEmpty) {
@@ -190,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (context) => AlertDialog(
           title: Text("Select canteen"),
           content: Text(
-              "Welcome to OpenMensa Germany :) \nI can take you to the place where you can select the Mensas you're interested in."),
+              "Welcome to OpenCanteen Germany :) \nI can take you to the place where you can select the Canteens you're interested in."),
           actions: <Widget>[
             FlatButton(
               child: Text(S.of(context).hello + ', let\'s go'),
@@ -200,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => WillPopScope(
-                              child: CheckableMensaList(),
+                              child: CheckableCanteenList(),
                               onWillPop: () async {
                                 Navigator.of(context).popAndPushNamed('/');
                                 return false;

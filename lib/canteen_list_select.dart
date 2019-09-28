@@ -6,24 +6,24 @@ import 'dart:convert';
 import './generated/i18n.dart';
 
 // creates a checkable list of all canteens
-class CheckableMensaList extends StatefulWidget {
+class CheckableCanteenList extends StatefulWidget {
   // Map which contains the selected location of the user.
   //final Map<String, double> latlng;
 
-  CheckableMensaList({Key key}) : super(key: key);
+  CheckableCanteenList({Key key}) : super(key: key);
 
   @override
-  CheckableMensaListState createState() => CheckableMensaListState();
+  CheckableCanteenListState createState() => CheckableCanteenListState();
 }
 
-class CheckableMensaListState extends State<CheckableMensaList> {
+class CheckableCanteenListState extends State<CheckableCanteenList> {
   bool booo = false;
-  // TODO once loaded, save canteens to this variable to not so often access the mensa api
+  // TODO once loaded, save canteens to this variable to not so often access the canteen api
   List<Canteen> listOfCanteens = [];
 
   TextEditingController controller = new TextEditingController();
 
-  //CheckableMensaListState();
+  //CheckableCanteenListState();
 
   @override
   build(BuildContext context) {
@@ -107,9 +107,9 @@ class ListWidgetState extends State<ListWidget> {
             } else if (snapshot.hasError) {
               if (snapshot.error.toString().contains('RangeError') ||
                   snapshot.data == null) {
-                return displayNoMensaFoundMessage(context);
+                return displayNoCanteenFoundMessage(context);
               }
-              return Center(child: Text("mensaListSelect build error: ${snapshot.error}"));
+              return Center(child: Text("canteenListSelect build error: ${snapshot.error}"));
             }
             return Center(child: CircularProgressIndicator());
           }),
@@ -118,8 +118,8 @@ class ListWidgetState extends State<ListWidget> {
 
   Future<ListView> createCheckedListView(List<Canteen> canteenList) async {
     final prefs = await SharedPreferences.getInstance();
-    List<CheckboxListTile> checkableMensaList =
-        getCheckableMensaList(canteenList, prefs);
+    List<CheckboxListTile> checkableCanteenList =
+        getCheckableCanteenList(canteenList, prefs);
 
     if (canteenList.isEmpty) {
       throw Exception('No canteen found');
@@ -133,21 +133,21 @@ class ListWidgetState extends State<ListWidget> {
           }
           final int index = i ~/ 2;
           if (index < canteenList.length) {
-            return checkableMensaList[index];
+            return checkableCanteenList[index];
           }
           return null;
         });
   }
 
-  List<CheckboxListTile> getCheckableMensaList(
-      List<Canteen> mensas, SharedPreferences prefs) {
+  List<CheckboxListTile> getCheckableCanteenList(
+      List<Canteen> canteens, SharedPreferences prefs) {
     List<CheckboxListTile> mList = new List<CheckboxListTile>();
-    for (int index = 0; index < mensas.length; index++) {
-      String canteen = json.encode(mensas[index].toJson());
+    for (int index = 0; index < canteens.length; index++) {
+      String canteen = json.encode(canteens[index].toJson());
       mList.add(CheckboxListTile(
-          title: Text(mensas[index].name),
+          title: Text(canteens[index].name),
           value:
-              checkPrefForMensa(prefs.getStringList('selectedCanteens'), canteen),
+              checkPrefForCanteen(prefs.getStringList('selectedCanteens'), canteen),
           onChanged: (bool value) {
             setState(() {
               List<String> selectedCanteens =
@@ -165,13 +165,13 @@ class ListWidgetState extends State<ListWidget> {
     return mList;
   }
 
-  bool checkPrefForMensa(List<String> mensaList, String mensaName) {
+  bool checkPrefForCanteen(List<String> canteenList, String canteenName) {
     bool ret = false;
-    if (mensaList == null) {
+    if (canteenList == null) {
       return false;
     } else {
-      for (int i = 0; i < mensaList.length; i++) {
-        if (mensaList[i].contains(mensaName)) {
+      for (int i = 0; i < canteenList.length; i++) {
+        if (canteenList[i].contains(canteenName)) {
           ret = true;
         }
       }
@@ -180,7 +180,7 @@ class ListWidgetState extends State<ListWidget> {
   }
 }
 
-Widget displayNoMensaFoundMessage(BuildContext context) {
+Widget displayNoCanteenFoundMessage(BuildContext context) {
   return Center(
       child: Column(
     children: <Widget>[
@@ -241,7 +241,7 @@ class CanteenSearch extends SearchDelegate<Canteen> {
             return name.contains(input);
           }).toList();
     if (items.isEmpty) {
-      return displayNoMensaFoundMessage(context);
+      return displayNoCanteenFoundMessage(context);
     }
     return ListWidget(
       items: suggestion,

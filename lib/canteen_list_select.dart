@@ -29,7 +29,6 @@ class CheckableCanteenListState extends State<CheckableCanteenList> {
   build(BuildContext context) {
     // check if canteen list is empty, if it is serve a FutureBuilder while it loads
     if (listOfCanteens.isEmpty) {
-      print("loaded canteenss");
       return FutureBuilder<List<Canteen>>(
         future: fetchAllCanteens(),
         builder: (context, snapshot) {

@@ -174,7 +174,6 @@ class CurrentDishesState extends State<CurrentDishes> {
     selectedCanteens.forEach((ca) {
       selectedCanteenNames.add(Canteen.fromJson(json.decode(ca)).name);
     });
-    print(selectedCanteenNames);
     // dirty fix for problem with only one canteen selected
     index = selectedCanteens.length == 1 ? 0 : index;
     var selectedCanteen = selectedCanteens[index];
@@ -203,7 +202,6 @@ class CurrentDishesState extends State<CurrentDishes> {
         dishCardDays.addAll({days[i]: _dishCards});
       }
     } catch (e) {
-      print("Error: ${e.toString()}");
     }
   }
 
@@ -248,7 +246,6 @@ class CurrentDishesState extends State<CurrentDishes> {
         } else {
           _isFavorite = true;
         }
-        print(_isFavorite);
         output.add(Dishcard(dish, context, _isFavorite));
       } catch (e) {}
     }

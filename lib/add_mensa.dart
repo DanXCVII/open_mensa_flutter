@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './fetch_canteens.dart';
 import 'dart:convert';
+import './generated/i18n.dart';
 
 class AddMensa extends StatefulWidget {
   @override
@@ -28,6 +29,7 @@ class _AddMensaState extends State<AddMensa> {
               bool noMensaSelected = mensas == null || mensas.length == 0;
 
               mensas = snapshot.data.getStringList('selectedCanteens');
+
               return CustomScrollView(slivers: <Widget>[
                 SliverAppBar(
                   expandedHeight: 200.0,
@@ -36,7 +38,7 @@ class _AddMensaState extends State<AddMensa> {
                   flexibleSpace: FlexibleSpaceBar(
                     background:
                         Image.asset('images/earth.jpg', fit: BoxFit.cover),
-                    title: Text("Selected Canteens"),
+                    title: Text(S.of(context).selected_canteens),
                   ),
                 ),
                 SliverList(
@@ -121,7 +123,7 @@ class _AddMensaState extends State<AddMensa> {
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(
             background: Image.asset('images/earth.jpg', fit: BoxFit.cover),
-            title: Text("Selected Canteens"),
+            title: Text(S.of(context).selected_canteens),
           ),
         ),
         SliverList(
@@ -138,8 +140,7 @@ class _AddMensaState extends State<AddMensa> {
     return Container(
         height: MediaQuery.of(context).size.height / 2,
         child: Center(
-          child: Text('You haven\'t selected any canteen',
-              style: TextStyle(fontSize: 18)),
+          child: Text(S.of(context).no_canteen_selected),
         ));
   }
 }

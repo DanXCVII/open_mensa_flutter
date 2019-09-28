@@ -7,29 +7,18 @@ import './dish_card.dart';
 import './database.dart';
 import './fetch_data.dart';
 import './fetch_canteens.dart';
-import './main.dart';
 
-//import './add_mensa.dart';
 import './dish.dart';
 import './generated/i18n.dart';
-//import './database.dart';
 
 class CurrentDishes extends StatefulWidget {
-  final Drawer myDrawer;
-
-  CurrentDishes({@required this.myDrawer});
-
   @override
   State<StatefulWidget> createState() {
-    return CurrentDishesState(myDrawer: myDrawer);
+    return CurrentDishesState();
   }
 }
 
 class CurrentDishesState extends State<CurrentDishes> {
-  Drawer myDrawer;
-
-  CurrentDishesState({@required this.myDrawer});
-
   Map<String, List<Widget>> dishCardDays = {};
 
   // TODO: make the 'days' list from the meal data, so that the correct days are added, and
@@ -61,7 +50,7 @@ class CurrentDishesState extends State<CurrentDishes> {
     return Container(
       color: Color(0xff3F3B35),
       child: FutureBuilder<SharedPreferences>(
-          future: getPrefs(),
+          future: SharedPreferences.getInstance(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               try {
@@ -69,13 +58,11 @@ class CurrentDishesState extends State<CurrentDishes> {
                     snapshot.data.getStringList('selectedCanteens')[0] != null);
               } catch (e) {
                 return Scaffold(
-                  drawer: myDrawer,
                   appBar: AppBar(
-                    title: Text('Current Dishes'),
+                    title: Text(S.of(context).current_dishes),
                   ),
                   body: Center(
-                    child: Text(
-                        "You haven't selected any Canteen yet. Do so, by navigating to the add mensa mensu :)"),
+                    child: Text(S.of(context).no_canteen_selected),
                   ),
                 );
               }
@@ -168,7 +155,7 @@ class CurrentDishesState extends State<CurrentDishes> {
   }
 
   initCurrentDishesData(BuildContext context, int index) async {
-    SharedPreferences prefs = await getPrefs();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     if (index == -1) {
       index = (prefs.getInt("currentCanteen") == null
           ? 0

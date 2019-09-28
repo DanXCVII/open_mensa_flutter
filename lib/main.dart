@@ -102,10 +102,9 @@ class _MyHomePageState extends State<MyHomePage> {
   /// -favorites
   /// -mensaSelctor
   _getDrawerItemWidget(int pos) {
-    Drawer myDrawer = _buildDrawer();
     switch (pos) {
       case 0:
-        return CurrentDishes(myDrawer: myDrawer);
+        return CurrentDishes();
       case 1:
         return FavouriteDishes();
       case 2:

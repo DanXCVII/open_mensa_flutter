@@ -30,6 +30,7 @@ class S implements WidgetsLocalizations {
   String get hello => "Hello";
   String get lets_go => "Let\\'s go";
   String get monday => "Monday";
+  String get no_canteen => "No canteen";
   String get no_canteen_selected => "No canteen selected yet";
   String get no_canteens_found => "No canteens were found";
   String get no_data_day => "No data for this day";
@@ -60,23 +61,13 @@ class $de extends S {
   @override
   String get favorite_dishes => "Lieblingsgerichte";
   @override
-  String get thursday => "Donnerstag";
-  @override
   String get students => "Studenten";
-  @override
-  String get select_canteen => "Wähle eine Mensa aus";
-  @override
-  String get no_data_day => "keine Daten für diesen Tag";
   @override
   String get no_canteen_selected => "Keine Mensa ausgewählt";
   @override
   String get select_canteens => "Wähle Mensen aus";
   @override
-  String get sunday => "Sonntag";
-  @override
   String get search => "Suchen";
-  @override
-  String get tuesday => "Dienstag";
   @override
   String get selected_canteens => "Ausgewählte Mensen";
   @override
@@ -86,21 +77,33 @@ class $de extends S {
   @override
   String get friday => "Freitag";
   @override
-  String get add_canteen => "Mensa hinzufügen";
-  @override
-  String get hello => "Hallo";
-  @override
   String get current_dishes => "Angebotene Gerichte";
-  @override
-  String get employees => "Mitarbeiter";
   @override
   String get welcome => "Willkommen bei OpenMensa Germany";
   @override
-  String get lets_go => "Let\\'s go";
+  String get lets_go => "Let\'s go";
   @override
   String get others => "Gäste";
   @override
   String get monday => "Montag";
+  @override
+  String get thursday => "Donnerstag";
+  @override
+  String get select_canteen => "Wähle eine Mensa aus";
+  @override
+  String get no_data_day => "keine Daten für diesen Tag";
+  @override
+  String get sunday => "Sonntag";
+  @override
+  String get no_canteen => "Keine Mensa";
+  @override
+  String get tuesday => "Dienstag";
+  @override
+  String get add_canteen => "Mensa hinzufügen";
+  @override
+  String get hello => "Hallo";
+  @override
+  String get employees => "Mitarbeiter";
 }
 
 class $en extends S {

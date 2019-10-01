@@ -53,7 +53,7 @@ class CurrentDishesState extends State<CurrentDishes> {
           future: SharedPreferences.getInstance(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              try {
+              /*try {
                 assert(
                     snapshot.data.getStringList('selectedCanteens')[0] != null);
               } catch (e) {
@@ -66,7 +66,7 @@ class CurrentDishesState extends State<CurrentDishes> {
                   ),
                 );
               }
-
+              */
               List<Tab> tabs = getTabs();
               List<ListView> tabsData = getTabsData();
 
@@ -131,7 +131,7 @@ class CurrentDishesState extends State<CurrentDishes> {
                         SliverPersistentHeader(
                           delegate: _SliverAppBarDelegate(
                             TabBar(
-                              isScrollable: true,
+                              isScrollable: tabs.length == 1? false : true,
                               tabs: tabs,
                             ),
                           ),
@@ -164,13 +164,20 @@ class CurrentDishesState extends State<CurrentDishes> {
       prefs.setInt("currentCanteen", index);
     }
 
+    selectedCanteenNames = [];
+
     // making sure that the user already selected selectedCanteen canteen
     List<String> selectedCanteens = prefs.getStringList('selectedCanteens');
     if (selectedCanteens == null || selectedCanteens.isEmpty) {
+      // add notice, that no canteen has ben selected yet
+      canteenName = S.of(context).no_canteen;
+      selectedCanteenNames.add(canteenName);
+      dishCardDays = {
+        S.of(context).no_canteen_selected: [displayNoCanteenSelected()],
+      };
       return;
     }
 
-    selectedCanteenNames = [];
     selectedCanteens.forEach((ca) {
       selectedCanteenNames.add(Canteen.fromJson(json.decode(ca)).name);
     });
@@ -201,8 +208,7 @@ class CurrentDishesState extends State<CurrentDishes> {
         _dishCards.add(SizedBox(height: 20));
         dishCardDays.addAll({days[i]: _dishCards});
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   List<Tab> getTabs() {

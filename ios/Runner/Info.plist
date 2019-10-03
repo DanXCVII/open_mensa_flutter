@@ -2,14 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- google maps -->
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>de</string>
+		<string>en</string>
+	</array>
 	<key>io.flutter.embedded_views_preview</key>
 	<string>YES</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Using location for searching for Mensas around you</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Using location for searching for Mensas around you</string>
-
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>

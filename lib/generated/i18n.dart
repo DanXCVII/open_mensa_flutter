@@ -115,8 +115,8 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
 
   List<Locale> get supportedLocales {
     return const <Locale>[
-      Locale("de", ""),
       Locale("en", ""),
+      Locale("de", ""),
     ];
   }
 

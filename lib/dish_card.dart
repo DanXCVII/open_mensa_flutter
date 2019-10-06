@@ -17,12 +17,14 @@ class Dishcard extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return DishcardState();
+    return DishcardState(_isFavorite);
   }
 }
 
 class DishcardState extends State<Dishcard> {
   bool _isFavorite;
+
+  DishcardState(this._isFavorite);
 
   @override
   Widget build(BuildContext context) {
@@ -65,27 +67,29 @@ class DishcardState extends State<Dishcard> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     IconButton(
-                        icon: widget._isFavorite
+                        icon: _isFavorite
                             ? Icon(Icons.favorite, color: Colors.pink)
                             : Icon(Icons.favorite_border, color: Colors.white),
                         // TODO: If saved to favourites: Icon is favorite and not only border
                         onPressed: () {
-                          setState(() {
-                            try {
-                              // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED ?? maybe changed
-                              if (widget._isFavorite) {
-                                DBProvider.db
-                                    .deleteFavDishByName(widget.dish.dishName);
+                          try {
+                            // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED ?? maybe changed
+                            if (_isFavorite) {
+                              DBProvider.db
+                                  .deleteFavDishByName(widget.dish.dishName);
+                              setState(() {
                                 _isFavorite = false;
-                              } else {
-                                DBProvider.db.newFavDish(widget.dish);
+                              });
+                            } else {
+                              DBProvider.db.newFavDish(widget.dish);
+                              setState(() {
                                 _isFavorite = true;
-                              }
-                            } catch (e) {
-                              print(
-                                  'pressed favorite button and error occured: $e');
+                              });
                             }
-                          });
+                          } catch (e) {
+                            print(
+                                'pressed favorite button and error occured: $e');
+                          }
                         }),
                     Padding(
                       padding: const EdgeInsets.only(left: 12.0, right: 12.0),

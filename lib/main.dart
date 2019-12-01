@@ -73,20 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
   /// -currentDishes
   /// -favorites
   /// -canteenSelctor
-  _getDrawerItemWidget(int pos) {
-    switch (pos) {
-      case 0:
-        return CurrentDishes();
-      case 1:
-        return FavouriteDishes();
-      case 2:
-        return AddCanteen();
-
-      default:
-        return Text("Error");
-    }
-  }
-
+  /// 
+  
   Drawer _buildDrawer(context) {
     List<DrawerItem> drawerItems = [
       DrawerItem(S.of(context).current_dishes, Icons.restaurant),

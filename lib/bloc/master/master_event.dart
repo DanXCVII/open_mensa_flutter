@@ -30,10 +30,10 @@ class DeleteCanteenEvent extends MasterEvent {
   String toString() => "delete $canteen event";
 }
 
-class AddFavouriteDishEvent extends MasterEvent {
+class AddFavoriteDishEvent extends MasterEvent {
   final Dish dish;
 
-  const AddFavouriteDishEvent(this.dish);
+  const AddFavoriteDishEvent(this.dish);
 
   @override
   List<Object> get props => [dish];
@@ -42,10 +42,10 @@ class AddFavouriteDishEvent extends MasterEvent {
   String toString() => "add $dish from favourites event";
 }
 
-class DeleteFavouriteDishEvent extends MasterEvent {
+class DeleteFavoriteDishEvent extends MasterEvent {
   final Dish dish;
 
-  const DeleteFavouriteDishEvent(this.dish);
+  const DeleteFavoriteDishEvent(this.dish);
 
   @override
   List<Object> get props => [dish];

@@ -4,7 +4,7 @@ import 'package:open_mensa_flutter/models/dish.dart';
 
 abstract class CurrentDishesState extends Equatable {
   const CurrentDishesState();
-  
+
   @override
   List<Object> get props => [];
 }
@@ -19,15 +19,23 @@ class NoDataToLoadState extends CurrentDishesState {
 }
 
 class LoadedCurrentDishesState extends CurrentDishesState {
-  final Map<int, List<Dish>> currentDishesList;
+  final Map<DateTime, List<Dish>> currentDishesList;
   final List<Canteen> availableCanteenList;
-  final int selectedCanteenIndex;
+  final Canteen selectedCanteen;
 
-  const LoadedCurrentDishesState(this.currentDishesList, this.availableCanteenList, this.selectedCanteenIndex);
+  const LoadedCurrentDishesState(
+    this.currentDishesList,
+    this.availableCanteenList,
+    this.selectedCanteen,
+  );
 
   @override
-  List<Object> get props => [ currentDishesList, availableCanteenList, selectedCanteenIndex];
+  List<Object> get props => [
+        currentDishesList,
+        availableCanteenList,
+        selectedCanteen,
+      ];
 
   @override
-  String toString() => 'Loaded currentDishes for index $selectedCanteenIndex';
+  String toString() => 'Loaded currentDishes for index $selectedCanteen';
 }

@@ -68,6 +68,10 @@ class HiveProvider {
     return favoriteDishes;
   }
 
+  DateTime getDateOfLatestDish(Canteen canteen) {
+    return DateTime.parse(currentDishesBox.keys.first);
+  }
+
   Future<void> cacheDataOfCanteen(
       Canteen canteen, Map<DateTime, List<Dish>> dishes) async {
     Map<String, List<Dish>> hiveData = {};
@@ -90,6 +94,10 @@ class HiveProvider {
 
   Future<void> addFavoriteDish(Dish dish) async {
     favoriteDishesBox.add(dish);
+  }
+
+  Future<void> deleteCachedDataFromCanteen(Canteen canteen) async {
+    currentDishesBox.delete(getHiveKey(canteen.name));
   }
 
   ////////////// hive internal related //////////////

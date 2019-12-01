@@ -34,6 +34,8 @@ dependencies:
   equatable: ^0.6.1
   rxdart: ^0.22.4
   flutter_bloc: ^1.0.0
+  hive_flutter: ^0.2.1
+  hive_generator: ^0.5.2
 
 flutter_icons:
   image_path: "icon/dish.png"

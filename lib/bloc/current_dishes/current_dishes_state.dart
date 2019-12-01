@@ -13,6 +13,11 @@ class InitialCurrentDishesState extends CurrentDishesState {}
 
 class LoadingCurrentDishesState extends CurrentDishesState {}
 
+class NoDataToLoadState extends CurrentDishesState {
+  @override
+  String toString() => 'no canteen selected';
+}
+
 class LoadedCurrentDishesState extends CurrentDishesState {
   final Map<int, List<Dish>> currentDishesList;
   final List<Canteen> availableCanteenList;

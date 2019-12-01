@@ -73,3 +73,5 @@ build/
 
 # Api keys
 GoogleMapsAPIkey/*
+ios/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+ios/Flutter/flutter_export_environment.sh

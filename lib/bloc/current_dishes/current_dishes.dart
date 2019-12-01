@@ -1,3 +1,3 @@
-export 'currentdishes_bloc.dart';
-export 'currentdishes_event.dart';
-export 'currentdishes_state.dart';
+export 'current_dishes_bloc.dart';
+export 'current_dishes_event.dart';
+export 'current_dishes_state.dart';

@@ -22,4 +22,7 @@ class LoadedCurrentDishesState extends CurrentDishesState {
 
   @override
   List<Object> get props => [ currentDishesList, availableCanteenList, selectedCanteenIndex];
+
+  @override
+  String toString() => 'Loaded currentDishes for index $selectedCanteenIndex';
 }

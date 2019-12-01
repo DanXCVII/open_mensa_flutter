@@ -132,7 +132,7 @@ class CurrentDishesState extends State<CurrentDishes> {
                         SliverPersistentHeader(
                           delegate: _SliverAppBarDelegate(
                             TabBar(
-                              isScrollable: tabs.length == 1? false : true,
+                              isScrollable: tabs.length == 1 ? false : true,
                               tabs: tabs,
                             ),
                           ),
@@ -186,30 +186,12 @@ class CurrentDishesState extends State<CurrentDishes> {
     index = selectedCanteens.length == 1 ? 0 : index;
     var selectedCanteen = selectedCanteens[index];
     Canteen cant = Canteen.fromJson(json.decode(selectedCanteen));
-    DishesRawData snapshot = await fetchMeals(cant.id);
-    List<String> days = getDays(context, snapshot);
+    Map<DateTime, List<Dish>> snapshot = await fetchMeals(cant.id);
+    dishCardDays = initializeDishCards(snapshot);
 
     canteenName = cant.name;
 
     // assigning the global variables with the dishCards.
-
-    try {
-      for (int i = 0; i < days.length; i++) {
-        List<Widget> _dishCards =
-            await getAllDishCardsDay(snapshot, context, i);
-        if (_dishCards.length == 0) {
-          _dishCards.add(
-            Center(
-              child: Container(
-                child: Text(S.of(context).no_data_day),
-              ),
-            ),
-          );
-        }
-        _dishCards.add(SizedBox(height: 20));
-        dishCardDays.addAll({days[i]: _dishCards});
-      }
-    } catch (e) {}
   }
 
   List<Tab> getTabs() {
@@ -237,28 +219,28 @@ class CurrentDishesState extends State<CurrentDishes> {
     // Making sure that the user already selected canteens
   }
 
-  Future<List<Widget>> getAllDishCardsDay(
-      DishesRawData dishesRawD, BuildContext context, int day) async {
-    var completer = new Completer<List<Widget>>();
-    List<Widget> output = [];
+  Map<String, List<Widget>> initializeDishCards(
+      Map<DateTime, List<Dish>> dishes) {
+    Map<int, String> dayMap = {
+      1: S.of(context).monday,
+      2: S.of(context).tuesday,
+      3: S.of(context).wednesday,
+      4: S.of(context).thursday,
+      5: S.of(context).friday,
+      6: S.of(context).saturday,
+      7: S.of(context).sunday,
+    };
 
-    for (int i = 0; i < getMealsCount(dishesRawD.dishRaw, day); i++) {
-      try {
-        Dish dish = Dish.fromMap(dishesRawD.dishRaw[day]['meals'][i]);
-        dynamic favoriteData =
-            await DBProvider.db.getFavDishByName(dish.dishName);
-        bool _isFavorite = false;
-        if (favoriteData == Null) {
-          _isFavorite = false;
-        } else {
-          _isFavorite = true;
-        }
-        output.add(Dishcard(dish, context, _isFavorite));
-      } catch (e) {}
+    Map<String, List<Widget>> currentDishes = {};
+
+    for (DateTime key in dishes.keys) {
+      currentDishes.addAll({
+        dayMap[key.weekday]:
+            dishes[key].map((dish) => Dishcard(dish, context, false)).toList()
+      });
     }
 
-    completer.complete(output);
-    return completer.future;
+    return currentDishes;
   }
 }
 
@@ -307,24 +289,6 @@ bool isOpenDishes(List<dynamic> dishesRaw, int dayFromToday) {
 
 int getMealsCount(List<dynamic> dishesRaw, int dayFromToday) {
   return dishesRaw[dayFromToday]['meals'].length;
-}
-
-List<String> getDays(context, DishesRawData drd) {
-  Map<int, String> dayMap = {
-    1: S.of(context).monday,
-    2: S.of(context).tuesday,
-    3: S.of(context).wednesday,
-    4: S.of(context).thursday,
-    5: S.of(context).friday,
-    6: S.of(context).saturday,
-    7: S.of(context).sunday,
-  };
-  List<String> days = [];
-  drd.dishRaw.forEach((item) {
-    DateTime date = DateTime.parse(item["date"]);
-    days.add(dayMap[date.weekday]);
-  });
-  return days;
 }
 
 class CustomDropdownClipper extends CustomClipper<Path> {

@@ -18,13 +18,13 @@ class HiveProvider {
   static final HiveProvider _singleton = HiveProvider._internal(
     Hive.box<Canteen>(BoxNames.selectedCanteensBox),
     Hive.box<String>(BoxNames.selectedCanteenIndexBox),
-    Hive.box<Map<int, List<Dish>>>(BoxNames.currentDishesBox),
+    Hive.box<Map<String, List<Dish>>>(BoxNames.currentDishesBox),
     Hive.box<Dish>(BoxNames.favoriteDishesBox),
   );
 
   Box<Canteen> selectedCanteensBox;
   Box<String> selectedCanteenIndexBox;
-  Box<Map<int, List<Dish>>> currentDishesBox;
+  Box<Map<String, List<Dish>>> currentDishesBox;
   Box<Dish> favoriteDishesBox;
 
   factory HiveProvider() {
@@ -38,8 +38,15 @@ class HiveProvider {
     this.favoriteDishesBox,
   );
 
-  Map<int, List<Dish>> getCachedDataOfCanteen(Canteen canteen) {
-    return currentDishesBox.get(getHiveKey(canteen.name));
+  Map<DateTime, List<Dish>> getCachedDataOfCanteen(Canteen canteen) {
+    Map<String, List<Dish>> hiveData =
+        currentDishesBox.get(getHiveKey(canteen.name));
+
+    Map<DateTime, List<Dish>> output = {};
+
+    for (String key in hiveData.keys) {
+      output.addAll({DateTime.parse(key): hiveData[key]});
+    }
   }
 
   Canteen getCurrentCanteen() {
@@ -62,8 +69,14 @@ class HiveProvider {
   }
 
   Future<void> cacheDataOfCanteen(
-      Canteen canteen, Map<int, List<Dish>> dishes) async {
-    await currentDishesBox.put(getHiveKey(canteen.name), dishes);
+      Canteen canteen, Map<DateTime, List<Dish>> dishes) async {
+    Map<String, List<Dish>> hiveData = {};
+
+    for (DateTime key in dishes.keys) {
+      hiveData.addAll({key.toIso8601String(): dishes[key]});
+    }
+
+    await currentDishesBox.put(getHiveKey(canteen.name), hiveData);
   }
 
   Future<void> setCurrentSelectedCanteen(Canteen canteen) async {
@@ -107,6 +120,6 @@ Future<void> initHive(bool firstTime) async {
 
   await Hive.openBox<Canteen>(BoxNames.selectedCanteensBox);
   Hive.openBox<String>(BoxNames.selectedCanteenIndexBox);
-  Hive.openBox<Map<int, List<Dish>>>(BoxNames.currentDishesBox);
+  Hive.openBox<Map<String, List<Dish>>>(BoxNames.currentDishesBox);
   Hive.openBox<Dish>(BoxNames.favoriteDishesBox);
 }

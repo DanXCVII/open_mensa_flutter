@@ -97,7 +97,18 @@ class HiveProvider {
   }
 
   Future<void> deleteCachedDataFromCanteen(Canteen canteen) async {
-    currentDishesBox.delete(getHiveKey(canteen.name));
+    await currentDishesBox.delete(getHiveKey(canteen.name));
+  }
+
+  Future<void> deleteFavoriteDish(Dish dish) async {
+    for (var key in favoriteDishesBox.keys) {
+      if (favoriteDishesBox.get(key) == dish)
+        await favoriteDishesBox.delete(key);
+    }
+  }
+
+  Future<void> removeSelectedCanteen(Canteen canteen) async {
+    await selectedCanteensBox.delete(getHiveKey(canteen.name));
   }
 
   ////////////// hive internal related //////////////

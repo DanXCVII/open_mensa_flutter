@@ -6,8 +6,7 @@ abstract class CurrentDishesEvent extends Equatable {
   const CurrentDishesEvent();
 }
 
-
-class InitializeDataEvent extends CurrentDishesEvent{
+class InitializeDataEvent extends CurrentDishesEvent {
   @override
   List<Object> get props => [];
 
@@ -39,26 +38,14 @@ class DeleteCanteenEvent extends CurrentDishesEvent {
   String toString() => "delete $canteen event";
 }
 
-class AddFavoriteDishEvent extends CurrentDishesEvent {
-  final Dish dish;
+class ChangeSelectedCanteenEvent extends CurrentDishesEvent {
+  final Canteen canteen;
 
-  const AddFavoriteDishEvent(this.dish);
-
-  @override
-  List<Object> get props => [dish];
+  const ChangeSelectedCanteenEvent(this.canteen);
 
   @override
-  String toString() => "add $dish from favourites event";
-}
-
-class DeleteFavoriteDishEvent extends CurrentDishesEvent {
-  final Dish dish;
-
-  const DeleteFavoriteDishEvent(this.dish);
+  List<Object> get props => [canteen];
 
   @override
-  List<Object> get props => [dish];
-
-  @override
-  String toString() => "delete $dish from favourites event";
+  String toString() => "change selected canteen to $canteen";
 }

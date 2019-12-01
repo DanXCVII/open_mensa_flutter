@@ -6,50 +6,50 @@ abstract class MasterEvent extends Equatable {
   const MasterEvent();
 }
 
-class AddCanteen extends MasterEvent{
+class AddCanteenEvent extends MasterEvent {
   final Canteen canteen;
 
-  const AddCanteen(this.canteen);
+  const AddCanteenEvent(this.canteen);
 
   @override
   List<Object> get props => [canteen];
 
   @override
-  String toString() => "add $canteen";
+  String toString() => "add $canteen event";
 }
 
-class DeleteCanteen extends MasterEvent{
+class DeleteCanteenEvent extends MasterEvent {
   final Canteen canteen;
 
-  const DeleteCanteen(this.canteen);
+  const DeleteCanteenEvent(this.canteen);
 
   @override
   List<Object> get props => [canteen];
 
   @override
-  String toString() => "delete $canteen";
+  String toString() => "delete $canteen event";
 }
 
-class AddFavouriteDish extends MasterEvent{
+class AddFavouriteDishEvent extends MasterEvent {
   final Dish dish;
 
-  const AddFavouriteDish(this.dish);
+  const AddFavouriteDishEvent(this.dish);
 
   @override
   List<Object> get props => [dish];
 
   @override
-  String toString() => "add $dish from favourites";
+  String toString() => "add $dish from favourites event";
 }
 
-class DeleteFavouriteDish extends MasterEvent{
+class DeleteFavouriteDishEvent extends MasterEvent {
   final Dish dish;
 
-  const DeleteFavouriteDish(this.dish);
+  const DeleteFavouriteDishEvent(this.dish);
 
   @override
   List<Object> get props => [dish];
 
   @override
-  String toString() => "delete $dish from favourites";
+  String toString() => "delete $dish from favourites event";
 }

@@ -136,7 +136,7 @@ class DishcardState extends State<Dishcard> {
         child: Align(
           alignment: Alignment.topCenter,
           child: Image.asset(
-            'images/${widget.dish.themeData.iconName}.png',
+            'images/${widget.dish.iconName}.png',
             width: 100,
             height: 80,
             fit: BoxFit.contain,

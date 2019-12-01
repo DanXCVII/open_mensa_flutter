@@ -1,27 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
+part './adapters/dish.g.dart';
+
+@HiveType()
 class Dish {
+  @HiveField(0)
   String dishName;
-  String category;
-  Map<String, double> priceGroup;
-  List<String> notes = [];
 
-  MyThemeData themeData;
+  @HiveField(1)
+  String category;
+
+  @HiveField(2)
+  Map<String, double> priceGroup;
+
+  @HiveField(3)
+  List<String> notes = [];
 
   Dish({
     this.dishName,
     this.category,
     this.priceGroup,
     this.notes,
-    this.themeData,
   });
 
   factory Dish.fromMap(Map<String, dynamic> dishRaw) => new Dish(
-      dishName: dishRaw['name'],
-      category: dishRaw['category'],
-      priceGroup: initPriceGroup(dishRaw),
-      themeData: getIconName(
-          '${dishRaw['name']}${dishRaw['category']}${initNotes(dishRaw).toString()}'));
+        dishName: dishRaw['name'],
+        category: dishRaw['category'],
+        priceGroup: initPriceGroup(dishRaw),
+      );
 
   Map<String, dynamic> toMap() => {
         "name": dishName,
@@ -33,7 +40,7 @@ class Dish {
         },
         "notes": notes,
       };
-  
+
   @override
   String toString() => dishName;
 }

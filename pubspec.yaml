@@ -31,6 +31,9 @@ dependencies:
   shared_preferences: ^0.5.1+1
 
   flutter_launcher_icons: ^0.7.0
+  equatable: ^0.6.1
+  rxdart: ^0.22.4
+  flutter_bloc: ^1.0.0
 
 flutter_icons:
   image_path: "icon/dish.png"

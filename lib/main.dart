@@ -138,7 +138,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: Colors.grey[350],
       drawer: _buildDrawer(context),
-      body: _getDrawerItemWidget(_selectedDrawerIndex),
+      body: IndexedStack(index: _selectedDrawerIndex, children: <Widget>[
+        CurrentDishes(),
+        FavouriteDishes(),
+        AddCanteen(),
+      ],),
       floatingActionButton: _selectedDrawerIndex == 2
           ? FloatingActionButton(
               backgroundColor: Colors.orange[700],

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import './dish.dart';
+import './models/dish.dart';
 
 class DBProvider {
   DBProvider._();

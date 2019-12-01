@@ -33,6 +33,9 @@ class Dish {
         },
         "notes": notes,
       };
+  
+  @override
+  String toString() => dishName;
 }
 
 Map<String, double> initPriceGroup(Map<String, dynamic> dishRaw) {

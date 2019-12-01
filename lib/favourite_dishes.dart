@@ -3,7 +3,7 @@ import 'dart:async';
 
 import './dish_card.dart';
 import './database.dart';
-import './dish.dart';
+import './models/dish.dart';
 import './generated/i18n.dart';
 
 class FavouriteDishes extends StatefulWidget {

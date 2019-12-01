@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import './generated/i18n.dart';
 import 'current_dishes.dart';
+import 'models/canteen.dart';
 
 // creates a checkable list of all canteens
 class CheckableCanteenList extends StatefulWidget {

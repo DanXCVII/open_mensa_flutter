@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import './dish.dart';
+import './models/dish.dart';
 import './database.dart';
 import './generated/i18n.dart';
 

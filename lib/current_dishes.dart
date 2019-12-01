@@ -8,8 +8,9 @@ import './database.dart';
 import './fetch_data.dart';
 import './fetch_canteens.dart';
 
-import './dish.dart';
+import './models/dish.dart';
 import './generated/i18n.dart';
+import 'models/canteen.dart';
 
 class CurrentDishes extends StatefulWidget {
   @override

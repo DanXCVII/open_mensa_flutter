@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './fetch_canteens.dart';
 import 'dart:convert';
 import './generated/i18n.dart';
+import 'models/canteen.dart';
 
 class AddCanteen extends StatefulWidget {
   @override

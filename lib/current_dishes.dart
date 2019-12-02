@@ -34,68 +34,70 @@ class CurrentDishesState extends State<CurrentDishes> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CurrentDishesBloc, CurrentDishesState>(
-        builder: (context, state) {
-      if (state is LoadingCurrentDishesState) {
-        return Center(child: CircularProgressIndicator());
-      } else if (state is LoadingCurrentDishesForCanteenState) {
-        return DefaultTabController(
-          length: 0,
-          child: NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                SliverAppBar(
-                  expandedHeight: 200.0,
-                  floating: false,
-                  pinned: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    centerTitle: true,
-                    title: Container(
-                      height: 20,
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<Canteen>(
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
+    return Container(
+      color: Color(0xff3F3B35),
+      child: BlocBuilder<CurrentDishesBloc, CurrentDishesState>(
+          builder: (context, state) {
+        if (state is LoadingCurrentDishesState) {
+          return Center(child: CircularProgressIndicator());
+        } else if (state is LoadingCurrentDishesForCanteenState) {
+          return DefaultTabController(
+            length: 0,
+            child: NestedScrollView(
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
+                return <Widget>[
+                  SliverAppBar(
+                    expandedHeight: 200.0,
+                    floating: false,
+                    pinned: true,
+                    flexibleSpace: FlexibleSpaceBar(
+                      centerTitle: true,
+                      title: Container(
+                        height: 20,
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<Canteen>(
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                            value:
+                                (state as LoadingCurrentDishesForCanteenState)
+                                    .selectedCanteen,
+                            onChanged: (Canteen newValue) {
+                              BlocProvider.of<CurrentDishesBloc>(context)
+                                  .add(ChangeSelectedCanteenEvent(newValue));
+                            },
+                            items:
+                                (state as LoadingCurrentDishesForCanteenState)
+                                    .availableCanteenList
+                                    .map(
+                                      (canteen) => DropdownMenuItem<Canteen>(
+                                        value: canteen,
+                                        child: Text(
+                                          canteen.name,
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                           ),
-                          value: (state as LoadingCurrentDishesForCanteenState)
-                              .selectedCanteen,
-                          onChanged: (Canteen newValue) {
-                            BlocProvider.of<CurrentDishesBloc>(context)
-                                .add(ChangeSelectedCanteenEvent(newValue));
-                          },
-                          items: (state as LoadingCurrentDishesForCanteenState)
-                              .availableCanteenList
-                              .map(
-                                (canteen) => DropdownMenuItem<Canteen>(
-                                  value: canteen,
-                                  child: Text(
-                                    canteen.name,
-                                  ),
-                                ),
-                              )
-                              .toList(),
                         ),
                       ),
-                    ),
-                    background: Image.asset(
-                      "images/ingredientsRound.jpg",
-                      fit: BoxFit.cover,
+                      background: Image.asset(
+                        "images/ingredientsRound.jpg",
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
-              ];
-            },
-            body: Container(
-              child: Center(child: CircularProgressIndicator()),
+                ];
+              },
+              body: Container(
+                child: Center(child: CircularProgressIndicator()),
+              ),
             ),
-          ),
-        );
-      } else if (state is LoadedCurrentDishesState) {
-        return Container(
-          color: Color(0xff3F3B35),
-          child: DefaultTabController(
+          );
+        } else if (state is LoadedCurrentDishesState) {
+          return DefaultTabController(
             length: (state as LoadedCurrentDishesState)
                 .currentDishesList
                 .keys
@@ -172,10 +174,12 @@ class CurrentDishesState extends State<CurrentDishes> {
                     .toList(),
               ),
             ),
-          ),
-        );
-      }
-    });
+          );
+        } else {
+          return Text(state.toString());
+        }
+      }),
+    );
   }
 }
 

@@ -47,6 +47,7 @@ class HiveProvider {
     for (String key in hiveData.keys) {
       output.addAll({DateTime.parse(key): hiveData[key]});
     }
+    return output;
   }
 
   Canteen getCurrentCanteen() {

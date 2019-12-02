@@ -4,15 +4,16 @@ import 'package:open_mensa_flutter/bloc/master/master_bloc.dart';
 import 'package:open_mensa_flutter/bloc/master/master_state.dart';
 import 'package:open_mensa_flutter/data/hive.dart';
 import 'package:open_mensa_flutter/fetch_data.dart';
+import 'package:open_mensa_flutter/generated/i18n.dart';
 import 'package:open_mensa_flutter/models/canteen.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
 import './current_dishes.dart';
 
-class CurrentdishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
+class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
   final MasterBloc masterBloc;
   StreamSubscription masterListener;
 
-  CurrentdishesBloc(this.masterBloc) {
+  CurrentDishesBloc(this.masterBloc) {
     masterListener = masterBloc.listen((masterState) {
       if (state is LoadedCurrentDishesState) {
         if (masterState is MDeleteCanteenState) {
@@ -46,10 +47,12 @@ class CurrentdishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
       InitializeDataEvent event) async* {
     final List<Canteen> canteens = HiveProvider().getSelectedCanteens();
     final Canteen selectedCanteen = HiveProvider().getCurrentCanteen();
-    Map<DateTime, List<Dish>> currentDishes = {};
+    Map<int, List<Dish>> currentDishes = {};
 
     if (selectedCanteen != null) {
-      currentDishes = await getDishesOfCanteen(selectedCanteen);
+      Map<DateTime, List<Dish>> dishes =
+          await getDishesOfCanteen(selectedCanteen);
+      currentDishes = _getWeekDayMap(dishes);
     }
 
     yield LoadedCurrentDishesState(currentDishes, canteens, selectedCanteen);
@@ -80,7 +83,7 @@ class CurrentdishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
       final List<Canteen> newCanteenList = (state as LoadedCurrentDishesState)
           .availableCanteenList
         ..remove(event.canteen);
-      Map<DateTime, List<Dish>> currentDishes = {};
+      Map<int, List<Dish>> currentDishes = {};
 
       Canteen selectedCanteen;
       // if the selected canteen is equal to the deleted canteen ..
@@ -90,7 +93,9 @@ class CurrentdishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
           /// and set the first canteen of the other canteens to the selected canteens
           HiveProvider().setCurrentSelectedCanteen(newCanteenList.first);
           selectedCanteen = newCanteenList.first;
-          currentDishes = await getDishesOfCanteen(selectedCanteen);
+          Map<DateTime, List<Dish>> dishes =
+              await getDishesOfCanteen(selectedCanteen);
+          currentDishes = _getWeekDayMap(dishes);
         } else {
           // if we have no canteens anymore, set the selected canteen to null
           HiveProvider().setCurrentSelectedCanteen(null);
@@ -121,8 +126,9 @@ class CurrentdishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
 
       await HiveProvider().setCurrentSelectedCanteen(event.canteen);
 
-      Map<DateTime, List<Dish>> currentDishes =
+      Map<DateTime, List<Dish>> dishes =
           await getDishesOfCanteen(event.canteen);
+      Map<int, List<Dish>> currentDishes = _getWeekDayMap(dishes);
 
       yield LoadedCurrentDishesState(
         currentDishes,
@@ -154,6 +160,16 @@ class CurrentdishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
 
       return currentDishes;
     }
+  }
+
+  Map<int, List<Dish>> _getWeekDayMap(Map<DateTime, List<Dish>> currentDishes) {
+    Map<int, List<Dish>> weekDayMap = {};
+
+    for (DateTime key in currentDishes.keys) {
+      weekDayMap.addAll({key.weekday: currentDishes[key]});
+    }
+
+    return weekDayMap;
   }
 
   @override

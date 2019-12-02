@@ -38,7 +38,7 @@ class LoadingCurrentDishesForCanteenState extends CurrentDishesState {
 }
 
 class LoadedCurrentDishesState extends CurrentDishesState {
-  final Map<DateTime, List<Dish>> currentDishesList;
+  final Map<int, List<Dish>> currentDishesList;
   final List<Canteen> availableCanteenList;
   final Canteen selectedCanteen;
 

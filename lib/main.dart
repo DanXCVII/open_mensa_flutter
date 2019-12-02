@@ -2,7 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:open_mensa_flutter/bloc/canteen_overview/canteen_overview.dart';
+import 'package:open_mensa_flutter/bloc/current_dishes/current_dishes.dart';
+import 'package:open_mensa_flutter/bloc/favorite_dishes/favorite_dishes_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './add_canteen.dart';
@@ -10,6 +14,7 @@ import './canteen_list_select.dart';
 import './current_dishes.dart';
 import './favourite_dishes.dart';
 import './generated/i18n.dart';
+import 'bloc/master/master_bloc.dart';
 
 void main() {
   // String languageCode = ui.window.locale.languageCode;
@@ -45,7 +50,20 @@ class App extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => MyHomePage(),
+        '/': (context) => BlocProvider(
+              create: (context) => MasterBloc(),
+              child: MultiBlocProvider(providers: [
+                BlocProvider(
+                    create: (context) => CurrentDishesBloc(
+                        BlocProvider.of<MasterBloc>(context))),
+                BlocProvider(
+                    create: (context) => FavoriteDishesBloc(
+                        BlocProvider.of<MasterBloc>(context))),
+                BlocProvider(
+                    create: (context) => CanteenOverviewBloc(
+                        BlocProvider.of<MasterBloc>(context))),
+              ], child: MyHomePage()),
+            ),
         '/canteen_list': (context) => CheckableCanteenList(),
       },
     );
@@ -69,49 +87,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedDrawerIndex = 0;
 
-  /// Initializing the drawer with:
-  /// -currentDishes
-  /// -favorites
-  /// -canteenSelctor
-  /// 
-  
-  Drawer _buildDrawer(context) {
-    List<DrawerItem> drawerItems = [
-      DrawerItem(S.of(context).current_dishes, Icons.restaurant),
-      DrawerItem(S.of(context).favorite_dishes, Icons.favorite),
-      DrawerItem(S.of(context).selected_canteens, Icons.edit_location)
-    ];
-
-    // creating the list of items shown by the drawer
-    var drawerOptions = <Widget>[];
-    for (var i = 0; i < drawerItems.length; i++) {
-      var d = drawerItems[i];
-      drawerOptions.add(ListTile(
-        leading: Icon(d.icon),
-        title: Text(d.title),
-        selected: i == _selectedDrawerIndex,
-        onTap: () => _onSelectItem(i),
-      ));
-    }
-    // creating and returning the drawer with the userAccountHeader
-    return Drawer(
-      child: Column(
-        children: <Widget>[
-          UserAccountsDrawerHeader(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('images/ingredients.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              accountName: Text(S.of(context).hello),
-              accountEmail: null),
-          Column(children: drawerOptions)
-        ],
-      ),
-    );
-  }
-
   // When drawer item gets selected
   _onSelectItem(int index) {
     setState(() => _selectedDrawerIndex = index);
@@ -120,17 +95,51 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    /// building the drawer again over here and not using the buidlDrawer() method
-    /// because it's good practise to put much in the build method
-
     return Scaffold(
       backgroundColor: Colors.grey[350],
-      drawer: _buildDrawer(context),
-      body: IndexedStack(index: _selectedDrawerIndex, children: <Widget>[
-        CurrentDishes(),
-        FavouriteDishes(),
-        AddCanteen(),
-      ],),
+      drawer: Drawer(
+        child: Column(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('images/ingredients.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                accountName: Text(S.of(context).hello),
+                accountEmail: null),
+            Column(children: [
+              ListTile(
+                leading: Icon(Icons.restaurant),
+                title: Text(S.of(context).current_dishes),
+                selected: 0 == _selectedDrawerIndex,
+                onTap: () => _onSelectItem(0),
+              ),
+              ListTile(
+                leading: Icon(Icons.favorite),
+                title: Text(S.of(context).favorite_dishes),
+                selected: 1 == _selectedDrawerIndex,
+                onTap: () => _onSelectItem(1),
+              ),
+              ListTile(
+                leading: Icon(Icons.edit_location),
+                title: Text(S.of(context).select_canteens),
+                selected: 2 == _selectedDrawerIndex,
+                onTap: () => _onSelectItem(2),
+              ),
+            ])
+          ],
+        ),
+      ),
+      body: IndexedStack(
+        index: _selectedDrawerIndex,
+        children: <Widget>[
+          CurrentDishes(),
+          FavouriteDishes(),
+          AddCanteen(),
+        ],
+      ),
       floatingActionButton: _selectedDrawerIndex == 2
           ? FloatingActionButton(
               backgroundColor: Colors.orange[700],
@@ -167,14 +176,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => WillPopScope(
-                            child: CheckableCanteenList(),
-                            onWillPop: () async {
-                              Navigator.pop(context);
-                              Navigator.of(context).popAndPushNamed('/');
-                              return false;
-                            },
-                          )),
+                    builder: (context) => WillPopScope(
+                      child: CheckableCanteenList(),
+                      onWillPop: () async {
+                        Navigator.pop(context);
+                        Navigator.of(context).popAndPushNamed('/');
+                        return false;
+                      },
+                    ),
+                  ),
                 );
               },
             )

@@ -13,7 +13,7 @@ class InitialCanteenOverviewState extends CanteenOverviewState {}
 class LoadingCanteenOverviewState extends CanteenOverviewState {}
 
 class LoadedCanteenOverviewState extends CanteenOverviewState {
-  List<Canteen> selectedCanteens;
+  final List<Canteen> selectedCanteens;
 
   LoadedCanteenOverviewState([this.selectedCanteens]);
 

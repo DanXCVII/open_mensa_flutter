@@ -157,7 +157,7 @@ class CurrentdishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
   }
 
   @override
-  void close() {
+  Future<void> close() async {
     masterListener.cancel();
     super.close();
   }

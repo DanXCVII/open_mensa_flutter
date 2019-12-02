@@ -30,10 +30,10 @@ dependencies:
   shared_preferences: ^0.5.1+1
 
   flutter_launcher_icons: ^0.7.0
-  equatable: ^0.6.1
+  equatable: ^1.0.0
   rxdart: ^0.22.4
   path_provider: ^1.2.0
-  flutter_bloc: ^1.0.0
+  flutter_bloc: ^2.0.0
   hive_flutter: ^0.2.1
   build_runner: ^1.7.1
   hive_generator: ^0.5.2

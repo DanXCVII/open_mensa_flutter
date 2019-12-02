@@ -6,10 +6,10 @@ abstract class MasterEvent extends Equatable {
   const MasterEvent();
 }
 
-class AddCanteenEvent extends MasterEvent {
+class MAddCanteenEvent extends MasterEvent {
   final Canteen canteen;
 
-  const AddCanteenEvent(this.canteen);
+  const MAddCanteenEvent(this.canteen);
 
   @override
   List<Object> get props => [canteen];
@@ -18,10 +18,10 @@ class AddCanteenEvent extends MasterEvent {
   String toString() => "add $canteen event";
 }
 
-class DeleteCanteenEvent extends MasterEvent {
+class MDeleteCanteenEvent extends MasterEvent {
   final Canteen canteen;
 
-  const DeleteCanteenEvent(this.canteen);
+  const MDeleteCanteenEvent(this.canteen);
 
   @override
   List<Object> get props => [canteen];
@@ -30,10 +30,10 @@ class DeleteCanteenEvent extends MasterEvent {
   String toString() => "delete $canteen event";
 }
 
-class AddFavoriteDishEvent extends MasterEvent {
+class MAddFavoriteDishEvent extends MasterEvent {
   final Dish dish;
 
-  const AddFavoriteDishEvent(this.dish);
+  const MAddFavoriteDishEvent(this.dish);
 
   @override
   List<Object> get props => [dish];
@@ -42,10 +42,10 @@ class AddFavoriteDishEvent extends MasterEvent {
   String toString() => "add $dish from favourites event";
 }
 
-class DeleteFavoriteDishEvent extends MasterEvent {
+class MDeleteFavoriteDishEvent extends MasterEvent {
   final Dish dish;
 
-  const DeleteFavoriteDishEvent(this.dish);
+  const MDeleteFavoriteDishEvent(this.dish);
 
   @override
   List<Object> get props => [dish];

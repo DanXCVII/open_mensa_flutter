@@ -11,10 +11,10 @@ class InitialMasterState extends MasterState {
   List<Object> get props => [];
 }
 
-class AddCanteenState extends MasterState {
+class MAddCanteenState extends MasterState {
   final Canteen canteen;
 
-  const AddCanteenState(this.canteen);
+  const MAddCanteenState(this.canteen);
 
   @override
   List<Object> get props => [canteen];
@@ -23,10 +23,10 @@ class AddCanteenState extends MasterState {
   String toString() => "add $canteen";
 }
 
-class DeleteCanteenState extends MasterState {
+class MDeleteCanteenState extends MasterState {
   final Canteen canteen;
 
-  const DeleteCanteenState(this.canteen);
+  const MDeleteCanteenState(this.canteen);
 
   @override
   List<Object> get props => [canteen];
@@ -35,10 +35,10 @@ class DeleteCanteenState extends MasterState {
   String toString() => "delete state $canteen state";
 }
 
-class AddFavoriteDishState extends MasterState {
+class MAddFavoriteDishState extends MasterState {
   final Dish dish;
 
-  AddFavoriteDishState(this.dish);
+  MAddFavoriteDishState(this.dish);
 
   @override
   List<Object> get props => [dish];
@@ -47,10 +47,10 @@ class AddFavoriteDishState extends MasterState {
   String toString() => "add $dish from favourites state";
 }
 
-class DeleteFavoriteDishState extends MasterState {
+class MDeleteFavoriteDishState extends MasterState {
   final Dish dish;
 
-  const DeleteFavoriteDishState(this.dish);
+  const MDeleteFavoriteDishState(this.dish);
 
   @override
   List<Object> get props => [dish];

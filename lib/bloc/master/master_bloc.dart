@@ -11,41 +11,43 @@ class MasterBloc extends Bloc<MasterEvent, MasterState> {
   Stream<MasterState> mapEventToState(
     MasterEvent event,
   ) async* {
-    if (event is AddCanteenEvent) {
+    if (event is MAddCanteenEvent) {
       yield* _mapAddCanteenEventToState(event);
-    } else if (event is DeleteCanteenEvent) {
+    } else if (event is MDeleteCanteenEvent) {
       yield* _mapDeleteCanteenEventToState(event);
-    } else if (event is AddFavoriteDishEvent) {
+    } else if (event is MAddFavoriteDishEvent) {
       yield* _mapAddFavouriteDishEventToState(event);
-    } else if (event is DeleteFavoriteDishEvent) {
+    } else if (event is MDeleteFavoriteDishEvent) {
       yield* _mapDeleteFavouriteDishEventToState(event);
     }
   }
 
-  Stream<MasterState> _mapAddCanteenEventToState(AddCanteenEvent event) async* {
+  Stream<MasterState> _mapAddCanteenEventToState(
+      MAddCanteenEvent event) async* {
     await HiveProvider().addSelectedCanteen(event.canteen);
 
-    yield AddCanteenState(event.canteen);
+    yield MAddCanteenState(event.canteen);
   }
 
   Stream<MasterState> _mapDeleteCanteenEventToState(
-      DeleteCanteenEvent event) async* {
+      MDeleteCanteenEvent event) async* {
     await HiveProvider().deleteCachedDataFromCanteen(event.canteen);
+    await HiveProvider().removeSelectedCanteen(event.canteen);
 
-    yield DeleteCanteenState(event.canteen);
+    yield MDeleteCanteenState(event.canteen);
   }
 
   Stream<MasterState> _mapAddFavouriteDishEventToState(
-      AddFavoriteDishEvent event) async* {
+      MAddFavoriteDishEvent event) async* {
     HiveProvider().addFavoriteDish(event.dish);
 
-    yield AddFavoriteDishState(event.dish);
+    yield MAddFavoriteDishState(event.dish);
   }
 
   Stream<MasterState> _mapDeleteFavouriteDishEventToState(
-      DeleteFavoriteDishEvent event) async* {
+      MDeleteFavoriteDishEvent event) async* {
     HiveProvider().deleteFavoriteDish(event.dish);
 
-    yield DeleteFavoriteDishState(event.dish);
+    yield MDeleteFavoriteDishState(event.dish);
   }
 }

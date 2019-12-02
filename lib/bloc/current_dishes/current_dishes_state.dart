@@ -18,6 +18,25 @@ class NoDataToLoadState extends CurrentDishesState {
   String toString() => 'no canteen selected';
 }
 
+class LoadingCurrentDishesForCanteenState extends CurrentDishesState {
+  final List<Canteen> availableCanteenList;
+  final Canteen selectedCanteen;
+
+  const LoadingCurrentDishesForCanteenState(
+    this.availableCanteenList,
+    this.selectedCanteen,
+  );
+
+  @override
+  List<Object> get props => [
+        availableCanteenList,
+        selectedCanteen,
+      ];
+
+  @override
+  String toString() => 'Loading currentDishes for canteen: $selectedCanteen';
+}
+
 class LoadedCurrentDishesState extends CurrentDishesState {
   final Map<DateTime, List<Dish>> currentDishesList;
   final List<Canteen> availableCanteenList;

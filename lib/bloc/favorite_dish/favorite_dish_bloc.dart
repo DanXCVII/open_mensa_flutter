@@ -10,9 +10,9 @@ class FavoritedishBloc extends Bloc<FavoriteDishEvent, FavoritedishState> {
 
   FavoritedishBloc(this.masterBloc) {
     masterListener = masterBloc.listen((state) {
-      if (state is AddFavoriteDishState) {
+      if (state is MAddFavoriteDishState) {
         add(AddFavoriteDishEvent());
-      } else if (state is DeleteFavoriteDishState) {
+      } else if (state is MDeleteFavoriteDishState) {
         add(DeleteFavoriteDishEvent());
       }
     });

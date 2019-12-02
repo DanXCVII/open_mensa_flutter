@@ -15,9 +15,9 @@ class CurrentdishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
   CurrentdishesBloc(this.masterBloc) {
     masterListener = masterBloc.listen((masterState) {
       if (state is LoadedCurrentDishesState) {
-        if (masterState is DeleteCanteenState) {
+        if (masterState is MDeleteCanteenState) {
           add(DeleteCanteenEvent(masterState.canteen));
-        } else if (masterState is AddCanteenState) {
+        } else if (masterState is MAddCanteenState) {
           add(AddCanteenEvent(masterState.canteen));
         }
       }
@@ -83,41 +83,58 @@ class CurrentdishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
       Map<DateTime, List<Dish>> currentDishes = {};
 
       Canteen selectedCanteen;
+      // if the selected canteen is equal to the deleted canteen ..
       if (previousSelectedCanteen == event.canteen) {
+        // .. check if the canteenlist without the deleted canteen is not empty
         if (newCanteenList.isNotEmpty) {
+          /// and set the first canteen of the other canteens to the selected canteens
           HiveProvider().setCurrentSelectedCanteen(newCanteenList.first);
           selectedCanteen = newCanteenList.first;
           currentDishes = await getDishesOfCanteen(selectedCanteen);
+        } else {
+          // if we have no canteens anymore, set the selected canteen to null
+          HiveProvider().setCurrentSelectedCanteen(null);
+          yield NoDataToLoadState();
+          return;
         }
       } else {
-        await HiveProvider().setCurrentSelectedCanteen(previousSelectedCanteen);
+        // if the deleted canteen is not equal to the selected canteen
         selectedCanteen = previousSelectedCanteen;
         currentDishes = (state as LoadedCurrentDishesState).currentDishesList;
       }
 
-      if (state is LoadedCurrentDishesState) {
-        yield LoadedCurrentDishesState(
-          currentDishes,
-          newCanteenList,
-          selectedCanteen,
-        );
-      }
+      yield LoadedCurrentDishesState(
+        currentDishes,
+        newCanteenList,
+        selectedCanteen,
+      );
     }
   }
 
   Stream<CurrentDishesState> _mapChangeSelectedCanteenEventToState(
       ChangeSelectedCanteenEvent event) async* {
     if (state is LoadedCurrentDishesState) {
+      yield LoadingCurrentDishesForCanteenState(
+        (state as LoadedCurrentDishesState).availableCanteenList,
+        event.canteen,
+      );
+
       await HiveProvider().setCurrentSelectedCanteen(event.canteen);
 
+      Map<DateTime, List<Dish>> currentDishes =
+          await getDishesOfCanteen(event.canteen);
+
       yield LoadedCurrentDishesState(
-        (state as LoadedCurrentDishesState).currentDishesList,
+        currentDishes,
         (state as LoadedCurrentDishesState).availableCanteenList,
         event.canteen,
       );
     }
   }
 
+  /// gets the dishes out of the hive database or network depending on whether current
+  /// data is cached or not. If it is not cached, it caches the fetched data in hive.
+  /// if cached data of the canteen in hive is outdated, it deletes it
   Future<Map<DateTime, List<Dish>>> getDishesOfCanteen(Canteen canteen) async {
     DateTime latestDate = HiveProvider().getDateOfLatestDish(canteen);
     if (latestDate != null) {
@@ -127,10 +144,15 @@ class CurrentdishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
         return HiveProvider().getCachedDataOfCanteen(canteen);
       } else {
         HiveProvider().deleteCachedDataFromCanteen(canteen);
-        return await fetchMeals(canteen.id);
+        Map<DateTime, List<Dish>> currentDishes = await fetchMeals(canteen.id);
+        await HiveProvider().cacheDataOfCanteen(canteen, currentDishes);
+        return currentDishes;
       }
     } else {
-      return await fetchMeals(canteen.id);
+      Map<DateTime, List<Dish>> currentDishes = await fetchMeals(canteen.id);
+      await HiveProvider().cacheDataOfCanteen(canteen, currentDishes);
+
+      return currentDishes;
     }
   }
 

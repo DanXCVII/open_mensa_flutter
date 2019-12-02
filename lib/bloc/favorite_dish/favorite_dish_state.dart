@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
-abstract class FavoritedishState extends Equatable {
-  const FavoritedishState();
+abstract class FavoriteDishState extends Equatable {
+  const FavoriteDishState();
 
   @override
   List<Object> get props => [];
 }
 
-class InitialFavoritedishState extends FavoritedishState {}
+class InitialFavoriteDishState extends FavoriteDishState {}
 
-class IsFavoriteDishState extends FavoritedishState {}
+class IsFavoriteDishState extends FavoriteDishState {}
 
-class IsNotFavoriteDishState extends FavoritedishState {}
+class IsNotFavoriteDishState extends FavoriteDishState {}

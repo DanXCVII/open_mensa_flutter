@@ -10,11 +10,11 @@ class LoadCanteenOverview extends AddCanteenEvent {
   List<Object> get props => [];
 }
 
-class SelectCanteen extends AddCanteenEvent {
+class SelectCanteenEvent extends AddCanteenEvent {
   final Canteen canteen;
   final bool selected;
 
-  const SelectCanteen(
+  const SelectCanteenEvent(
     this.canteen,
     this.selected,
   );

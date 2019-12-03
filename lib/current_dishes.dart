@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_mensa_flutter/bloc/current_dishes/current_dishes_bloc.dart';
 
 import './dish_card.dart';
+import 'bloc/current_dishes/current_dishes_bloc.dart';
 import 'bloc/current_dishes/current_dishes_event.dart';
 import 'bloc/current_dishes/current_dishes_state.dart';
 import 'generated/i18n.dart';
 import 'models/canteen.dart';
 
-class CurrentDishes extends StatefulWidget {
+class CurrentDishesScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return CurrentDishesState();
+    return CurrentDishesScreenState();
   }
 }
 
-class CurrentDishesState extends State<CurrentDishes> {
+class CurrentDishesScreenState extends State<CurrentDishesScreen> {
   Map<int, String> dayMap;
 
   @override

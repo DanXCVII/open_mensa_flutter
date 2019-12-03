@@ -61,25 +61,21 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
                               color: Colors.white,
                               fontSize: 18,
                             ),
-                            value:
-                                (state as LoadingCurrentDishesForCanteenState)
-                                    .selectedCanteen,
+                            value: state.selectedCanteen,
                             onChanged: (Canteen newValue) {
                               BlocProvider.of<CurrentDishesBloc>(context)
                                   .add(ChangeSelectedCanteenEvent(newValue));
                             },
-                            items:
-                                (state as LoadingCurrentDishesForCanteenState)
-                                    .availableCanteenList
-                                    .map(
-                                      (canteen) => DropdownMenuItem<Canteen>(
-                                        value: canteen,
-                                        child: Text(
-                                          canteen.name,
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
+                            items: state.availableCanteenList
+                                .map(
+                                  (canteen) => DropdownMenuItem<Canteen>(
+                                    value: canteen,
+                                    child: Text(
+                                      canteen.name,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                           ),
                         ),
                       ),
@@ -98,10 +94,7 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
           );
         } else if (state is LoadedCurrentDishesState) {
           return DefaultTabController(
-            length: (state as LoadedCurrentDishesState)
-                .currentDishesList
-                .keys
-                .length,
+            length: state.currentDishesList.keys.length,
             child: NestedScrollView(
               headerSliverBuilder:
                   (BuildContext context, bool innerBoxIsScrolled) {
@@ -120,14 +113,12 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
                               color: Colors.white,
                               fontSize: 18,
                             ),
-                            value: (state as LoadedCurrentDishesState)
-                                .selectedCanteen,
+                            value: state.selectedCanteen,
                             onChanged: (Canteen newValue) {
                               BlocProvider.of<CurrentDishesBloc>(context)
                                   .add(ChangeSelectedCanteenEvent(newValue));
                             },
-                            items: (state as LoadedCurrentDishesState)
-                                .availableCanteenList
+                            items: state.availableCanteenList
                                 .map(
                                   (canteen) => DropdownMenuItem<Canteen>(
                                     value: canteen,
@@ -150,9 +141,7 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
                     delegate: _SliverAppBarDelegate(
                       TabBar(
                         isScrollable: true,
-                        tabs: (state as LoadedCurrentDishesState)
-                            .currentDishesList
-                            .keys
+                        tabs: state.currentDishesList.keys
                             .toList()
                             .map((day) => Tab(text: dayMap[day]))
                             .toList(),
@@ -163,12 +152,9 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
                 ];
               },
               body: TabBarView(
-                children: (state as LoadedCurrentDishesState)
-                    .currentDishesList
-                    .keys
+                children: state.currentDishesList.keys
                     .map((key) => ListView(
-                        children: (state as LoadedCurrentDishesState)
-                            .currentDishesList[key]
+                        children: state.currentDishesList[key]
                             .map((dish) => Dishcard(dish, context, false))
                             .toList()))
                     .toList(),

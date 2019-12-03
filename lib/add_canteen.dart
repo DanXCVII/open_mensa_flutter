@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_mensa_flutter/bloc/canteen_overview/canteen_overview.dart';
-import 'package:open_mensa_flutter/bloc/master/master.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import './fetch_canteens.dart';
-import 'dart:convert';
+
 import './generated/i18n.dart';
+import 'bloc/canteen_overview/canteen_overview.dart';
+import 'bloc/master/master.dart';
 import 'bloc/master/master_bloc.dart';
-import 'models/canteen.dart';
 
 class AddCanteen extends StatefulWidget {
   @override

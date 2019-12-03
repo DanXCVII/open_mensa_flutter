@@ -30,7 +30,7 @@ class FavoriteDishesBloc
   Stream<FavoriteDishesState> mapEventToState(
     FavoriteDishesEvent event,
   ) async* {
-    if (event is LoadFavoriteDishes) {
+    if (event is LoadingFavoriteDishes) {
       yield* _mapLoadFavoriteDishesToState(event);
     } else if (event is FAddFavoriteDishEvent) {
       yield* _mapFAddFavoriteDishEventToState(event);

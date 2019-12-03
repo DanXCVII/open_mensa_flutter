@@ -10,7 +10,7 @@ abstract class FavoriteDishesState extends Equatable {
 
 class InitialFavoriteDishesState extends FavoriteDishesState {}
 
-class LoadFavoriteDishes extends FavoriteDishesState {}
+class LoadingFavoriteDishes extends FavoriteDishesState {}
 
 class LoadedFavoriteDishes extends FavoriteDishesState {
   final List<Dish> favoriteDishes;

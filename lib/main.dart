@@ -135,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: IndexedStack(
         index: _selectedDrawerIndex,
         children: <Widget>[
-          CurrentDishes(),
+          CurrentDishesScreen(),
           FavouriteDishes(),
           AddCanteen(),
         ],

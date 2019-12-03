@@ -3,7 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:open_mensa_flutter/bloc/master/master.dart';
 import 'package:open_mensa_flutter/data/hive.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
-import './favourite_dishes.dart';
+import './favorite_dishes.dart';
 
 class FavoriteDishesBloc
     extends Bloc<FavoriteDishesEvent, FavoriteDishesState> {
@@ -30,7 +30,7 @@ class FavoriteDishesBloc
   Stream<FavoriteDishesState> mapEventToState(
     FavoriteDishesEvent event,
   ) async* {
-    if (event is LoadingFavoriteDishes) {
+    if (event is FLoadFavoriteDishesEvent) {
       yield* _mapLoadFavoriteDishesToState(event);
     } else if (event is FAddFavoriteDishEvent) {
       yield* _mapFAddFavoriteDishEventToState(event);

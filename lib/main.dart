@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:open_mensa_flutter/bloc/canteen_overview/canteen_overview.dart';
 import 'package:open_mensa_flutter/bloc/current_dishes/current_dishes.dart';
-import 'package:open_mensa_flutter/bloc/favorite_dishes/favorite_dishes_bloc.dart';
+import 'package:open_mensa_flutter/bloc/favorite_dishes/favorite_dishes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './add_canteen.dart';
@@ -55,13 +55,13 @@ class App extends StatelessWidget {
               child: MultiBlocProvider(providers: [
                 BlocProvider(
                     create: (context) => CurrentDishesBloc(
-                        BlocProvider.of<MasterBloc>(context))),
+                        BlocProvider.of<MasterBloc>(context))..add(InitializeDataEvent())),
                 BlocProvider(
                     create: (context) => FavoriteDishesBloc(
-                        BlocProvider.of<MasterBloc>(context))),
+                        BlocProvider.of<MasterBloc>(context))..add(FLoadFavoriteDishesEvent())),
                 BlocProvider(
                     create: (context) => CanteenOverviewBloc(
-                        BlocProvider.of<MasterBloc>(context))),
+                        BlocProvider.of<MasterBloc>(context))..add(LoadCanteenOverviewEvent())),
               ], child: MyHomePage()),
             ),
         '/canteen_list': (context) => CheckableCanteenList(),

@@ -5,6 +5,16 @@ abstract class FavoriteDishesEvent extends Equatable {
   const FavoriteDishesEvent();
 }
 
+
+class FLoadFavoriteDishesEvent extends FavoriteDishesEvent {
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+
+  @override
+  String toString() => "loading favorite dishes";
+}
+
 class FAddFavoriteDishEvent extends FavoriteDishesEvent {
   final Dish dish;
 

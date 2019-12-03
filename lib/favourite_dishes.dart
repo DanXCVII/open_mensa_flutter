@@ -36,7 +36,7 @@ class FavouriteDishesState extends State<FavouriteDishes> {
           ),
           BlocBuilder<FavoriteDishesBloc, FavoriteDishesState>(
             builder: (context, state) {
-              if (state is LoadingFavoriteDishes) {
+              if (state is LoadingFavoriteDishesState) {
                 return SliverList(
                   delegate: SliverChildListDelegate(
                     [

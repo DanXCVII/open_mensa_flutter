@@ -46,9 +46,9 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                 );
               } else if (state is LoadedFavoriteDishes) {
                 return SliverList(
-                  delegate: SliverChildListDelegate([
-                    state.favoriteDishes.isEmpty
-                        ? Container(
+                  delegate: SliverChildListDelegate(state.favoriteDishes.isEmpty
+                      ? [
+                          Container(
                             height: MediaQuery.of(context).size.height / 2,
                             child: Center(
                               child: Icon(
@@ -57,9 +57,10 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                               ),
                             ),
                           )
-                        : state.favoriteDishes
-                            .map((dish) => Dishcard(dish, context, true))
-                  ]),
+                        ]
+                      : state.favoriteDishes
+                          .map((dish) => Dishcard(dish, context, true))
+                          .toList()),
                 );
               } else {
                 return Text(state.toString());

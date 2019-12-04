@@ -80,32 +80,27 @@ class ListWidgetState extends State<ListWidget> {
       return Container(child: displayNoCanteenFoundMessage(context));
     }
     return Container(
-      child: createCheckedListView(widget.items
-          .map((canteen) => CheckboxListTile(
-                title: Text(canteen.name),
-                value: widget.selectedCanteens.contains(canteen),
-                onChanged: (bool value) {
-                  BlocProvider.of<AddCanteenBloc>(context)
-                      .add(SelectCanteenEvent(canteen, value));
-                },
-              ))
-          .toList()),
-    );
-  }
-
-  ListView createCheckedListView(List<CheckboxListTile> checkableCanteenList) {
-    return ListView.builder(
+      child: ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (BuildContext _context, int i) {
-          if (i.isOdd && i < checkableCanteenList.length * 2) {
+          if (i.isOdd && i < widget.items.length * 2) {
             return const Divider();
           }
           final int index = i ~/ 2;
-          if (index < checkableCanteenList.length) {
-            return checkableCanteenList[index];
+          if (index < widget.items.length) {
+            return CheckboxListTile(
+              title: Text(widget.items[index].name),
+              value: widget.selectedCanteens.contains(widget.items[index]),
+              onChanged: (bool value) {
+                BlocProvider.of<AddCanteenBloc>(context)
+                    .add(SelectCanteenEvent(widget.items[index], value));
+              },
+            );
           }
           return null;
-        });
+        },
+      ),
+    );
   }
 }
 

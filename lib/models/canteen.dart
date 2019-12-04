@@ -1,11 +1,11 @@
 import 'package:hive/hive.dart';
-
+import 'package:equatable/equatable.dart';
 part './adapters/canteen.g.dart';
 
 /// Canteens are identified by name (human readable) and id (for api calls)
 /// here, coordinates aren't saved
 @HiveType()
-class Canteen {
+class Canteen extends Equatable{
   @HiveField(0)
   final String id;
 
@@ -42,4 +42,7 @@ class Canteen {
 
   @override
   String toString() => 'canteen: $name, id: $id';
+
+  @override
+  List<Object> get props => [this.id, this.name, this.city, this.address];
 }

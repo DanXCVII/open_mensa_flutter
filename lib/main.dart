@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:open_mensa_flutter/bloc/add_canteen/add_canteen.dart';
 import 'package:open_mensa_flutter/bloc/canteen_overview/canteen_overview.dart';
 import 'package:open_mensa_flutter/bloc/current_dishes/current_dishes.dart';
 import 'package:open_mensa_flutter/bloc/favorite_dishes/favorite_dishes.dart';

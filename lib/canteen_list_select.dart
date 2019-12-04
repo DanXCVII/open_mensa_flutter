@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import './fetch_canteens.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:async';
-import 'dart:convert';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import './generated/i18n.dart';
-import 'current_dishes.dart';
+import 'bloc/add_canteen/add_canteen.dart';
 import 'models/canteen.dart';
 
 // creates a checkable list of all canteens
@@ -19,24 +17,19 @@ class CheckableCanteenList extends StatefulWidget {
 }
 
 class CheckableCanteenListState extends State<CheckableCanteenList> {
-  bool booo = false;
-  // TODO once loaded, save canteens to this variable to not so often access the canteen api
-  List<Canteen> listOfCanteens = [];
-
-  TextEditingController controller = new TextEditingController();
-
   //CheckableCanteenListState();
 
   @override
   build(BuildContext context) {
     // check if canteen list is empty, if it is serve a FutureBuilder while it loads
-    if (listOfCanteens.isEmpty) {
-      return FutureBuilder<List<Canteen>>(
-        future: fetchAllCanteens(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            listOfCanteens = snapshot.data;
-          }
+    return Container(
+      child: BlocBuilder<AddCanteenBloc, AddCanteenState>(
+          builder: (context, state) {
+        if (state is LoadingCanteenOverview) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (state is LoadedCanteenOverview) {
           return Scaffold(
             appBar: AppBar(
               title: Text(S.of(context).select_canteens),
@@ -44,48 +37,32 @@ class CheckableCanteenListState extends State<CheckableCanteenList> {
                 IconButton(
                   icon: Icon(Icons.search),
                   tooltip: S.of(context).search,
-                  onPressed: !snapshot.hasData
-                      ? null
-                      : () {
-                          showSearch(
-                              context: context,
-                              delegate: CanteenSearch(items: snapshot.data));
-                        },
+                  onPressed: () {
+                    showSearch(
+                      context: context,
+                      delegate: CanteenSearch(
+                          items: state.canteens,
+                          selected: state.selectedCanteens),
+                    );
+                  },
                 )
               ],
             ),
-            body: snapshot.hasData
-                ? ListWidget(items: snapshot.data)
-                : Center(child: CircularProgressIndicator()),
+            body: ListWidget(
+              items: state.canteens,
+              selectedCanteens: state.selectedCanteens,
+            ),
           );
-        },
-      );
-    }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).select_canteens),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            tooltip: S.of(context).search,
-            onPressed: () {
-              showSearch(
-                  context: context,
-                  delegate: CanteenSearch(items: listOfCanteens));
-            },
-          )
-        ],
-      ),
-      body: ListWidget(
-        items: listOfCanteens,
-      ),
+        }
+      }),
     );
   }
 }
 
 class ListWidget extends StatefulWidget {
   final List<Canteen> items;
-  ListWidget({@required this.items});
+  final List<Canteen> selectedCanteens;
+  ListWidget({@required this.items, @required this.selectedCanteens});
 
   @override
   State<StatefulWidget> createState() {
@@ -99,87 +76,36 @@ class ListWidgetState extends State<ListWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.items.isEmpty) {
+      return Container(child: displayNoCanteenFoundMessage(context));
+    }
     return Container(
-      child: FutureBuilder<ListView>(
-          future: createCheckedListView(widget.items),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return snapshot.data;
-            } else if (snapshot.hasError) {
-              if (snapshot.error.toString().contains('RangeError') ||
-                  snapshot.data == null) {
-                return displayNoCanteenFoundMessage(context);
-              }
-              return Center(
-                  child:
-                      Text("canteenListSelect build error: ${snapshot.error}"));
-            }
-            return Center(child: CircularProgressIndicator());
-          }),
+      child: createCheckedListView(widget.items
+          .map((canteen) => CheckboxListTile(
+                title: Text(canteen.name),
+                value: widget.selectedCanteens.contains(canteen),
+                onChanged: (bool value) {
+                  BlocProvider.of<AddCanteenBloc>(context)
+                      .add(SelectCanteenEvent(canteen, value));
+                },
+              ))
+          .toList()),
     );
   }
 
-  Future<ListView> createCheckedListView(List<Canteen> canteenList) async {
-    final prefs = await SharedPreferences.getInstance();
-    List<CheckboxListTile> checkableCanteenList =
-        getCheckableCanteenList(canteenList, prefs);
-
-    if (canteenList.isEmpty) {
-      throw Exception('No canteen found');
-    }
-
+  ListView createCheckedListView(List<CheckboxListTile> checkableCanteenList) {
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (BuildContext _context, int i) {
-          if (i.isOdd && i < canteenList.length * 2) {
+          if (i.isOdd && i < checkableCanteenList.length * 2) {
             return const Divider();
           }
           final int index = i ~/ 2;
-          if (index < canteenList.length) {
+          if (index < checkableCanteenList.length) {
             return checkableCanteenList[index];
           }
           return null;
         });
-  }
-
-  List<CheckboxListTile> getCheckableCanteenList(
-      List<Canteen> canteens, SharedPreferences prefs) {
-    List<CheckboxListTile> mList = new List<CheckboxListTile>();
-    for (int index = 0; index < canteens.length; index++) {
-      String canteen = json.encode(canteens[index].toJson());
-      mList.add(CheckboxListTile(
-          title: Text(canteens[index].name),
-          value: checkPrefForCanteen(
-              prefs.getStringList('selectedCanteens'), canteen),
-          onChanged: (bool value) {
-            setState(() {
-              List<String> selectedCanteens =
-                  prefs.getStringList('selectedCanteens') ?? [];
-              if (value) {
-                selectedCanteens.add(canteen);
-                prefs.setStringList('selectedCanteens', selectedCanteens);
-              } else {
-                selectedCanteens.remove(canteen);
-                prefs.setStringList('selectedCanteens', selectedCanteens);
-              }
-            });
-          }));
-    }
-    return mList;
-  }
-
-  bool checkPrefForCanteen(List<String> canteenList, String canteenName) {
-    bool ret = false;
-    if (canteenList == null) {
-      return false;
-    } else {
-      for (int i = 0; i < canteenList.length; i++) {
-        if (canteenList[i].contains(canteenName)) {
-          ret = true;
-        }
-      }
-    }
-    return ret;
   }
 }
 
@@ -204,9 +130,10 @@ Widget displayNoCanteenFoundMessage(BuildContext context) {
 
 class CanteenSearch extends SearchDelegate<Canteen> {
   List<Canteen> items = [];
+  List<Canteen> selected = [];
   List<Canteen> suggestion = [];
 
-  CanteenSearch({@required this.items});
+  CanteenSearch({@required this.items, @required this.selected});
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -248,6 +175,7 @@ class CanteenSearch extends SearchDelegate<Canteen> {
     }
     return ListWidget(
       items: suggestion,
+      selectedCanteens: selected,
     );
   }
 
@@ -268,6 +196,7 @@ class CanteenSearch extends SearchDelegate<Canteen> {
   Widget buildResults(BuildContext context) {
     return ListWidget(
       items: suggestion,
+      selectedCanteens: selected,
     );
   }
 }

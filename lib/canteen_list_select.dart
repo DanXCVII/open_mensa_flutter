@@ -5,6 +5,12 @@ import './generated/i18n.dart';
 import 'bloc/add_canteen/add_canteen.dart';
 import 'models/canteen.dart';
 
+class CheckableCanteenListBlocArgs {
+  final BuildContext context;
+
+  CheckableCanteenListBlocArgs(this.context);
+}
+
 class CheckableCanteenList extends StatelessWidget {
   //CheckableCanteenListState();
 

@@ -50,22 +50,40 @@ class App extends StatelessWidget {
         accentColor: Colors.red,
       ),
       initialRoute: '/',
-      routes: {
-        '/': (context) => BlocProvider(
-              create: (context) => MasterBloc(),
-              child: MultiBlocProvider(providers: [
-                BlocProvider(
-                    create: (context) => CurrentDishesBloc(
-                        BlocProvider.of<MasterBloc>(context))..add(InitializeDataEvent())),
-                BlocProvider(
-                    create: (context) => FavoriteDishesBloc(
-                        BlocProvider.of<MasterBloc>(context))..add(FLoadFavoriteDishesEvent())),
-                BlocProvider(
-                    create: (context) => CanteenOverviewBloc(
-                        BlocProvider.of<MasterBloc>(context))..add(LoadCanteenOverviewEvent())),
-              ], child: MyHomePage()),
-            ),
-        '/canteen_list': (context) => CheckableCanteenList(),
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case "/":
+            return MaterialPageRoute(
+              builder: (context) => BlocProvider(
+                create: (context) => MasterBloc(),
+                child: MultiBlocProvider(providers: [
+                  BlocProvider(
+                      create: (context) => CurrentDishesBloc(
+                          BlocProvider.of<MasterBloc>(context))
+                        ..add(InitializeDataEvent())),
+                  BlocProvider(
+                      create: (context) => FavoriteDishesBloc(
+                          BlocProvider.of<MasterBloc>(context))
+                        ..add(FLoadFavoriteDishesEvent())),
+                  BlocProvider(
+                      create: (context) => CanteenOverviewBloc(
+                          BlocProvider.of<MasterBloc>(context))
+                        ..add(LoadCanteenOverviewEvent())),
+                ], child: MyHomePage()),
+              ),
+            );
+
+          case "/canteen_list":
+            final CheckableCanteenListBlocArgs args = settings.arguments;
+
+            return MaterialPageRoute(
+              builder: (context) => BlocProvider<AddCanteenBloc>(
+                create: (context) =>
+                    AddCanteenBloc(BlocProvider.of<MasterBloc>(args.context)),
+                child: CheckableCanteenList(),
+              ),
+            );
+        }
       },
     );
   }
@@ -145,7 +163,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ? FloatingActionButton(
               backgroundColor: Colors.orange[700],
               onPressed: () {
-                Navigator.pushNamed(context, '/canteen_list');
+                Navigator.pushNamed(
+                  context,
+                  '/canteen_list',
+                );
               },
               child: Icon(Icons.add),
             )
@@ -161,12 +182,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   /// checking if a canteen is selected and otherwise showing an alert.
-  checkIfCanteenSelectedAlert(BuildContext context) async {
+  checkIfCanteenSelectedAlert(BuildContext homePageContext) async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getStringList('selectedCanteens') == null ||
         prefs.getStringList('selectedCanteens').isEmpty) {
       showDialog(
-        context: context,
+        context: homePageContext,
         builder: (context) => AlertDialog(
           title: Text(S.of(context).select_canteen),
           content: Text(S.of(context).welcome),
@@ -174,18 +195,10 @@ class _MyHomePageState extends State<MyHomePage> {
             FlatButton(
               child: Text(S.of(context).lets_go),
               onPressed: () {
-                Navigator.pushReplacement(
+                Navigator.pushNamed(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => WillPopScope(
-                      child: CheckableCanteenList(),
-                      onWillPop: () async {
-                        Navigator.pop(context);
-                        Navigator.of(context).popAndPushNamed('/');
-                        return false;
-                      },
-                    ),
-                  ),
+                  "/canteen_list",
+                  arguments: CheckableCanteenListBlocArgs(homePageContext),
                 );
               },
             )

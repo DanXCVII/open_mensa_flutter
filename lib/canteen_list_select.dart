@@ -23,50 +23,54 @@ class CheckableCanteenListState extends State<CheckableCanteenList> {
   build(BuildContext context) {
     // check if canteen list is empty, if it is serve a FutureBuilder while it loads
     return Container(
-      child: BlocBuilder<AddCanteenBloc, AddCanteenState>(
-          builder: (context, state) {
-        if (state is LoadingCanteenOverview) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (state is LoadedCanteenOverview) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(S.of(context).select_canteens),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.search),
-                  tooltip: S.of(context).search,
-                  onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: CanteenSearch(
-                          items: state.canteens,
-                          selected: state.selectedCanteens),
-                    );
-                  },
-                )
-              ],
-            ),
-            body: ListWidget(
-              items: state.canteens,
-              selectedCanteens: state.selectedCanteens,
-            ),
-          );
-        }
-      }),
-    );
+        child: Scaffold(
+      appBar: AppBar(
+        title: Text(S.of(context).select_canteens),
+        actions: <Widget>[
+          BlocBuilder<AddCanteenBloc, AddCanteenState>(
+              condition: (oldState, newState) {
+            if (oldState is LoadedCanteenOverview &&
+                newState is LoadedCanteenOverview) {
+              return false;
+            }
+            return true;
+          }, builder: (context, state) {
+            if (state is LoadingCanteenOverview) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is LoadedCanteenOverview) {
+              return IconButton(
+                icon: Icon(Icons.search),
+                tooltip: S.of(context).search,
+                onPressed: () {
+                  showSearch(
+                    context: context,
+                    delegate: CanteenSearch(
+                      items: state.canteens,
+                    ),
+                  );
+                },
+              );
+            } else {
+              return Text(state.toString());
+            }
+          })
+        ],
+      ),
+      body: ListWidget(),
+    ));
   }
 }
 
 class ListWidget extends StatefulWidget {
   final List<Canteen> items;
-  final List<Canteen> selectedCanteens;
-  ListWidget({@required this.items, @required this.selectedCanteens});
+
+  // if items is null, it builds a list with all the canteens
+  ListWidget({this.items});
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return ListWidgetState();
   }
 }
@@ -79,28 +83,37 @@ class ListWidgetState extends State<ListWidget> {
     if (widget.items.isEmpty) {
       return Container(child: displayNoCanteenFoundMessage(context));
     }
-    return Container(
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (BuildContext _context, int i) {
-          if (i.isOdd && i < widget.items.length * 2) {
-            return const Divider();
-          }
-          final int index = i ~/ 2;
-          if (index < widget.items.length) {
-            return CheckboxListTile(
-              title: Text(widget.items[index].name),
-              value: widget.selectedCanteens.contains(widget.items[index]),
-              onChanged: (bool value) {
-                BlocProvider.of<AddCanteenBloc>(context)
-                    .add(SelectCanteenEvent(widget.items[index], value));
-              },
-            );
-          }
-          return null;
-        },
-      ),
-    );
+    return Container(child:
+        BlocBuilder<AddCanteenBloc, AddCanteenState>(builder: (context, state) {
+      if (state is LoadingCanteenOverview) {
+        return Center(child: CircularProgressIndicator());
+      } else if (state is LoadedCanteenOverview) {
+        List<Canteen> selectedCanteens =
+            widget.items == null ? state.canteens : widget.items;
+        return ListView.builder(
+          padding: const EdgeInsets.all(16.0),
+          itemBuilder: (BuildContext _context, int i) {
+            if (i.isOdd && i < widget.items.length * 2) {
+              return const Divider();
+            }
+            final int index = i ~/ 2;
+            if (index < widget.items.length) {
+              return CheckboxListTile(
+                title: Text(widget.items[index].name),
+                value: selectedCanteens.contains(widget.items[index]),
+                onChanged: (bool value) {
+                  BlocProvider.of<AddCanteenBloc>(context)
+                      .add(SelectCanteenEvent(widget.items[index], value));
+                },
+              );
+            }
+            return null;
+          },
+        );
+      } else {
+        return Text(state.toString());
+      }
+    }));
   }
 }
 
@@ -125,10 +138,9 @@ Widget displayNoCanteenFoundMessage(BuildContext context) {
 
 class CanteenSearch extends SearchDelegate<Canteen> {
   List<Canteen> items = [];
-  List<Canteen> selected = [];
   List<Canteen> suggestion = [];
 
-  CanteenSearch({@required this.items, @required this.selected});
+  CanteenSearch({@required this.items});
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -170,7 +182,6 @@ class CanteenSearch extends SearchDelegate<Canteen> {
     }
     return ListWidget(
       items: suggestion,
-      selectedCanteens: selected,
     );
   }
 
@@ -191,7 +202,6 @@ class CanteenSearch extends SearchDelegate<Canteen> {
   Widget buildResults(BuildContext context) {
     return ListWidget(
       items: suggestion,
-      selectedCanteens: selected,
     );
   }
 }

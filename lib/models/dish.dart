@@ -24,7 +24,9 @@ class Dish {
     this.category,
     this.priceGroup,
     this.notes,
-  });
+  }) {
+    this.theme = getThemeFromName(this.dishName + this.category);
+  }
 
   factory Dish.fromMap(Map<String, dynamic> dishRaw) => new Dish(
         dishName: dishRaw['name'],
@@ -42,10 +44,6 @@ class Dish {
         },
         "notes": notes,
       };
-
-  void initTheme(){
-    this.theme = getThemeFromName(this.dishName+this.category);
-  }
 
   @override
   String toString() => dishName;

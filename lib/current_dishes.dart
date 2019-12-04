@@ -155,7 +155,7 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
                 children: state.currentDishesList.keys
                     .map((key) => ListView(
                         children: state.currentDishesList[key]
-                            .map((dish) => Dishcard(dish, context, false))
+                            .map((dish) => Dishcard(dish, context))
                             .toList()))
                     .toList(),
               ),

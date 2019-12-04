@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_mensa_flutter/bloc/favorite_dishes/favorite_dishes.dart';
 
 import './generated/i18n.dart';
 import './models/dish.dart';
@@ -9,12 +10,10 @@ import 'bloc/master/master_bloc.dart';
 class Dishcard extends StatelessWidget {
   final Dish dish;
   final BuildContext context;
-  final _isFavorite;
 
   Dishcard(
     this.dish,
     this.context,
-    this._isFavorite,
   );
 
   @override
@@ -54,21 +53,31 @@ class Dishcard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    IconButton(
-                        icon: _isFavorite
-                            ? Icon(Icons.favorite, color: Colors.pink)
-                            : Icon(Icons.favorite_border, color: Colors.white),
-                        // TODO: If saved to favourites: Icon is favorite and not only border
-                        onPressed: () {
-                          // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED ?? maybe changed
-                          if (_isFavorite) {
-                            BlocProvider.of<MasterBloc>(context)
-                                .add(MDeleteFavoriteDishEvent(dish));
-                          } else {
-                            BlocProvider.of<MasterBloc>(context)
-                                .add(MAddFavoriteDishEvent(dish));
-                          }
-                        }),
+                    BlocBuilder<FavoriteDishesBloc, FavoriteDishesState>(
+                      builder: (context, state) {
+                        if (state is LoadingFavoriteDishesState) {
+                          return CircularProgressIndicator();
+                        } else if (state is LoadedFavoriteDishes) {
+                          // TODO: Maybe add another bloc for the heart because it needs to check with every rebuild
+                          bool _isFavorite =
+                              state.favoriteDishes.contains(dish);
+                          return IconButton(
+                              icon: _isFavorite
+                                  ? Icon(Icons.favorite, color: Colors.pink)
+                                  : Icon(Icons.favorite_border,
+                                      color: Colors.white),
+                              onPressed: () {
+                                if (_isFavorite) {
+                                  BlocProvider.of<MasterBloc>(context)
+                                      .add(MDeleteFavoriteDishEvent(dish));
+                                } else {
+                                  BlocProvider.of<MasterBloc>(context)
+                                      .add(MAddFavoriteDishEvent(dish));
+                                }
+                              });
+                        }
+                      },
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 12.0, right: 12.0),
                       child: Column(

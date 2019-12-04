@@ -56,7 +56,7 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                           )
                         ]
                       : state.favoriteDishes
-                          .map((dish) => Dishcard(dish, context, true))
+                          .map((dish) => Dishcard(dish, context))
                           .toList()),
                 );
               } else {

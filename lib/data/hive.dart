@@ -45,7 +45,8 @@ class HiveProvider {
     Map<DateTime, List<Dish>> output = {};
 
     for (String key in hiveData.keys) {
-      output.addAll({DateTime.parse(key): hiveData[key]..map((dish) => dish.initTheme())});
+      output.addAll(
+          {DateTime.parse(key): hiveData[key]..map((dish) => dish).toList()});
     }
     return output;
   }
@@ -63,10 +64,11 @@ class HiveProvider {
   }
 
   List<Dish> getFavoriteDishes() {
-    final List<Dish> favoriteDishes =
-        favoriteDishesBox.keys.map((key) => favoriteDishesBox.get(key));
+    final List<Dish> favoriteDishes = favoriteDishesBox.keys
+        .map((key) => favoriteDishesBox.get(key))
+        .toList();
 
-    return favoriteDishes..map((dish) => dish.initTheme());
+    return favoriteDishes;
   }
 
   DateTime getDateOfLatestDish(Canteen canteen) {

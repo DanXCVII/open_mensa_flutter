@@ -4,10 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:open_mensa_flutter/bloc/add_canteen/add_canteen.dart';
-import 'package:open_mensa_flutter/bloc/canteen_overview/canteen_overview.dart';
-import 'package:open_mensa_flutter/bloc/current_dishes/current_dishes.dart';
-import 'package:open_mensa_flutter/bloc/favorite_dishes/favorite_dishes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './add_canteen.dart';
@@ -15,6 +11,10 @@ import './canteen_list_select.dart';
 import './current_dishes.dart';
 import './favourite_dishes.dart';
 import './generated/i18n.dart';
+import 'bloc/add_canteen/add_canteen.dart';
+import 'bloc/canteen_overview/canteen_overview.dart';
+import 'bloc/current_dishes/current_dishes.dart';
+import 'bloc/favorite_dishes/favorite_dishes.dart';
 import 'bloc/master/master_bloc.dart';
 
 void main() {
@@ -78,8 +78,8 @@ class App extends StatelessWidget {
 
             return MaterialPageRoute(
               builder: (context) => BlocProvider<AddCanteenBloc>(
-                create: (context) =>
-                    AddCanteenBloc(BlocProvider.of<MasterBloc>(args.masterBlocContext)),
+                create: (context) => AddCanteenBloc(
+                    BlocProvider.of<MasterBloc>(args.masterBlocContext)),
                 child: CheckableCanteenList(),
               ),
             );

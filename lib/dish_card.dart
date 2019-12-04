@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import './models/dish.dart';
-import './database.dart';
 import './generated/i18n.dart';
+import './models/dish.dart';
+import 'bloc/master/master.dart';
+import 'bloc/master/master_bloc.dart';
 
-class Dishcard extends StatefulWidget {
+class Dishcard extends StatelessWidget {
   final Dish dish;
   final BuildContext context;
   final _isFavorite;
@@ -14,17 +16,6 @@ class Dishcard extends StatefulWidget {
     this.context,
     this._isFavorite,
   );
-
-  @override
-  State<StatefulWidget> createState() {
-    return DishcardState(_isFavorite);
-  }
-}
-
-class DishcardState extends State<Dishcard> {
-  bool _isFavorite;
-
-  DishcardState(this._isFavorite);
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +34,7 @@ class DishcardState extends State<Dishcard> {
                 boxShadow: [
                   BoxShadow(
                     // Shadow of the DishCard
-                    color: widget.dish.theme.color[1],
+                    color: dish.theme.color[1],
                     blurRadius: 15.0, // default 20.0
                     spreadRadius: 1.5, // default 5.0
                     offset: Offset(10.0, 10.0),
@@ -54,10 +45,7 @@ class DishcardState extends State<Dishcard> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15.0),
                     gradient: LinearGradient(
-                      colors: [
-                        widget.dish.theme.color[0],
-                        widget.dish.theme.color[1]
-                      ],
+                      colors: [dish.theme.color[0], dish.theme.color[1]],
                       begin: FractionalOffset.topLeft,
                       end: FractionalOffset.bottomRight,
                       stops: [0.0, 1.0],
@@ -72,23 +60,13 @@ class DishcardState extends State<Dishcard> {
                             : Icon(Icons.favorite_border, color: Colors.white),
                         // TODO: If saved to favourites: Icon is favorite and not only border
                         onPressed: () {
-                          try {
-                            // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED ?? maybe changed
-                            if (_isFavorite) {
-                              DBProvider.db
-                                  .deleteFavDishByName(widget.dish.dishName);
-                              setState(() {
-                                _isFavorite = false;
-                              });
-                            } else {
-                              DBProvider.db.newFavDish(widget.dish);
-                              setState(() {
-                                _isFavorite = true;
-                              });
-                            }
-                          } catch (e) {
-                            print(
-                                'pressed favorite button and error occured: $e');
+                          // User already has favorites /// NOT FINISHED. TODO: ON INIT STATE, THE FAVORITES NEEDS TO BE INITIALIZED ?? maybe changed
+                          if (_isFavorite) {
+                            BlocProvider.of<MasterBloc>(context)
+                                .add(MDeleteFavoriteDishEvent(dish));
+                          } else {
+                            BlocProvider.of<MasterBloc>(context)
+                                .add(MAddFavoriteDishEvent(dish));
                           }
                         }),
                     Padding(
@@ -99,7 +77,7 @@ class DishcardState extends State<Dishcard> {
                           children: <Widget>[
                             Center(
                               child: Text(
-                                widget.dish.dishName,
+                                dish.dishName,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -111,13 +89,12 @@ class DishcardState extends State<Dishcard> {
                               padding: const EdgeInsets.all(8.0),
                               child: Divider(),
                             ),
-                            createRowPrices(
-                                widget.dish.priceGroup, widget.context),
+                            createRowPrices(dish.priceGroup, context),
                             // set prices list looks different
                             Padding(
                               padding:
                                   const EdgeInsets.only(top: 12.0, bottom: 5.0),
-                              child: Text(widget.dish.category,
+                              child: Text(dish.category,
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontStyle: FontStyle.italic)),
@@ -136,7 +113,7 @@ class DishcardState extends State<Dishcard> {
         child: Align(
           alignment: Alignment.topCenter,
           child: Image.asset(
-            'images/${widget.dish.theme.iconName}.png',
+            'images/${dish.theme.iconName}.png',
             width: 100,
             height: 80,
             fit: BoxFit.contain,

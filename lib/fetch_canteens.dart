@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 import 'models/canteen.dart';
-
 
 Future<List<Canteen>> fetchAllCanteens() async {
   List<Canteen> canteens = [];
@@ -13,8 +13,7 @@ Future<List<Canteen>> fetchAllCanteens() async {
   List decodedResponses = [];
 
   // inital api response, used to determine how many pages we need to get
-  var response = await http.get(
-      'http://openmensa.org/api/v2/canteens');
+  var response = await http.get('http://openmensa.org/api/v2/canteens');
 
   if (response.statusCode == 200) {
     print(
@@ -25,9 +24,8 @@ Future<List<Canteen>> fetchAllCanteens() async {
 
     // number of pages
     var pages = int.parse(response.headers["x-total-pages"]);
-    for(int i = 2; i<=pages; i++) {
-      response = await http.get(
-          'http://openmensa.org/api/v2/canteens?page=$i');
+    for (int i = 2; i <= pages; i++) {
+      response = await http.get('http://openmensa.org/api/v2/canteens?page=$i');
       decodedResponses.addAll(json.decode(response.body));
     }
 
@@ -41,4 +39,3 @@ Future<List<Canteen>> fetchAllCanteens() async {
         'Commander: We faild loading the Post from the server. Sorry for that.');
   }
 }
-

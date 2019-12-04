@@ -5,18 +5,7 @@ import './generated/i18n.dart';
 import 'bloc/add_canteen/add_canteen.dart';
 import 'models/canteen.dart';
 
-// creates a checkable list of all canteens
-class CheckableCanteenList extends StatefulWidget {
-  // Map which contains the selected location of the user.
-  //final Map<String, double> latlng;
-
-  CheckableCanteenList({Key key}) : super(key: key);
-
-  @override
-  CheckableCanteenListState createState() => CheckableCanteenListState();
-}
-
-class CheckableCanteenListState extends State<CheckableCanteenList> {
+class CheckableCanteenList extends StatelessWidget {
   //CheckableCanteenListState();
 
   @override
@@ -63,24 +52,14 @@ class CheckableCanteenListState extends State<CheckableCanteenList> {
   }
 }
 
-class ListWidget extends StatefulWidget {
-  final List<Canteen> items;
+class ListWidget extends StatelessWidget {
+  final List<Canteen> canteens;
 
-  // if items is null, it builds a list with all the canteens
-  ListWidget({this.items});
-
-  @override
-  State<StatefulWidget> createState() {
-    return ListWidgetState();
-  }
-}
-
-class ListWidgetState extends State<ListWidget> {
-  ListWidgetState();
+  const ListWidget({this.canteens});
 
   @override
   Widget build(BuildContext context) {
-    if (widget.items.isEmpty) {
+    if (canteens.isEmpty) {
       return Container(child: displayNoCanteenFoundMessage(context));
     }
     return Container(child:
@@ -89,21 +68,21 @@ class ListWidgetState extends State<ListWidget> {
         return Center(child: CircularProgressIndicator());
       } else if (state is LoadedCanteenOverview) {
         List<Canteen> selectedCanteens =
-            widget.items == null ? state.canteens : widget.items;
+            canteens == null ? state.canteens : canteens;
         return ListView.builder(
           padding: const EdgeInsets.all(16.0),
           itemBuilder: (BuildContext _context, int i) {
-            if (i.isOdd && i < widget.items.length * 2) {
+            if (i.isOdd && i < canteens.length * 2) {
               return const Divider();
             }
             final int index = i ~/ 2;
-            if (index < widget.items.length) {
+            if (index < canteens.length) {
               return CheckboxListTile(
-                title: Text(widget.items[index].name),
-                value: selectedCanteens.contains(widget.items[index]),
+                title: Text(canteens[index].name),
+                value: selectedCanteens.contains(canteens[index]),
                 onChanged: (bool value) {
                   BlocProvider.of<AddCanteenBloc>(context)
-                      .add(SelectCanteenEvent(widget.items[index], value));
+                      .add(SelectCanteenEvent(canteens[index], value));
                 },
               );
             }
@@ -181,7 +160,7 @@ class CanteenSearch extends SearchDelegate<Canteen> {
       return displayNoCanteenFoundMessage(context);
     }
     return ListWidget(
-      items: suggestion,
+      canteens: suggestion,
     );
   }
 
@@ -201,7 +180,7 @@ class CanteenSearch extends SearchDelegate<Canteen> {
   @override
   Widget buildResults(BuildContext context) {
     return ListWidget(
-      items: suggestion,
+      canteens: suggestion,
     );
   }
 }

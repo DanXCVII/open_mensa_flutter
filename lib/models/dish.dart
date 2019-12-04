@@ -1,32 +1,31 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 part './adapters/dish.g.dart';
 
 @HiveType()
-class Dish {
+class Dish extends Equatable {
   @HiveField(0)
-  String dishName;
+  final String dishName;
 
   @HiveField(1)
-  String category;
+  final String category;
 
   @HiveField(2)
-  Map<String, double> priceGroup;
+  final Map<String, double> priceGroup;
 
   @HiveField(3)
-  List<String> notes = [];
+  final List<String> notes;
 
-  MyThemeData theme;
+  final MyThemeData theme;
 
   Dish({
     this.dishName,
     this.category,
     this.priceGroup,
-    this.notes,
-  }) {
-    this.theme = getThemeFromName(this.dishName + this.category);
-  }
+    this.notes = const [],
+  }) : this.theme = getThemeFromName(dishName + category);
 
   factory Dish.fromMap(Map<String, dynamic> dishRaw) => new Dish(
         dishName: dishRaw['name'],
@@ -44,6 +43,15 @@ class Dish {
         },
         "notes": notes,
       };
+
+  @override
+  List<Object> get props => [
+        dishName,
+        category,
+        priceGroup,
+        notes,
+        theme,
+      ];
 
   @override
   String toString() => dishName;

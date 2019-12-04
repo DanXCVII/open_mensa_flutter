@@ -26,7 +26,7 @@ Map<DateTime, List<Dish>> _decodeJsonToDishes(List<dynamic> json) {
     fetchedDishes.addAll({date: []});
     for (int i = 0; i < json[day]['meals'].length; i++) {
       try {
-        fetchedDishes[date].add(Dish.fromMap(json[day]['meals'][i]));
+        fetchedDishes[date].add(Dish.fromMap(json[day]['meals'][i])..initTheme());
       } catch (e) {}
     }
   }

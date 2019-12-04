@@ -17,6 +17,8 @@ class Dish {
   @HiveField(3)
   List<String> notes = [];
 
+  MyThemeData theme;
+
   Dish({
     this.dishName,
     this.category,
@@ -40,6 +42,10 @@ class Dish {
         },
         "notes": notes,
       };
+
+  void initTheme(){
+    this.theme = getThemeFromName(this.dishName+this.category);
+  }
 
   @override
   String toString() => dishName;
@@ -70,7 +76,7 @@ List<String> initNotes(Map<String, dynamic> dishRaw) {
   return notes;
 }
 
-MyThemeData getIconName(String dishInfo) {
+MyThemeData getThemeFromName(String dishInfo) {
   String dISHiNFO = dishInfo.toUpperCase();
 
   MyThemeData theme = themeData['DEFAULT'];

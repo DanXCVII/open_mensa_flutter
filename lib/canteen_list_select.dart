@@ -6,9 +6,9 @@ import 'bloc/add_canteen/add_canteen.dart';
 import 'models/canteen.dart';
 
 class CheckableCanteenListBlocArgs {
-  final BuildContext context;
+  final BuildContext masterBlocContext;
 
-  CheckableCanteenListBlocArgs(this.context);
+  CheckableCanteenListBlocArgs(this.masterBlocContext);
 }
 
 class CheckableCanteenList extends StatelessWidget {

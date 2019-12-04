@@ -79,7 +79,7 @@ class App extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) => BlocProvider<AddCanteenBloc>(
                 create: (context) =>
-                    AddCanteenBloc(BlocProvider.of<MasterBloc>(args.context)),
+                    AddCanteenBloc(BlocProvider.of<MasterBloc>(args.masterBlocContext)),
                 child: CheckableCanteenList(),
               ),
             );

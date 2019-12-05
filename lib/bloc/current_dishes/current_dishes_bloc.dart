@@ -4,7 +4,6 @@ import 'package:open_mensa_flutter/bloc/master/master_bloc.dart';
 import 'package:open_mensa_flutter/bloc/master/master_state.dart';
 import 'package:open_mensa_flutter/data/hive.dart';
 import 'package:open_mensa_flutter/fetch_data.dart';
-import 'package:open_mensa_flutter/generated/i18n.dart';
 import 'package:open_mensa_flutter/models/canteen.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
 import './current_dishes.dart';

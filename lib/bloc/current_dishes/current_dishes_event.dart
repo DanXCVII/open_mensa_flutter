@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:open_mensa_flutter/models/canteen.dart';
-import 'package:open_mensa_flutter/models/dish.dart';
 
 abstract class CurrentDishesEvent extends Equatable {
   const CurrentDishesEvent();

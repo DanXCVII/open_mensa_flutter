@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_mensa_flutter/models/dish.dart';
 
 abstract class FavoriteDishEvent extends Equatable {
   const FavoriteDishEvent();

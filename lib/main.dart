@@ -15,7 +15,7 @@ import 'bloc/add_canteen/add_canteen.dart';
 import 'bloc/canteen_overview/canteen_overview.dart';
 import 'bloc/current_dishes/current_dishes.dart';
 import 'bloc/favorite_dishes/favorite_dishes.dart';
-import 'bloc/master/master_bloc.dart';
+import 'bloc/master/master.dart';
 
 void main() {
   // String languageCode = ui.window.locale.languageCode;

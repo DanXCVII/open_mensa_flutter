@@ -5,7 +5,6 @@ import 'package:open_mensa_flutter/bloc/favorite_dishes/favorite_dishes.dart';
 import './generated/i18n.dart';
 import './models/dish.dart';
 import 'bloc/master/master.dart';
-import 'bloc/master/master_bloc.dart';
 
 class Dishcard extends StatelessWidget {
   final Dish dish;

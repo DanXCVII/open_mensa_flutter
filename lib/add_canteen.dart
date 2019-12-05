@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import './generated/i18n.dart';
 import 'bloc/canteen_overview/canteen_overview.dart';
 import 'bloc/master/master.dart';
-import 'bloc/master/master_bloc.dart';
 
 class AddCanteen extends StatefulWidget {
   @override

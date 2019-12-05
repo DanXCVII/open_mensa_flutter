@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import './dish_card.dart';
 import './generated/i18n.dart';
-import 'bloc/favorite_dishes/favorite_dishes_bloc.dart';
-import 'bloc/favorite_dishes/favorite_dishes_state.dart';
+import 'bloc/favorite_dishes/favorite_dishes.dart';
 
 class FavouriteDishes extends StatefulWidget {
   @override

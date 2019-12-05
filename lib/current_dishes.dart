@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import './dish_card.dart';
-import 'bloc/current_dishes/current_dishes_bloc.dart';
-import 'bloc/current_dishes/current_dishes_event.dart';
-import 'bloc/current_dishes/current_dishes_state.dart';
+import 'bloc/current_dishes/current_dishes.dart';
 import 'generated/i18n.dart';
 import 'models/canteen.dart';
 

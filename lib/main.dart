@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './add_canteen.dart';
@@ -17,14 +18,31 @@ import 'bloc/current_dishes/current_dishes.dart';
 import 'bloc/favorite_dishes/favorite_dishes.dart';
 import 'bloc/master/master.dart';
 import 'data/hive.dart';
+import 'package:hive/hive.dart';
+
+import 'models/canteen.dart';
+import 'models/dish.dart';
 
 void main() {
   // String languageCode = ui.window.locale.languageCode;
+  Hive.registerAdapter(DishAdapter(), 1);
+  Hive.registerAdapter(CanteenAdapter(), 2);
   runApp(App());
 }
 
 class App extends StatelessWidget {
   final debugPaintSizeEnabled = false;
+  Future _openBoxes() async {
+    var dir = await getApplicationDocumentsDirectory();
+    Hive.init(dir.path);
+
+    return Future.wait([
+      Hive.openBox<Canteen>(BoxNames.selectedCanteensBox),
+      Hive.openBox<String>(BoxNames.selectedCanteenIndexBox),
+      Hive.openBox<Map<String, List<Dish>>>(BoxNames.currentDishesBox),
+      Hive.openBox<Dish>(BoxNames.favoriteDishesBox),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +74,7 @@ class App extends StatelessWidget {
           case "/":
             return MaterialPageRoute(
               builder: (context) => FutureBuilder(
-                  future: initHive(),
+                  future: _openBoxes(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       // if (snapshot.error != 0) {
@@ -67,23 +85,23 @@ class App extends StatelessWidget {
                       //     ),
                       //   );
                       // } else {
-                        return BlocProvider(
-                          create: (context) => MasterBloc(),
-                          child: MultiBlocProvider(providers: [
-                            BlocProvider(
-                                create: (context) => CurrentDishesBloc(
-                                    BlocProvider.of<MasterBloc>(context))
-                                  ..add(InitializeDataEvent())),
-                            BlocProvider(
-                                create: (context) => FavoriteDishesBloc(
-                                    BlocProvider.of<MasterBloc>(context))
-                                  ..add(FLoadFavoriteDishesEvent())),
-                            BlocProvider(
-                                create: (context) => CanteenOverviewBloc(
-                                    BlocProvider.of<MasterBloc>(context))
-                                  ..add(LoadCanteenOverviewEvent())),
-                          ], child: MyHomePage()),
-                        );
+                      return BlocProvider(
+                        create: (context) => MasterBloc(),
+                        child: MultiBlocProvider(providers: [
+                          BlocProvider(
+                              create: (context) => CurrentDishesBloc(
+                                  BlocProvider.of<MasterBloc>(context))
+                                ..add(InitializeDataEvent())),
+                          BlocProvider(
+                              create: (context) => FavoriteDishesBloc(
+                                  BlocProvider.of<MasterBloc>(context))
+                                ..add(FLoadFavoriteDishesEvent())),
+                          BlocProvider(
+                              create: (context) => CanteenOverviewBloc(
+                                  BlocProvider.of<MasterBloc>(context))
+                                ..add(LoadCanteenOverviewEvent())),
+                        ], child: MyHomePage()),
+                      );
                       //}
                     } else {
                       return Scaffold(
@@ -101,7 +119,8 @@ class App extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) => BlocProvider<AddCanteenBloc>(
                 create: (context) => AddCanteenBloc(
-                    BlocProvider.of<MasterBloc>(args.masterBlocContext)),
+                    BlocProvider.of<MasterBloc>(args.masterBlocContext))
+                  ..add(LoadCanteenOverview()),
                 child: CheckableCanteenList(),
               ),
             );

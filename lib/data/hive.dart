@@ -58,7 +58,7 @@ class HiveProvider {
 
   List<Canteen> getSelectedCanteens() {
     final List<Canteen> selectedCanteens =
-        selectedCanteensBox.keys.map((key) => selectedCanteensBox.get(key));
+        selectedCanteensBox.keys.map((key) => selectedCanteensBox.get(key)).toList();
 
     return selectedCanteens;
   }
@@ -133,15 +133,13 @@ class HiveProvider {
 }
 
 // must(!) be executed before calling the HiveProvider
-Future<void> initHive(bool firstTime) async {
-  if (firstTime) {
-    Hive.init((await getApplicationDocumentsDirectory()).path);
-    Hive.registerAdapter(DishAdapter(), 1);
-    Hive.registerAdapter(CanteenAdapter(), 2);
-  }
+Future initHive() async {
+  Hive.init((await getApplicationDocumentsDirectory()).path);
+  Hive.registerAdapter(DishAdapter(), 1);
+  Hive.registerAdapter(CanteenAdapter(), 2);
 
   await Hive.openBox<Canteen>(BoxNames.selectedCanteensBox);
-  Hive.openBox<String>(BoxNames.selectedCanteenIndexBox);
-  Hive.openBox<Map<String, List<Dish>>>(BoxNames.currentDishesBox);
-  Hive.openBox<Dish>(BoxNames.favoriteDishesBox);
+  await Hive.openBox<String>(BoxNames.selectedCanteenIndexBox);
+  await Hive.openBox<Map<String, List<Dish>>>(BoxNames.currentDishesBox);
+  return await Hive.openBox<Dish>(BoxNames.favoriteDishesBox);
 }

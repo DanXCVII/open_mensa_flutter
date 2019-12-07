@@ -16,6 +16,7 @@ import 'bloc/canteen_overview/canteen_overview.dart';
 import 'bloc/current_dishes/current_dishes.dart';
 import 'bloc/favorite_dishes/favorite_dishes.dart';
 import 'bloc/master/master.dart';
+import 'data/hive.dart';
 
 void main() {
   // String languageCode = ui.window.locale.languageCode;
@@ -54,23 +55,44 @@ class App extends StatelessWidget {
         switch (settings.name) {
           case "/":
             return MaterialPageRoute(
-              builder: (context) => BlocProvider(
-                create: (context) => MasterBloc(),
-                child: MultiBlocProvider(providers: [
-                  BlocProvider(
-                      create: (context) => CurrentDishesBloc(
-                          BlocProvider.of<MasterBloc>(context))
-                        ..add(InitializeDataEvent())),
-                  BlocProvider(
-                      create: (context) => FavoriteDishesBloc(
-                          BlocProvider.of<MasterBloc>(context))
-                        ..add(FLoadFavoriteDishesEvent())),
-                  BlocProvider(
-                      create: (context) => CanteenOverviewBloc(
-                          BlocProvider.of<MasterBloc>(context))
-                        ..add(LoadCanteenOverviewEvent())),
-                ], child: MyHomePage()),
-              ),
+              builder: (context) => FutureBuilder(
+                  future: initHive(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      // if (snapshot.error != 0) {
+                      //   print("Hive Error: $snapshot.error");
+                      //   return Scaffold(
+                      //     body: Center(
+                      //       child: Text("Hive error, check logs"),
+                      //     ),
+                      //   );
+                      // } else {
+                        return BlocProvider(
+                          create: (context) => MasterBloc(),
+                          child: MultiBlocProvider(providers: [
+                            BlocProvider(
+                                create: (context) => CurrentDishesBloc(
+                                    BlocProvider.of<MasterBloc>(context))
+                                  ..add(InitializeDataEvent())),
+                            BlocProvider(
+                                create: (context) => FavoriteDishesBloc(
+                                    BlocProvider.of<MasterBloc>(context))
+                                  ..add(FLoadFavoriteDishesEvent())),
+                            BlocProvider(
+                                create: (context) => CanteenOverviewBloc(
+                                    BlocProvider.of<MasterBloc>(context))
+                                  ..add(LoadCanteenOverviewEvent())),
+                          ], child: MyHomePage()),
+                        );
+                      //}
+                    } else {
+                      return Scaffold(
+                        body: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                  }),
             );
 
           case "/canteen_list":

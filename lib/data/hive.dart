@@ -72,8 +72,12 @@ class HiveProvider {
     return favoriteDishes;
   }
 
+  /// returns the first date of the cached data which the canteen holds. If
+  /// there is no data cached under this canteen, it returns null
   DateTime getDateOfLatestDish(Canteen canteen) {
-    return DateTime.parse(currentDishesBox.keys.first);
+    if (currentDishesBox.get(getHiveKey(canteen.name)) == null) return null;
+    return DateTime.parse(
+        currentDishesBox.get(getHiveKey(canteen.name)).keys.first);
   }
 
   Future<void> cacheDataOfCanteen(

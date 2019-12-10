@@ -25,6 +25,9 @@ class MasterBloc extends Bloc<MasterEvent, MasterState> {
   Stream<MasterState> _mapAddCanteenEventToState(
       MAddCanteenEvent event) async* {
     await HiveProvider().addSelectedCanteen(event.canteen);
+    if (HiveProvider().getCurrentCanteen() == null) {
+      await HiveProvider().setCurrentSelectedCanteen(event.canteen);
+    }
 
     yield MAddCanteenState(event.canteen);
   }

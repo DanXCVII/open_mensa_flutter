@@ -20,13 +20,20 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
   void initState() {
     super.initState();
     dayMap = {
-      1: S.of(context).monday,
-      2: S.of(context).tuesday,
-      3: S.of(context).wednesday,
-      4: S.of(context).thursday,
-      5: S.of(context).friday,
-      6: S.of(context).saturday,
-      7: S.of(context).sunday,
+      // 1: S.of(context).monday,
+      // 2: S.of(context).tuesday,
+      // 3: S.of(context).wednesday,
+      // 4: S.of(context).thursday,
+      // 5: S.of(context).friday,
+      // 6: S.of(context).saturday,
+      // 7: S.of(context).sunday,
+      1: 'Montag',
+      2: 'Dienstag',
+      3: 'Mittwoch',
+      4: 'Donnerstag',
+      5: 'Freitag',
+      6: 'Samstag',
+      7: 'Sonntag',
     };
   }
 
@@ -89,6 +96,10 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
                 child: Center(child: CircularProgressIndicator()),
               ),
             ),
+          );
+        } else if (state is NoDataToLoadState) {
+          return Center(
+            child: Text('You haven\'t selected any canteen yet'),
           );
         } else if (state is LoadedCurrentDishesState) {
           return DefaultTabController(

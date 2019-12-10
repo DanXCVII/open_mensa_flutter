@@ -85,18 +85,18 @@ class App extends StatelessWidget {
                       //     ),
                       //   );
                       // } else {
-                      return BlocProvider(
+                      return BlocProvider<MasterBloc>(
                         create: (context) => MasterBloc(),
                         child: MultiBlocProvider(providers: [
-                          BlocProvider(
+                          BlocProvider<CurrentDishesBloc>(
                               create: (context) => CurrentDishesBloc(
                                   BlocProvider.of<MasterBloc>(context))
                                 ..add(InitializeDataEvent())),
-                          BlocProvider(
+                          BlocProvider<FavoriteDishesBloc>(
                               create: (context) => FavoriteDishesBloc(
                                   BlocProvider.of<MasterBloc>(context))
                                 ..add(FLoadFavoriteDishesEvent())),
-                          BlocProvider(
+                          BlocProvider<CanteenOverviewBloc>(
                               create: (context) => CanteenOverviewBloc(
                                   BlocProvider.of<MasterBloc>(context))
                                 ..add(LoadCanteenOverviewEvent())),
@@ -122,6 +122,15 @@ class App extends StatelessWidget {
                     BlocProvider.of<MasterBloc>(args.masterBlocContext))
                   ..add(LoadCanteenOverview()),
                 child: CheckableCanteenList(),
+              ),
+            );
+
+          default:
+            return MaterialPageRoute(
+              builder: (context) => Container(
+                child: Center(
+                  child: Text("Default route"),
+                ),
               ),
             );
         }
@@ -195,9 +204,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: IndexedStack(
         index: _selectedDrawerIndex,
         children: <Widget>[
-          CurrentDishesScreen(),
-          FavouriteDishes(),
-          AddCanteen(),
+          CurrentDishesScreen(), Container(), Container()
+          // FavouriteDishes(),
+          // AddCanteen(),
         ],
       ),
       floatingActionButton: _selectedDrawerIndex == 2

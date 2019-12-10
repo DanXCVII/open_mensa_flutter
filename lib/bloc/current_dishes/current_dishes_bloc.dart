@@ -53,20 +53,22 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
           await getDishesOfCanteen(selectedCanteen);
       currentDishes = _getWeekDayMap(dishes);
     }
-
-    yield LoadedCurrentDishesState(currentDishes, canteens, selectedCanteen);
+    if (selectedCanteen == null) {
+      yield NoDataToLoadState();
+    } else {
+      yield LoadedCurrentDishesState(currentDishes, canteens, selectedCanteen);
+    }
   }
 
   Stream<CurrentDishesState> _mapAddCanteenEventToState(
       AddCanteenEvent event) async* {
     if (state is LoadedCurrentDishesState) {
       yield LoadedCurrentDishesState(
-        (state as LoadedCurrentDishesState).currentDishesList,
+        (state as LoadedCurrentDishesState).selectedCanteen == null
+            ? (state as LoadedCurrentDishesState).currentDishesList
+            : await getDishesOfCanteen(event.canteen),
         (state as LoadedCurrentDishesState).availableCanteenList
           ..add(event.canteen),
-
-        /// if we haven't selected any canteen, we set the newly added canteen
-        /// as currently selected one
         (state as LoadedCurrentDishesState).selectedCanteen == null
             ? event.canteen
             : (state as LoadedCurrentDishesState).selectedCanteen,

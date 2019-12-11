@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:hive/hive.dart';
 import 'package:open_mensa_flutter/models/canteen.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
-import 'package:path_provider/path_provider.dart';
 
 const currentSelectedCanteen = 'currentKey';
 
@@ -18,13 +17,13 @@ class HiveProvider {
   static final HiveProvider _singleton = HiveProvider._internal(
     Hive.box<Canteen>(BoxNames.selectedCanteensBox),
     Hive.box<String>(BoxNames.selectedCanteenIndexBox),
-    Hive.box<Map<String, List<Dish>>>(BoxNames.currentDishesBox),
+    Hive.box<Map>(BoxNames.currentDishesBox),
     Hive.box<Dish>(BoxNames.favoriteDishesBox),
   );
 
   Box<Canteen> selectedCanteensBox;
   Box<String> selectedCanteenIndexBox;
-  Box<Map<String, List<Dish>>> currentDishesBox;
+  Box<Map> currentDishesBox;
   Box<Dish> favoriteDishesBox;
 
   factory HiveProvider() {
@@ -39,8 +38,10 @@ class HiveProvider {
   );
 
   Map<DateTime, List<Dish>> getCachedDataOfCanteen(Canteen canteen) {
-    Map<String, List<Dish>> hiveData =
-        currentDishesBox.get(getHiveKey(canteen.name));
+    Map<String, List<Dish>> hiveData;
+    var tmpHiveData = currentDishesBox.get(getHiveKey(canteen.name));
+    hiveData =
+        tmpHiveData == null ? null : tmpHiveData.cast<String, List<Dish>>();
 
     Map<DateTime, List<Dish>> output = {};
 
@@ -75,20 +76,26 @@ class HiveProvider {
   /// returns the first date of the cached data which the canteen holds. If
   /// there is no data cached under this canteen, it returns null
   DateTime getDateOfLatestDish(Canteen canteen) {
-    if (currentDishesBox.get(getHiveKey(canteen.name)) == null) return null;
-    return DateTime.parse(
-        currentDishesBox.get(getHiveKey(canteen.name)).keys.first);
+    Map<String, List<Dish>> currentDishes;
+    var tmpHiveData = currentDishesBox.get(getHiveKey(canteen.name));
+    currentDishes =
+        tmpHiveData == null ? null : tmpHiveData.cast<String, List<Dish>>();
+
+    selectedCanteensBox.get('lol');
+    if (currentDishes == null || currentDishes.keys.isEmpty) return null;
+
+    return DateTime.parse(currentDishes.keys.first);
   }
 
   Future<void> cacheDataOfCanteen(
       Canteen canteen, Map<DateTime, List<Dish>> dishes) async {
-    Map<String, List<Dish>> hiveData = {};
+    Map<String, List<Dish>> cacheData = {};
 
     for (DateTime key in dishes.keys) {
-      hiveData.addAll({key.toIso8601String(): dishes[key]});
+      cacheData.addAll({key.toIso8601String(): dishes[key]});
     }
 
-    await currentDishesBox.put(getHiveKey(canteen.name), hiveData);
+    await currentDishesBox.put(getHiveKey(canteen.name), cacheData);
   }
 
   Future<void> setCurrentSelectedCanteen(Canteen canteen) async {

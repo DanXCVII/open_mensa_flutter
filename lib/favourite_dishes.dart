@@ -59,7 +59,11 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                           .toList()),
                 );
               } else {
-                return Text(state.toString());
+                return SliverList(
+                  delegate: SliverChildListDelegate(
+                    [Text(state.toString())],
+                  ),
+                );
               }
             },
           )

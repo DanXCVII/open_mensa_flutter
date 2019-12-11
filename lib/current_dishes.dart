@@ -103,7 +103,9 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
           );
         } else if (state is LoadedCurrentDishesState) {
           return DefaultTabController(
-            length: state.currentDishesList.keys.length,
+            length: state.currentDishesList.keys.length == 0
+                ? 1
+                : state.currentDishesList.keys.length,
             child: NestedScrollView(
               headerSliverBuilder:
                   (BuildContext context, bool innerBoxIsScrolled) {
@@ -146,28 +148,32 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
                       ),
                     ),
                   ),
-                  SliverPersistentHeader(
-                    delegate: _SliverAppBarDelegate(
-                      TabBar(
-                        isScrollable: true,
-                        tabs: state.currentDishesList.keys
-                            .toList()
-                            .map((day) => Tab(text: dayMap[day]))
-                            .toList(),
-                      ),
-                    ),
-                    pinned: false,
-                  ),
-                ];
+                  state.currentDishesList.keys.isEmpty
+                      ? null
+                      : SliverPersistentHeader(
+                          delegate: _SliverAppBarDelegate(
+                            TabBar(
+                              isScrollable: true,
+                              tabs: state.currentDishesList.keys
+                                  .toList()
+                                  .map((day) => Tab(text: dayMap[day]))
+                                  .toList(),
+                            ),
+                          ),
+                          pinned: false,
+                        ),
+                ]..removeWhere((item) => item == null);
               },
-              body: TabBarView(
-                children: state.currentDishesList.keys
-                    .map((key) => ListView(
-                        children: state.currentDishesList[key]
-                            .map((dish) => Dishcard(dish, context))
-                            .toList()))
-                    .toList(),
-              ),
+              body: state.currentDishesList.keys.isEmpty
+                  ? Container(child: Text('This canteen has no dishes :/'))
+                  : TabBarView(
+                      children: state.currentDishesList.keys
+                          .map((key) => ListView(
+                              children: state.currentDishesList[key]
+                                  .map((dish) => Dishcard(dish, context))
+                                  .toList()))
+                          .toList(),
+                    ),
             ),
           );
         } else {

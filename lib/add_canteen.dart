@@ -97,6 +97,8 @@ class _AddCanteenState extends State<AddCanteen> {
                 ),
               )
             ]);
+          } else {
+            return Text(state.toString());
           }
         },
       ),

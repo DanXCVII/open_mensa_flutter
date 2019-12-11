@@ -25,8 +25,8 @@ import 'models/dish.dart';
 
 void main() {
   // String languageCode = ui.window.locale.languageCode;
-  Hive.registerAdapter(DishAdapter(), 1);
-  Hive.registerAdapter(CanteenAdapter(), 2);
+  Hive.registerAdapter(DishAdapter(), 0);
+  Hive.registerAdapter(CanteenAdapter(), 1);
   runApp(App());
 }
 
@@ -39,7 +39,7 @@ class App extends StatelessWidget {
     return Future.wait([
       Hive.openBox<Canteen>(BoxNames.selectedCanteensBox),
       Hive.openBox<String>(BoxNames.selectedCanteenIndexBox),
-      Hive.openBox<Map<String, List<Dish>>>(BoxNames.currentDishesBox),
+      Hive.openBox<Map>(BoxNames.currentDishesBox),
       Hive.openBox<Dish>(BoxNames.favoriteDishesBox),
     ]);
   }
@@ -204,9 +204,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: IndexedStack(
         index: _selectedDrawerIndex,
         children: <Widget>[
-          CurrentDishesScreen(), Container(), Container()
-          // FavouriteDishes(),
-          // AddCanteen(),
+          CurrentDishesScreen(),
+          FavouriteDishes(),
+          AddCanteen(),
         ],
       ),
       floatingActionButton: _selectedDrawerIndex == 2
@@ -216,6 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.pushNamed(
                   context,
                   '/canteen_list',
+                  arguments: CheckableCanteenListBlocArgs(context),
                 );
               },
               child: Icon(Icons.add),

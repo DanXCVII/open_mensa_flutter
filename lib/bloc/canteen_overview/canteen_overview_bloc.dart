@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:open_mensa_flutter/bloc/master/master_bloc.dart';
-import 'package:open_mensa_flutter/bloc/master/master_state.dart';
+import 'package:open_mensa_flutter/bloc/master/master.dart';
 import 'package:open_mensa_flutter/data/hive.dart';
 import 'package:open_mensa_flutter/models/canteen.dart';
 import './canteen_overview.dart';

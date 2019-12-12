@@ -100,6 +100,9 @@ class HiveProvider {
 
   Future<void> setCurrentSelectedCanteen(Canteen canteen) async {
     await selectedCanteenIndexBox.put(
+      // this may seem like wrong order but isnt: 
+      // this box only contains one item at the index currentSelectedCanteen
+      // which stores the key of the canteen
         currentSelectedCanteen, getHiveKey(canteen.name));
   }
 

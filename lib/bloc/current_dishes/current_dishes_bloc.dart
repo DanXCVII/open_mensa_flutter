@@ -14,7 +14,7 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
 
   CurrentDishesBloc(this.masterBloc) {
     masterListener = masterBloc.listen((masterState) {
-      if (state is LoadedCurrentDishesState) {
+      if (state is LoadedCurrentDishesState || state is NoDataToLoadState) {
         if (masterState is MDeleteCanteenState) {
           add(DeleteCanteenEvent(masterState.canteen));
         } else if (masterState is MAddCanteenState) {
@@ -64,15 +64,14 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
       AddCanteenEvent event) async* {
     if (state is LoadedCurrentDishesState) {
       yield LoadedCurrentDishesState(
-        (state as LoadedCurrentDishesState).selectedCanteen == null
-            ? (state as LoadedCurrentDishesState).currentDishesList
-            : await getDishesOfCanteen(event.canteen),
-        (state as LoadedCurrentDishesState).availableCanteenList
+        (state as LoadedCurrentDishesState).currentDishesList,
+        List<Canteen>.from(
+            (state as LoadedCurrentDishesState).availableCanteenList)
           ..add(event.canteen),
-        (state as LoadedCurrentDishesState).selectedCanteen == null
-            ? event.canteen
-            : (state as LoadedCurrentDishesState).selectedCanteen,
+        (state as LoadedCurrentDishesState).selectedCanteen,
       );
+    } else if (state is NoDataToLoadState) {
+      add(InitializeDataEvent());
     }
   }
 
@@ -81,8 +80,8 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
     if (state is LoadedCurrentDishesState) {
       final Canteen previousSelectedCanteen =
           (state as LoadedCurrentDishesState).selectedCanteen;
-      final List<Canteen> newCanteenList = (state as LoadedCurrentDishesState)
-          .availableCanteenList
+      final List<Canteen> newCanteenList = List<Canteen>.from(
+          (state as LoadedCurrentDishesState).availableCanteenList)
         ..remove(event.canteen);
       Map<int, List<Dish>> currentDishes = {};
 
@@ -92,14 +91,14 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
         // .. check if the canteenlist without the deleted canteen is not empty
         if (newCanteenList.isNotEmpty) {
           /// and set the first canteen of the other canteens to the selected canteens
-          HiveProvider().setCurrentSelectedCanteen(newCanteenList.first);
+          await HiveProvider().setCurrentSelectedCanteen(newCanteenList.first);
           selectedCanteen = newCanteenList.first;
           Map<DateTime, List<Dish>> dishes =
-              await getDishesOfCanteen(selectedCanteen);
+              await getDishesOfCanteen(newCanteenList.first);
           currentDishes = _getWeekDayMap(dishes);
         } else {
-          // if we have no canteens anymore, set the selected canteen to null
-          HiveProvider().setCurrentSelectedCanteen(null);
+          // if we have no canteens anymore, delete the selected canteen
+          await HiveProvider().deleteCurrentSelectedCanteen();
           yield NoDataToLoadState();
           return;
         }
@@ -120,6 +119,9 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
   Stream<CurrentDishesState> _mapChangeSelectedCanteenEventToState(
       ChangeSelectedCanteenEvent event) async* {
     if (state is LoadedCurrentDishesState) {
+      List<Canteen> availabeCanteenList =
+          (state as LoadedCurrentDishesState).availableCanteenList;
+
       yield LoadingCurrentDishesForCanteenState(
         (state as LoadedCurrentDishesState).availableCanteenList,
         event.canteen,
@@ -133,7 +135,7 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
 
       yield LoadedCurrentDishesState(
         currentDishes,
-        (state as LoadedCurrentDishesState).availableCanteenList,
+        availabeCanteenList,
         event.canteen,
       );
     }
@@ -175,6 +177,7 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
 
   @override
   Future<void> close() async {
+    print('current dishes bloc closed');
     masterListener.cancel();
     super.close();
   }

@@ -47,7 +47,7 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
           return Center(child: CircularProgressIndicator());
         } else if (state is LoadingCurrentDishesForCanteenState) {
           return DefaultTabController(
-            length: 0,
+            length: 1,
             child: NestedScrollView(
               headerSliverBuilder:
                   (BuildContext context, bool innerBoxIsScrolled) {

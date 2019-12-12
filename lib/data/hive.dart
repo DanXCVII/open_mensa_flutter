@@ -103,6 +103,10 @@ class HiveProvider {
         currentSelectedCanteen, getHiveKey(canteen.name));
   }
 
+  Future<void> deleteCurrentSelectedCanteen() async {
+    await selectedCanteenIndexBox.delete(currentSelectedCanteen);
+  }
+
   Future<void> addSelectedCanteen(Canteen canteen) async {
     await selectedCanteensBox.put(getHiveKey(canteen.name), canteen);
   }

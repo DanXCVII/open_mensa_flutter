@@ -67,6 +67,7 @@ class CanteenOverviewBloc
 
   @override
   Future<void> close() async {
+    print('canteen overview bloc closed');
     masterListener.cancel();
     super.close();
   }

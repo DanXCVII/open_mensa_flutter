@@ -64,6 +64,7 @@ class FavoriteDishesBloc
 
   @override
   Future<void> close() async {
+    print('favorite dishes bloc closed');
     masterListener.cancel();
     super.close();
   }

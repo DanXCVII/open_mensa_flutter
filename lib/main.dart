@@ -229,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: Maybe not good practise to do async activity in the init state
     super.initState();
-    checkIfCanteenSelectedAlert(context);
+    // checkIfCanteenSelectedAlert(context);
   }
 
   /// checking if a canteen is selected and otherwise showing an alert.

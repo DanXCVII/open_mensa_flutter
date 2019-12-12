@@ -53,4 +53,10 @@ class MasterBloc extends Bloc<MasterEvent, MasterState> {
 
     yield MDeleteFavoriteDishState(event.dish);
   }
+
+  @override
+  Future<void> close() {
+    print('closed master bloc');
+    return super.close();
+  }
 }

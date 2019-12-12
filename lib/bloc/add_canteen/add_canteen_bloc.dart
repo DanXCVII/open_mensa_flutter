@@ -36,22 +36,30 @@ class AddCanteenBloc extends Bloc<AddCanteenEvent, AddCanteenState> {
     yield LoadedCanteenOverview(canteens, selectedCanteens);
   }
 
-  Stream<AddCanteenState> _mapSelectCanteenToState(SelectCanteenEvent event) async* {
+  Stream<AddCanteenState> _mapSelectCanteenToState(
+      SelectCanteenEvent event) async* {
     if (state is LoadedCanteenOverview) {
-      List<Canteen> selectedCanteens =
-          (state as LoadedCanteenOverview).selectedCanteens;
       if (event.selected) {
-        selectedCanteens.add(event.canteen);
+        final List<Canteen> selectedCanteens = List<Canteen>.from(
+            (state as LoadedCanteenOverview).selectedCanteens)
+          ..add(event.canteen);
         masterBloc.add(MAddCanteenEvent(event.canteen));
+
+        yield LoadedCanteenOverview(
+          (state as LoadedCanteenOverview).canteens,
+          selectedCanteens,
+        );
       } else {
         masterBloc.add(MDeleteCanteenEvent(event.canteen));
-        selectedCanteens.remove(event.canteen);
-      }
+        final List<Canteen> selectedCanteens = List<Canteen>.from(
+            (state as LoadedCanteenOverview).selectedCanteens)
+          ..remove(event.canteen);
 
-      yield LoadedCanteenOverview(
-        (state as LoadedCanteenOverview).canteens,
-        selectedCanteens,
-      );
+        yield LoadedCanteenOverview(
+          (state as LoadedCanteenOverview).canteens,
+          selectedCanteens,
+        );
+      }
     }
   }
 }

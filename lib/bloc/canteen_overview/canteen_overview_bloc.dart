@@ -49,18 +49,19 @@ class CanteenOverviewBloc
   Stream<CanteenOverviewState> _mapCOAddCanteenEventToState(
       COAddCanteenEvent event) async* {
     if (state is LoadedCanteenOverviewState) {
-      yield LoadedCanteenOverviewState(
-          (state as LoadedCanteenOverviewState).selectedCanteens
-            ..add(event.canteen));
+      final List<Canteen> selectedCanteens = List<Canteen>.from(
+          (state as LoadedCanteenOverviewState).selectedCanteens)
+        ..add(event.canteen);
+      yield LoadedCanteenOverviewState(selectedCanteens);
     }
   }
 
   Stream<CanteenOverviewState> _mapCODeleteCanteenEventToState(
       CODeleteCanteenEvent event) async* {
     if (state is LoadedCanteenOverviewState) {
-      yield LoadedCanteenOverviewState(
-          (state as LoadedCanteenOverviewState).selectedCanteens
-            ..remove(event.canteen));
+      yield LoadedCanteenOverviewState(List<Canteen>.from(
+          (state as LoadedCanteenOverviewState).selectedCanteens)
+        ..remove(event.canteen));
     }
   }
 

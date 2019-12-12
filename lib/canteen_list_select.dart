@@ -22,39 +22,36 @@ class CheckableCanteenList extends StatelessWidget {
       appBar: AppBar(
         title: Text(S.of(context).select_canteens),
         actions: <Widget>[
-          BlocBuilder(
-              bloc: BlocProvider.of<AddCanteenBloc>(context),
+          BlocBuilder<AddCanteenBloc, AddCanteenState>(
               condition: (oldState, newState) {
-                if (oldState is LoadedCanteenOverview &&
-                    newState is LoadedCanteenOverview) {
-                  return false;
-                }
-                return true;
-              },
-              builder: (context, state) {
-                if (state is LoadingCanteenOverview) {
-                  return Center(
-                    child: CircularProgressIndicator(),
+            if (oldState is LoadedCanteenOverview &&
+                newState is LoadedCanteenOverview) {
+              return false;
+            }
+            return true;
+          }, builder: (context, state) {
+            if (state is LoadingCanteenOverview) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is LoadedCanteenOverview) {
+              return IconButton(
+                icon: Icon(Icons.search),
+                tooltip: S.of(context).search,
+                onPressed: () {
+                  showSearch(
+                    context: context,
+                    delegate: CanteenSearch(
+                      items: state.canteens,
+                      addCanteenBloc: BlocProvider.of<AddCanteenBloc>(context),
+                    ),
                   );
-                } else if (state is LoadedCanteenOverview) {
-                  return IconButton(
-                    icon: Icon(Icons.search),
-                    tooltip: S.of(context).search,
-                    onPressed: () {
-                      showSearch(
-                        context: context,
-                        delegate: CanteenSearch(
-                          items: state.canteens,
-                          addCanteenBloc:
-                              BlocProvider.of<AddCanteenBloc>(context),
-                        ),
-                      );
-                    },
-                  );
-                } else {
-                  return Text(state.toString());
-                }
-              })
+                },
+              );
+            } else {
+              return Text(state.toString());
+            }
+          })
         ],
       ),
       body: ListWidget(
@@ -98,9 +95,8 @@ class ListWidget extends StatelessWidget {
                           value: state.selectedCanteens
                               .contains(selectedCanteens[index]),
                           onChanged: (bool value) {
-                            BlocProvider.of<AddCanteenBloc>(context).add(
-                                SelectCanteenEvent(
-                                    selectedCanteens[index], value));
+                            addCanteenBloc.add(SelectCanteenEvent(
+                                selectedCanteens[index], value));
                           },
                         );
                       }

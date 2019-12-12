@@ -234,9 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// checking if a canteen is selected and otherwise showing an alert.
   checkIfCanteenSelectedAlert(BuildContext homePageContext) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getStringList('selectedCanteens') == null ||
-        prefs.getStringList('selectedCanteens').isEmpty) {
+    if (HiveProvider().getSelectedCanteens().isEmpty) {
       showDialog(
         context: homePageContext,
         builder: (context) => AlertDialog(

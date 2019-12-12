@@ -18,7 +18,7 @@ class LoadedCanteenOverviewState extends CanteenOverviewState {
   LoadedCanteenOverviewState([this.selectedCanteens]);
 
   @override
-  List<Object> get props => [this.selectedCanteens];
+  List<Object> get props => [selectedCanteens];
 
   @override
   String toString() =>

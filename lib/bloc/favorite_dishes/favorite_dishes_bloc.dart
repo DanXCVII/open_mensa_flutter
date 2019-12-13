@@ -15,7 +15,7 @@ class FavoriteDishesBloc
       if (state is LoadedFavoriteDishes) {
         if (masterState is MAddFavoriteDishState) {
           add(FAddFavoriteDishEvent(masterState.dish));
-        } else if (masterState is MDeleteFavoriteDishEvent) {
+        } else if (masterState is MDeleteFavoriteDishState) {
           add(FDeleteFavoriteDishEvent(
               (masterState as MDeleteFavoriteDishEvent).dish));
         }
@@ -43,7 +43,8 @@ class FavoriteDishesBloc
       FAddFavoriteDishEvent event) async* {
     if (state is LoadedFavoriteDishes) {
       yield LoadedFavoriteDishes(
-          (state as LoadedFavoriteDishes).favoriteDishes..add(event.dish));
+          List<Dish>.from((state as LoadedFavoriteDishes).favoriteDishes)
+            ..add(event.dish));
     }
   }
 
@@ -51,7 +52,8 @@ class FavoriteDishesBloc
       FDeleteFavoriteDishEvent event) async* {
     if (state is LoadedFavoriteDishes) {
       yield LoadedFavoriteDishes(
-          (state as LoadedFavoriteDishes).favoriteDishes..remove(event.dish));
+          List<Dish>.from((state as LoadedFavoriteDishes).favoriteDishes)
+            ..remove(event.dish));
     }
   }
 

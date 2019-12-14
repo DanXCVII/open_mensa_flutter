@@ -147,9 +147,9 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
   Future<Map<DateTime, List<Dish>>> getDishesOfCanteen(Canteen canteen) async {
     DateTime latestDate = HiveProvider().getDateOfLatestDish(canteen);
     if (latestDate != null) {
-      if (latestDate.day == DateTime.now().day &&
-          latestDate.month == DateTime.now().month &&
-          latestDate.year == DateTime.now().year) {
+      if (latestDate.day >= DateTime.now().day &&
+          latestDate.month >= DateTime.now().month &&
+          latestDate.year >= DateTime.now().year) {
         return HiveProvider().getCachedDataOfCanteen(canteen);
       } else {
         HiveProvider().deleteCachedDataFromCanteen(canteen);

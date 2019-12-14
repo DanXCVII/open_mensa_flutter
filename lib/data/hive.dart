@@ -46,8 +46,10 @@ class HiveProvider {
     Map<DateTime, List<Dish>> output = {};
 
     for (String key in hiveData.keys) {
+      var dynamicList = hiveData[key];
+      List<Dish> dishList = dynamicList.cast<Dish>();
       output.addAll(
-          {DateTime.parse(key): hiveData[key]..map((dish) => dish).toList()});
+          {DateTime.parse(key): dishList..map((dish) => dish).toList()});
     }
     return output;
   }
@@ -100,10 +102,11 @@ class HiveProvider {
 
   Future<void> setCurrentSelectedCanteen(Canteen canteen) async {
     await selectedCanteenIndexBox.put(
-      // this may seem like wrong order but isnt: 
-      // this box only contains one item at the index currentSelectedCanteen
-      // which stores the key of the canteen
-        currentSelectedCanteen, getHiveKey(canteen.name));
+        // this may seem like wrong order but isnt:
+        // this box only contains one item at the index currentSelectedCanteen
+        // which stores the key of the canteen
+        currentSelectedCanteen,
+        getHiveKey(canteen.name));
   }
 
   Future<void> deleteCurrentSelectedCanteen() async {

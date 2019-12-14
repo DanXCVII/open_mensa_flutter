@@ -77,16 +77,14 @@ class HiveProvider {
 
   /// returns the first date of the cached data which the canteen holds. If
   /// there is no data cached under this canteen, it returns null
-  DateTime getDateOfLatestDish(Canteen canteen) {
+  List<DateTime> getDateRangeOfCache(Canteen canteen) {
     Map<String, List<Dish>> currentDishes;
     var tmpHiveData = currentDishesBox.get(getHiveKey(canteen.name));
     currentDishes =
         tmpHiveData == null ? null : tmpHiveData.cast<String, List<Dish>>();
 
-    selectedCanteensBox.get('lol');
     if (currentDishes == null || currentDishes.keys.isEmpty) return null;
-
-    return DateTime.parse(currentDishes.keys.first);
+    return [DateTime.parse(currentDishes.keys.first), DateTime.parse(currentDishes.keys.last)];
   }
 
   Future<void> cacheDataOfCanteen(

@@ -145,15 +145,31 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
   /// data is cached or not. If it is not cached, it caches the fetched data in hive.
   /// if cached data of the canteen in hive is outdated, it deletes it
   Future<Map<DateTime, List<Dish>>> getDishesOfCanteen(Canteen canteen) async {
-    DateTime latestDate = HiveProvider().getDateOfLatestDish(canteen);
-    if (latestDate != null) {
-      if (latestDate.day >= DateTime.now().day &&
-          latestDate.month >= DateTime.now().month &&
-          latestDate.year >= DateTime.now().year) {
+    List<DateTime> dateRange = HiveProvider().getDateRangeOfCache(canteen);
+    DateTime today = DateTime.now();
+    if (dateRange != null) {
+      // dont fetch data again if the latest entry is today
+      if (dateRange[0].day >= today.day &&
+          dateRange[0].month >= today.month &&
+          dateRange[0].year >= today.year) {
         return HiveProvider().getCachedDataOfCanteen(canteen);
       } else {
-        HiveProvider().deleteCachedDataFromCanteen(canteen);
+        // else fetch the data: data is thus refreshed once every day
         Map<DateTime, List<Dish>> currentDishes = await fetchMeals(canteen.id);
+        // no connection or other error: check if 'today' is included in the cash
+        // if today is not included, delete the old data from the db and return null
+        if (currentDishes == null &&
+            dateRange[1].day >= today.day &&
+            dateRange[1].month >= today.month &&
+            dateRange[1].year >= today.year) {
+          // if not remove the older entries
+          return HiveProvider().getCachedDataOfCanteen(canteen)
+            ..removeWhere((k, v) =>
+                k.day < today.day &&
+                k.month <= today.month &&
+                k.year <= today.year);
+        }
+        HiveProvider().deleteCachedDataFromCanteen(canteen);
         await HiveProvider().cacheDataOfCanteen(canteen, currentDishes);
         return currentDishes;
       }

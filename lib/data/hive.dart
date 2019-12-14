@@ -38,10 +38,9 @@ class HiveProvider {
   );
 
   Map<DateTime, List<Dish>> getCachedDataOfCanteen(Canteen canteen) {
-    Map<String, List<Dish>> hiveData;
+    Map<String, List> hiveData;
     var tmpHiveData = currentDishesBox.get(getHiveKey(canteen.name));
-    hiveData =
-        tmpHiveData == null ? null : tmpHiveData.cast<String, List<Dish>>();
+    hiveData = tmpHiveData == null ? null : tmpHiveData.cast<String, List>();
 
     Map<DateTime, List<Dish>> output = {};
 
@@ -84,7 +83,10 @@ class HiveProvider {
         tmpHiveData == null ? null : tmpHiveData.cast<String, List<Dish>>();
 
     if (currentDishes == null || currentDishes.keys.isEmpty) return null;
-    return [DateTime.parse(currentDishes.keys.first), DateTime.parse(currentDishes.keys.last)];
+    return [
+      DateTime.parse(currentDishes.keys.first),
+      DateTime.parse(currentDishes.keys.last)
+    ];
   }
 
   Future<void> cacheDataOfCanteen(

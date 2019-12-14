@@ -74,8 +74,9 @@ class HiveProvider {
     return favoriteDishes;
   }
 
-  /// returns the first date of the cached data which the canteen holds. If
-  /// there is no data cached under this canteen, it returns null
+  /// returns the first date of the cached data which the canteen holds on index 0.
+  /// And on index 1 the latest date of dishinfo in the cache. If
+  /// there is no data cached under this canteen, it returns null.
   List<DateTime> getDateRangeOfCache(Canteen canteen) {
     Map<String, List<Dish>> currentDishes;
     var tmpHiveData = currentDishesBox.get(getHiveKey(canteen.name));

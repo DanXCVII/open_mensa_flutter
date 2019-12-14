@@ -11,7 +11,21 @@ abstract class CurrentDishesState extends Equatable {
 
 class InitialCurrentDishesState extends CurrentDishesState {}
 
-class LoadingCurrentDishesState extends CurrentDishesState {}
+class NoInternetConnectionState extends CurrentDishesState {
+  final List<Canteen> availableCanteenList;
+  final Canteen selectedCanteen;
+
+  const NoInternetConnectionState(
+    this.availableCanteenList,
+    this.selectedCanteen,
+  );
+
+  @override
+  List<Object> get props => [
+        availableCanteenList,
+        selectedCanteen,
+      ];
+}
 
 class NoDataToLoadState extends CurrentDishesState {
   @override

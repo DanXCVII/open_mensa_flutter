@@ -51,6 +51,13 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
     if (selectedCanteen != null) {
       Map<DateTime, List<Dish>> dishes =
           await getDishesOfCanteen(selectedCanteen);
+      if (dishes == null) {
+        yield NoInternetConnectionState(
+          canteens,
+          selectedCanteen,
+        );
+        return;
+      }
       currentDishes = _getWeekDayMap(dishes);
     }
     if (selectedCanteen == null) {
@@ -95,6 +102,13 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
           selectedCanteen = newCanteenList.first;
           Map<DateTime, List<Dish>> dishes =
               await getDishesOfCanteen(newCanteenList.first);
+          if (dishes == null) {
+            yield NoInternetConnectionState(
+              newCanteenList,
+              event.canteen,
+            );
+            return;
+          }
           currentDishes = _getWeekDayMap(dishes);
         } else {
           // if we have no canteens anymore, delete the selected canteen
@@ -131,6 +145,13 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
 
       Map<DateTime, List<Dish>> dishes =
           await getDishesOfCanteen(event.canteen);
+      if (dishes == null) {
+        yield NoInternetConnectionState(
+          availabeCanteenList,
+          event.canteen,
+        );
+        return;
+      }
       Map<int, List<Dish>> currentDishes = _getWeekDayMap(dishes);
 
       yield LoadedCurrentDishesState(
@@ -170,11 +191,12 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
                 k.year <= today.year);
         }
         HiveProvider().deleteCachedDataFromCanteen(canteen);
+        if (currentDishes == null) return null;
         await HiveProvider().cacheDataOfCanteen(canteen, currentDishes);
-        return currentDishes;
       }
     } else {
       Map<DateTime, List<Dish>> currentDishes = await fetchMeals(canteen.id);
+      if (currentDishes == null) return null;
       await HiveProvider().cacheDataOfCanteen(canteen, currentDishes);
 
       return currentDishes;

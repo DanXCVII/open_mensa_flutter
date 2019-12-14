@@ -43,8 +43,7 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
       color: Color(0xff3F3B35),
       child: BlocBuilder<CurrentDishesBloc, CurrentDishesState>(
           builder: (context, state) {
-        if (state is LoadingCurrentDishesState ||
-            state is InitialCurrentDishesState) {
+        if (state is InitialCurrentDishesState) {
           return Center(child: CircularProgressIndicator());
         } else if (state is LoadingCurrentDishesForCanteenState) {
           return DefaultTabController(

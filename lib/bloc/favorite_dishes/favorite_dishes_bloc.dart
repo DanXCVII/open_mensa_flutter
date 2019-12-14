@@ -16,8 +16,7 @@ class FavoriteDishesBloc
         if (masterState is MAddFavoriteDishState) {
           add(FAddFavoriteDishEvent(masterState.dish));
         } else if (masterState is MDeleteFavoriteDishState) {
-          add(FDeleteFavoriteDishEvent(
-              (masterState as MDeleteFavoriteDishEvent).dish));
+          add(FDeleteFavoriteDishEvent(masterState.dish));
         }
       }
     });

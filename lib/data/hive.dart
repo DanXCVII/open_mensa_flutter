@@ -5,12 +5,15 @@ import 'package:open_mensa_flutter/models/canteen.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
 
 const currentSelectedCanteen = 'currentKey';
+const dislikedDishesKey = 'dislikedDishes';
+const likedDishesKey = 'likedDishes';
+const favoriteDishesKey = 'favoriteDishes';
 
 class BoxNames {
   static final selectedCanteensBox = "selectedCanteens";
   static final selectedCanteenIndexBox = "selectedCanteenIndex";
   static final currentDishesBox = "currentDishes";
-  static final favoriteDishesBox = "favoriteDishes";
+  static final ratedDishesBox = "ratedDishes";
 }
 
 class HiveProvider {
@@ -18,13 +21,13 @@ class HiveProvider {
     Hive.box<Canteen>(BoxNames.selectedCanteensBox),
     Hive.box<String>(BoxNames.selectedCanteenIndexBox),
     Hive.box<Map>(BoxNames.currentDishesBox),
-    Hive.box<Dish>(BoxNames.favoriteDishesBox),
+    Hive.box<List>(BoxNames.ratedDishesBox),
   );
 
   Box<Canteen> selectedCanteensBox;
   Box<String> selectedCanteenIndexBox;
   Box<Map> currentDishesBox;
-  Box<Dish> favoriteDishesBox;
+  Box<List> ratedDishesBox;
 
   factory HiveProvider() {
     return _singleton;
@@ -34,7 +37,7 @@ class HiveProvider {
     this.selectedCanteensBox,
     this.selectedCanteenIndexBox,
     this.currentDishesBox,
-    this.favoriteDishesBox,
+    this.ratedDishesBox,
   );
 
   Map<DateTime, List<Dish>> getCachedDataOfCanteen(Canteen canteen) {
@@ -66,10 +69,26 @@ class HiveProvider {
     return selectedCanteens;
   }
 
+  List<Dish> getDislikedDishes() {
+    var dislikedDishesHive = ratedDishesBox.get(dislikedDishesKey);
+    List<Dish> dislikedDishes =
+        dislikedDishesHive != null ? dislikedDishesHive.cast<Dish>() : [];
+
+    return dislikedDishes;
+  }
+
+  List<Dish> getLikedDishes() {
+    var hiveLikedDishes = ratedDishesBox.get(likedDishesKey);
+    List<Dish> likedDishes =
+        hiveLikedDishes != null ? hiveLikedDishes.cast<Dish>() : [];
+
+    return likedDishes;
+  }
+
   List<Dish> getFavoriteDishes() {
-    final List<Dish> favoriteDishes = favoriteDishesBox.keys
-        .map((key) => favoriteDishesBox.get(key))
-        .toList();
+    var hiveFavoriteDishes = ratedDishesBox.get(favoriteDishesKey);
+    List<Dish> favoriteDishes =
+        hiveFavoriteDishes != null ? hiveFavoriteDishes.cast<Dish>() : [];
 
     return favoriteDishes;
   }
@@ -118,19 +137,38 @@ class HiveProvider {
     await selectedCanteensBox.put(getHiveKey(canteen.name), canteen);
   }
 
-  Future<void> addFavoriteDish(Dish dish) async {
-    favoriteDishesBox.add(dish);
+  Future<void> changeRatedState(Dish dish, DishRated ratedState) async {
+    switch (ratedState) {
+      case DishRated.Disliked:
+        await ratedDishesBox.put(
+            dislikedDishesKey, getDislikedDishes()..add(dish));
+        return;
+      case DishRated.Liked:
+        await ratedDishesBox.put(likedDishesKey, getLikedDishes()..add(dish));
+        return;
+      case DishRated.Favorite:
+        await ratedDishesBox.put(
+            likedDishesKey, getFavoriteDishes()..add(dish));
+        return;
+      case DishRated.Undecided:
+        await removeRatedState(dish);
+        return;
+      default:
+    }
+  }
+
+  Future<void> removeRatedState(Dish dish) async {
+    for (var ratedTypeKey in ratedDishesBox.keys) {
+      if (ratedDishesBox.get(ratedTypeKey).contains(dish)) {
+        ratedDishesBox.put(
+            ratedTypeKey, ratedDishesBox.get(ratedTypeKey)..remove(dish));
+        return;
+      }
+    }
   }
 
   Future<void> deleteCachedDataFromCanteen(Canteen canteen) async {
     await currentDishesBox.delete(getHiveKey(canteen.name));
-  }
-
-  Future<void> deleteFavoriteDish(Dish dish) async {
-    for (var key in favoriteDishesBox.keys) {
-      if (favoriteDishesBox.get(key) == dish)
-        await favoriteDishesBox.delete(key);
-    }
   }
 
   Future<void> removeSelectedCanteen(Canteen canteen) async {

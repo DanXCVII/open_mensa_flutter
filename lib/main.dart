@@ -31,7 +31,7 @@ void main() {
 }
 
 class App extends StatelessWidget {
-  final debugPaintSizeEnabled = false;
+  final debugPaintSizeEnabled = true;
   Future _openBoxes() async {
     var dir = await getApplicationDocumentsDirectory();
     Hive.init(dir.path);
@@ -40,7 +40,7 @@ class App extends StatelessWidget {
       Hive.openBox<Canteen>(BoxNames.selectedCanteensBox),
       Hive.openBox<String>(BoxNames.selectedCanteenIndexBox),
       Hive.openBox<Map>(BoxNames.currentDishesBox),
-      Hive.openBox<Dish>(BoxNames.favoriteDishesBox),
+      Hive.openBox<List>(BoxNames.ratedDishesBox),
     ]);
   }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:open_mensa_flutter/bloc/favorite_dish/favorite_dish.dart';
 import 'package:open_mensa_flutter/bloc/master/master_bloc.dart';
 import 'package:open_mensa_flutter/bloc/master/master_state.dart';
 import 'package:open_mensa_flutter/data/hive.dart';
@@ -47,6 +48,7 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
     final List<Canteen> canteens = HiveProvider().getSelectedCanteens();
     final Canteen selectedCanteen = HiveProvider().getCurrentCanteen();
     Map<int, List<Dish>> currentDishes = {};
+    Map<int, List<FavoriteDishBloc>> favoriteDishBlocs = {};
 
     if (selectedCanteen != null) {
       Map<DateTime, List<Dish>> dishes =
@@ -59,11 +61,17 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
         return;
       }
       currentDishes = _getWeekDayMap(dishes);
+      favoriteDishBlocs = _getFavoriteDishBlocs(currentDishes);
     }
     if (selectedCanteen == null) {
       yield NoDataToLoadState();
     } else {
-      yield LoadedCurrentDishesState(currentDishes, canteens, selectedCanteen);
+      yield LoadedCurrentDishesState(
+        currentDishes,
+        favoriteDishBlocs,
+        canteens,
+        selectedCanteen,
+      );
     }
   }
 
@@ -72,6 +80,7 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
     if (state is LoadedCurrentDishesState) {
       yield LoadedCurrentDishesState(
         (state as LoadedCurrentDishesState).currentDishesList,
+        (state as LoadedCurrentDishesState).favoriteBlocs,
         List<Canteen>.from(
             (state as LoadedCurrentDishesState).availableCanteenList)
           ..add(event.canteen),
@@ -91,6 +100,7 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
           (state as LoadedCurrentDishesState).availableCanteenList)
         ..remove(event.canteen);
       Map<int, List<Dish>> currentDishes = {};
+      Map<int, List<FavoriteDishBloc>> favoriteDishBlocs = {};
 
       Canteen selectedCanteen;
       // if the selected canteen is equal to the deleted canteen ..
@@ -110,6 +120,7 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
             return;
           }
           currentDishes = _getWeekDayMap(dishes);
+          favoriteDishBlocs = _getFavoriteDishBlocs(currentDishes);
         } else {
           // if we have no canteens anymore, delete the selected canteen
           await HiveProvider().deleteCurrentSelectedCanteen();
@@ -120,10 +131,12 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
         // if the deleted canteen is not equal to the selected canteen
         selectedCanteen = previousSelectedCanteen;
         currentDishes = (state as LoadedCurrentDishesState).currentDishesList;
+        favoriteDishBlocs = (state as LoadedCurrentDishesState).favoriteBlocs;
       }
 
       yield LoadedCurrentDishesState(
         currentDishes,
+        favoriteDishBlocs,
         newCanteenList,
         selectedCanteen,
       );
@@ -153,9 +166,12 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
         return;
       }
       Map<int, List<Dish>> currentDishes = _getWeekDayMap(dishes);
+      Map<int, List<FavoriteDishBloc>> favoriteDishBlocs =
+          _getFavoriteDishBlocs(currentDishes);
 
       yield LoadedCurrentDishesState(
         currentDishes,
+        favoriteDishBlocs,
         availabeCanteenList,
         event.canteen,
       );
@@ -201,6 +217,22 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
 
       return currentDishes;
     }
+  }
+
+  Map<int, List<FavoriteDishBloc>> _getFavoriteDishBlocs(
+      Map<int, List<Dish>> currentDishes) {
+    Map<int, List<FavoriteDishBloc>> output = {};
+
+    for (int key in currentDishes.keys) {
+      output.addAll({key: []});
+
+      for (Dish dish in currentDishes[key]) {
+        output[key].add(
+            FavoriteDishBloc(masterBloc, dish)..add(InitializeDishEvent(dish)));
+      }
+    }
+
+    return output;
   }
 
   Map<int, List<Dish>> _getWeekDayMap(Map<DateTime, List<Dish>> currentDishes) {

@@ -4,6 +4,8 @@ import 'package:hive/hive.dart';
 
 part './adapters/dish.g.dart';
 
+enum DishRated { Disliked, Liked, Favorite, Undecided }
+
 @HiveType()
 class Dish extends Equatable {
   @HiveField(0)

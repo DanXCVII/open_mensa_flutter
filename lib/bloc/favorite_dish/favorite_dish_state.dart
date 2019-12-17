@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:open_mensa_flutter/dish_card.dart';
+import 'package:open_mensa_flutter/models/dish.dart';
 
 abstract class FavoriteDishState extends Equatable {
   const FavoriteDishState();
@@ -7,8 +9,13 @@ abstract class FavoriteDishState extends Equatable {
   List<Object> get props => [];
 }
 
-class InitialFavoriteDishState extends FavoriteDishState {}
+class LoadingRatedState extends FavoriteDishState {}
 
-class IsFavoriteDishState extends FavoriteDishState {}
+class LoadedRatedState extends FavoriteDishState {
+  final DishRated ratedState;
 
-class IsNotFavoriteDishState extends FavoriteDishState {}
+  const LoadedRatedState(this.ratedState);
+
+  @override
+  List<Object> get props => [ratedState];
+}

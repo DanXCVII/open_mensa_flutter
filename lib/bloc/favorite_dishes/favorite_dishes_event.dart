@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:open_mensa_flutter/dish_card.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
 
 abstract class FavoriteDishesEvent extends Equatable {
   const FavoriteDishesEvent();
 }
-
 
 class FLoadFavoriteDishesEvent extends FavoriteDishesEvent {
   @override
@@ -15,26 +15,18 @@ class FLoadFavoriteDishesEvent extends FavoriteDishesEvent {
   String toString() => "loading favorite dishes";
 }
 
-class FAddFavoriteDishEvent extends FavoriteDishesEvent {
+class FChangeRatedEvent extends FavoriteDishesEvent {
+  final DishRated ratedState;
   final Dish dish;
 
-  const FAddFavoriteDishEvent(this.dish);
+  const FChangeRatedEvent(
+    this.dish,
+    this.ratedState,
+  );
 
   @override
-  List<Object> get props => [dish];
-
-  @override
-  String toString() => "add $dish from favourites event";
-}
-
-class FDeleteFavoriteDishEvent extends FavoriteDishesEvent {
-  final Dish dish;
-
-  const FDeleteFavoriteDishEvent(this.dish);
-
-  @override
-  List<Object> get props => [dish];
-
-  @override
-  String toString() => "delete $dish from favourites event";
+  List<Object> get props => [
+        dish,
+        ratedState,
+      ];
 }

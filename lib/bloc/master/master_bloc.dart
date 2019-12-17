@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:open_mensa_flutter/data/hive.dart';
+import 'package:open_mensa_flutter/models/dish.dart';
+import '../../models/dish.dart';
+import '../../dish_card.dart';
 import './master.dart';
 
 class MasterBloc extends Bloc<MasterEvent, MasterState> {
@@ -15,10 +18,8 @@ class MasterBloc extends Bloc<MasterEvent, MasterState> {
       yield* _mapAddCanteenEventToState(event);
     } else if (event is MDeleteCanteenEvent) {
       yield* _mapDeleteCanteenEventToState(event);
-    } else if (event is MAddFavoriteDishEvent) {
-      yield* _mapAddFavouriteDishEventToState(event);
-    } else if (event is MDeleteFavoriteDishEvent) {
-      yield* _mapDeleteFavouriteDishEventToState(event);
+    } else if (event is MChangeRatedEvent) {
+      yield* _mapChangeRatedEventToState(event);
     }
   }
 
@@ -40,18 +41,14 @@ class MasterBloc extends Bloc<MasterEvent, MasterState> {
     yield MDeleteCanteenState(event.canteen);
   }
 
-  Stream<MasterState> _mapAddFavouriteDishEventToState(
-      MAddFavoriteDishEvent event) async* {
-    HiveProvider().addFavoriteDish(event.dish);
+  Stream<MasterState> _mapChangeRatedEventToState(
+      MChangeRatedEvent event) async* {
+    await HiveProvider().changeRatedState(event.dish, event.ratedState);
 
-    yield MAddFavoriteDishState(event.dish);
-  }
-
-  Stream<MasterState> _mapDeleteFavouriteDishEventToState(
-      MDeleteFavoriteDishEvent event) async* {
-    HiveProvider().deleteFavoriteDish(event.dish);
-
-    yield MDeleteFavoriteDishState(event.dish);
+    yield MChangeRatedState(
+      event.dish,
+      event.ratedState,
+    );
   }
 
   @override

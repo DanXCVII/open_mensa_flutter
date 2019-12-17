@@ -37,6 +37,7 @@ dependencies:
   hive_flutter: ^0.2.1
   build_runner: ^1.7.1
   hive_generator: ^0.5.2
+  groovin_material_icons: ^1.1.6
 
 flutter_icons:
   image_path: "icon/dish.png"

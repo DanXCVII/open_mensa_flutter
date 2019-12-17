@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:groovin_material_icons/groovin_material_icons.dart';
+import 'package:open_mensa_flutter/bloc/favorite_dish/favorite_dish.dart';
 import 'package:open_mensa_flutter/bloc/favorite_dishes/favorite_dishes.dart';
 
 import './generated/i18n.dart';
@@ -9,10 +11,12 @@ import 'bloc/master/master.dart';
 class Dishcard extends StatelessWidget {
   final Dish dish;
   final BuildContext context;
+  final FavoriteDishBloc favoriteDishBloc;
 
   Dishcard(
     this.dish,
     this.context,
+    this.favoriteDishBloc,
   );
 
   @override
@@ -50,33 +54,97 @@ class Dishcard extends StatelessWidget {
                     )),
                 width: width * 0.9,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    BlocBuilder<FavoriteDishesBloc, FavoriteDishesState>(
-                      builder: (context, state) {
-                        if (state is LoadingFavoriteDishesState) {
-                          return CircularProgressIndicator();
-                        } else if (state is LoadedFavoriteDishes) {
-                          // TODO: Maybe add another bloc for the heart because it needs to check with every rebuild
-                          bool _isFavorite =
-                              state.favoriteDishes.contains(dish);
-                          return IconButton(
-                              icon: _isFavorite
-                                  ? Icon(Icons.favorite, color: Colors.pink)
-                                  : Icon(Icons.favorite_border,
-                                      color: Colors.white),
-                              onPressed: () {
-                                if (_isFavorite) {
-                                  BlocProvider.of<MasterBloc>(context)
-                                      .add(MDeleteFavoriteDishEvent(dish));
-                                } else {
-                                  BlocProvider.of<MasterBloc>(context)
-                                      .add(MAddFavoriteDishEvent(dish));
-                                }
-                              });
-                        }
-                      },
-                    ),
+                    BlocBuilder<FavoriteDishBloc, FavoriteDishState>(
+                        bloc: favoriteDishBloc,
+                        builder: (context, state) {
+                          if (state is LoadingRatedState) {
+                            return Row(children: <Widget>[
+                              CircularProgressIndicator(),
+                              Spacer(),
+                              CircularProgressIndicator(),
+                            ]);
+                          } else if (state is LoadedRatedState) {
+                            Icon dislikedIcon;
+                            Icon likeIcon;
+                            // TODO: Maybe add another bloc for the heart because it needs to check with every rebuild
+                            switch (state.ratedState) {
+                              case DishRated.Disliked:
+                                dislikedIcon = Icon(
+                                  GroovinMaterialIcons.emoticon_poop,
+                                  color: Colors.brown,
+                                );
+                                likeIcon = Icon(
+                                  GroovinMaterialIcons.heart_outline,
+                                  color: Colors.white,
+                                );
+                                break;
+                              case DishRated.Liked:
+                                dislikedIcon = Icon(
+                                    GroovinMaterialIcons.emoticon_poop,
+                                    color: Colors.white);
+                                likeIcon = Icon(
+                                    GroovinMaterialIcons.heart_half_full,
+                                    color: Colors.pink);
+                                break;
+                              case DishRated.Favorite:
+                                dislikedIcon = Icon(
+                                    GroovinMaterialIcons.emoticon_poop,
+                                    color: Colors.white);
+                                likeIcon =
+                                    Icon(Icons.favorite, color: Colors.pink);
+                                break;
+                              case DishRated.Undecided:
+                                dislikedIcon = Icon(
+                                    GroovinMaterialIcons.emoticon_poop,
+                                    color: Colors.white);
+                                likeIcon = Icon(
+                                  Icons.favorite_border,
+                                  color: Colors.white,
+                                );
+                                break;
+                              default:
+                            }
+
+                            return Row(
+                              children: <Widget>[
+                                IconButton(
+                                    icon: dislikedIcon,
+                                    onPressed: () {
+                                      if (state.ratedState ==
+                                          DishRated.Disliked) {
+                                        BlocProvider.of<MasterBloc>(context)
+                                            .add(MChangeRatedEvent(
+                                                dish, DishRated.Undecided));
+                                      } else {
+                                        BlocProvider.of<MasterBloc>(context)
+                                            .add(MChangeRatedEvent(
+                                                dish, DishRated.Disliked));
+                                      }
+                                    }),
+                                Spacer(),
+                                IconButton(
+                                    icon: likeIcon,
+                                    onPressed: () {
+                                      if (state.ratedState == DishRated.Liked) {
+                                        BlocProvider.of<MasterBloc>(context)
+                                            .add(MChangeRatedEvent(
+                                                dish, DishRated.Favorite));
+                                      } else if (state.ratedState ==
+                                          DishRated.Favorite) {
+                                        BlocProvider.of<MasterBloc>(context)
+                                            .add(MChangeRatedEvent(
+                                                dish, DishRated.Undecided));
+                                      } else {
+                                        BlocProvider.of<MasterBloc>(context)
+                                            .add(MChangeRatedEvent(
+                                                dish, DishRated.Liked));
+                                      }
+                                    })
+                              ],
+                            );
+                          }
+                        }),
                     Padding(
                       padding: const EdgeInsets.only(left: 12.0, right: 12.0),
                       child: Column(

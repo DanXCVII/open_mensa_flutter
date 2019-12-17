@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import './dish_card.dart';
 import 'bloc/current_dishes/current_dishes.dart';
+import 'bloc/favorite_dish/favorite_dish_bloc.dart';
 import 'generated/i18n.dart';
 import 'models/canteen.dart';
 
@@ -46,56 +47,18 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
         if (state is InitialCurrentDishesState) {
           return Center(child: CircularProgressIndicator());
         } else if (state is LoadingCurrentDishesForCanteenState) {
-          return DefaultTabController(
-            length: 1,
-            child: NestedScrollView(
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  SliverAppBar(
-                    expandedHeight: 200.0,
-                    floating: false,
-                    pinned: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: true,
-                      title: Container(
-                        height: 20,
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<Canteen>(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                            value: state.selectedCanteen,
-                            onChanged: (Canteen newValue) {
-                              BlocProvider.of<CurrentDishesBloc>(context)
-                                  .add(ChangeSelectedCanteenEvent(newValue));
-                            },
-                            items: state.availableCanteenList
-                                .map(
-                                  (canteen) => DropdownMenuItem<Canteen>(
-                                    value: canteen,
-                                    child: Text(
-                                      canteen.name,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        ),
-                      ),
-                      background: Image.asset(
-                        "images/ingredientsRound.jpg",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ];
-              },
-              body: Container(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ),
+          return _getCurrentDishesScreenWithBody(
+            Container(child: Center(child: CircularProgressIndicator())),
+            state.availableCanteenList,
+            state.selectedCanteen,
+          );
+        } else if (state is NoInternetConnectionState) {
+          return _getCurrentDishesScreenWithBody(
+            Container(
+                child: Center(
+                    child: Text('you are not connected to the internet'))),
+            state.availableCanteenList,
+            state.selectedCanteen,
           );
         } else if (state is NoDataToLoadState) {
           return Center(
@@ -107,79 +70,140 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
                 ? 1
                 : state.currentDishesList.keys.length,
             child: NestedScrollView(
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  SliverAppBar(
-                    expandedHeight: 200.0,
-                    floating: false,
-                    pinned: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: true,
-                      title: Container(
-                        height: 20,
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<Canteen>(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                            value: state.selectedCanteen,
-                            onChanged: (Canteen newValue) {
-                              BlocProvider.of<CurrentDishesBloc>(context)
-                                  .add(ChangeSelectedCanteenEvent(newValue));
-                            },
-                            items: state.availableCanteenList
-                                .map(
-                                  (canteen) => DropdownMenuItem<Canteen>(
-                                    value: canteen,
-                                    child: Text(
-                                      canteen.name,
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  return <Widget>[
+                    SliverAppBar(
+                      expandedHeight: 200.0,
+                      floating: false,
+                      pinned: true,
+                      flexibleSpace: FlexibleSpaceBar(
+                        centerTitle: true,
+                        title: Container(
+                          height: 20,
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<Canteen>(
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ),
+                              value: state.selectedCanteen,
+                              onChanged: (Canteen newValue) {
+                                BlocProvider.of<CurrentDishesBloc>(context)
+                                    .add(ChangeSelectedCanteenEvent(newValue));
+                              },
+                              items: state.availableCanteenList
+                                  .map(
+                                    (canteen) => DropdownMenuItem<Canteen>(
+                                      value: canteen,
+                                      child: Text(
+                                        canteen.name,
+                                      ),
                                     ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        ),
-                      ),
-                      background: Image.asset(
-                        "images/ingredientsRound.jpg",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  state.currentDishesList.keys.isEmpty
-                      ? null
-                      : SliverPersistentHeader(
-                          delegate: _SliverAppBarDelegate(
-                            TabBar(
-                              isScrollable: true,
-                              tabs: state.currentDishesList.keys
-                                  .toList()
-                                  .map((day) => Tab(text: dayMap[day]))
+                                  )
                                   .toList(),
                             ),
                           ),
-                          pinned: false,
                         ),
-                ]..removeWhere((item) => item == null);
-              },
-              body: state.currentDishesList.keys.isEmpty
-                  ? Container(child: Text('This canteen has no dishes :/'))
-                  : TabBarView(
-                      children: state.currentDishesList.keys
-                          .map((key) => ListView(
-                              children: state.currentDishesList[key]
-                                  .map((dish) => Dishcard(dish, context))
-                                  .toList()))
-                          .toList(),
+                        background: Image.asset(
+                          "images/ingredientsRound.jpg",
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-            ),
+                    state.currentDishesList.keys.isEmpty
+                        ? null
+                        : SliverPersistentHeader(
+                            delegate: _SliverAppBarDelegate(
+                              TabBar(
+                                isScrollable: true,
+                                tabs: state.currentDishesList.keys
+                                    .toList()
+                                    .map((day) => Tab(text: dayMap[day]))
+                                    .toList(),
+                              ),
+                            ),
+                            pinned: false,
+                          ),
+                  ]..removeWhere((item) => item == null);
+                },
+                body: state.currentDishesList.keys.isEmpty
+                    ? Container(child: Text('This canteen has no dishes :/'))
+                    : TabBarView(
+                        children: state.currentDishesList.keys.map((key) {
+                          int i = -1;
+                          return ListView(
+                              children:
+                                  state.currentDishesList[key].map((dish) {
+                            i++;
+                            return BlocProvider<FavoriteDishBloc>(
+                              create: (context) => state.favoriteBlocs[key][i],
+                              child: Dishcard(
+                                dish,
+                                context,
+                                state.favoriteBlocs[key][i],
+                              ),
+                            );
+                          }).toList());
+                        }).toList(),
+                      )),
           );
         } else {
           return Text(state.toString());
         }
       }),
+    );
+  }
+
+  Widget _getCurrentDishesScreenWithBody(
+      Widget body, List<Canteen> canteens, Canteen selectedCanteen) {
+    return DefaultTabController(
+      length: 1,
+      child: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              expandedHeight: 200.0,
+              floating: false,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Container(
+                  height: 20,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<Canteen>(
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                      value: selectedCanteen,
+                      onChanged: (Canteen newValue) {
+                        BlocProvider.of<CurrentDishesBloc>(context)
+                            .add(ChangeSelectedCanteenEvent(newValue));
+                      },
+                      items: canteens
+                          .map(
+                            (canteen) => DropdownMenuItem<Canteen>(
+                              value: canteen,
+                              child: Text(
+                                canteen.name,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ),
+                background: Image.asset(
+                  "images/ingredientsRound.jpg",
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ];
+        },
+        body: body,
+      ),
     );
   }
 }

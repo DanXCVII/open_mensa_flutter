@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:open_mensa_flutter/dish_card.dart';
 import 'package:open_mensa_flutter/models/canteen.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
 
@@ -13,9 +14,6 @@ class MAddCanteenEvent extends MasterEvent {
 
   @override
   List<Object> get props => [canteen];
-
-  @override
-  String toString() => "add $canteen event";
 }
 
 class MDeleteCanteenEvent extends MasterEvent {
@@ -25,31 +23,20 @@ class MDeleteCanteenEvent extends MasterEvent {
 
   @override
   List<Object> get props => [canteen];
-
-  @override
-  String toString() => "delete $canteen event";
 }
 
-class MAddFavoriteDishEvent extends MasterEvent {
+class MChangeRatedEvent extends MasterEvent {
+  final DishRated ratedState;
   final Dish dish;
 
-  const MAddFavoriteDishEvent(this.dish);
+  const MChangeRatedEvent(
+    this.dish,
+    this.ratedState,
+  );
 
   @override
-  List<Object> get props => [dish];
-
-  @override
-  String toString() => "add $dish from favourites event";
-}
-
-class MDeleteFavoriteDishEvent extends MasterEvent {
-  final Dish dish;
-
-  const MDeleteFavoriteDishEvent(this.dish);
-
-  @override
-  List<Object> get props => [dish];
-
-  @override
-  String toString() => "delete $dish from favourites event";
+  List<Object> get props => [
+        dish,
+        ratedState,
+      ];
 }

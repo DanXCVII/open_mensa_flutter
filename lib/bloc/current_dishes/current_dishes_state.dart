@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:open_mensa_flutter/bloc/favorite_dish/favorite_dish.dart';
 import 'package:open_mensa_flutter/models/canteen.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
 
@@ -53,11 +54,13 @@ class LoadingCurrentDishesForCanteenState extends CurrentDishesState {
 
 class LoadedCurrentDishesState extends CurrentDishesState {
   final Map<int, List<Dish>> currentDishesList;
+  final Map<int, List<FavoriteDishBloc>> favoriteBlocs;
   final List<Canteen> availableCanteenList;
   final Canteen selectedCanteen;
 
   const LoadedCurrentDishesState(
     this.currentDishesList,
+    this.favoriteBlocs,
     this.availableCanteenList,
     this.selectedCanteen,
   );

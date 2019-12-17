@@ -60,6 +60,7 @@ class FavoriteDishBloc extends Bloc<FavoriteDishEvent, FavoriteDishState> {
   @override
   Future<void> close() async {
     masterListener.cancel();
+    print('favoriteBloc cancelled');
     super.close();
   }
 }

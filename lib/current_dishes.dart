@@ -133,17 +133,19 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
                         children: state.currentDishesList.keys
                             .map((key) => ListView(
                                 children: state.currentDishesList[key]
-                                    .map((dish) =>
-                                        BlocProvider<FavoriteDishBloc>(
-                                          create: (context) =>
-                                              state.favoriteBlocs[dish],
-                                          child: Dishcard(
-                                            dish,
-                                            context,
+                                    .map<Widget>(
+                                      (dish) => BlocProvider<FavoriteDishBloc>(
+                                        create: (context) =>
                                             state.favoriteBlocs[dish],
-                                          ),
-                                        ))
-                                    .toList()))
+                                        child: Dishcard(
+                                          dish,
+                                          context,
+                                          state.favoriteBlocs[dish],
+                                        ),
+                                      ),
+                                    )
+                                    .toList()
+                                      ..add(Container(height: 20))))
                             .toList(),
                       )),
           );

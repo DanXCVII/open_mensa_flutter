@@ -33,14 +33,14 @@ class AddCanteenBloc extends Bloc<AddCanteenEvent, AddCanteenState> {
 
     // if canteens is an empty list, nothing is cached yet
     // if so, attempt to load the canteens from the API
-    if (canteens.length == 0) {
-      canteens = await fetchAllCanteens();
-      if (canteens == null) {
-        yield  LoadedCanteenOverview([], selectedCanteens);
+    if (canteens.length == 0 || event.refresh) {
+      List<Canteen> canteensFromApi = await fetchAllCanteens();
+      if (canteensFromApi == null) {
+        yield LoadedCanteenOverview(canteens, selectedCanteens, event.refresh);
       } else {
-        await HiveProvider().changeAvailableCanteens(canteens);
+        await HiveProvider().changeAvailableCanteens(canteensFromApi);
       }
-    } else{
+    } else {
       print("used cached available canteens");
     }
     //List<Canteen> canteens = await fetchAllCanteens();

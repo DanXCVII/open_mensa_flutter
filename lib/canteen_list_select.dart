@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_mensa_flutter/bloc/canteen_overview/canteen_overview_event.dart';
 
 import './generated/i18n.dart';
 import 'bloc/add_canteen/add_canteen.dart';
@@ -25,7 +26,7 @@ class CheckableCanteenList extends StatelessWidget {
           BlocBuilder<AddCanteenBloc, AddCanteenState>(
               condition: (oldState, newState) {
             if (oldState is LoadedCanteenOverview &&
-                newState is LoadedCanteenOverview) {
+                newState is LoadedCanteenOverview || (newState is LoadedCanteenOverview ? newState.refreshed: false)) {
               return false;
             }
             return true;
@@ -84,25 +85,31 @@ class ListWidget extends StatelessWidget {
                 } else if (state is LoadedCanteenOverview) {
                   List<Canteen> selectedCanteens =
                       canteens == null ? state.canteens : canteens;
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(16.0),
-                    itemBuilder: (BuildContext _context, int i) {
-                      if (i.isOdd && i < selectedCanteens.length * 2) {
-                        return const Divider();
-                      }
-                      final int index = i ~/ 2;
-                      if (index < selectedCanteens.length) {
-                        return CheckboxListTile(
-                          title: Text(selectedCanteens[index].name),
-                          value: state.selectedCanteens
-                              .contains(selectedCanteens[index]),
-                          onChanged: (bool value) {
-                            addCanteenBloc.add(SelectCanteenEvent(
-                                selectedCanteens[index], value));
-                          },
-                        );
-                      }
-                      return null;
+                  return RefreshIndicator(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16.0),
+                      itemBuilder: (BuildContext _context, int i) {
+                        if (i.isOdd && i < selectedCanteens.length * 2) {
+                          return const Divider();
+                        }
+                        final int index = i ~/ 2;
+                        if (index < selectedCanteens.length) {
+                          return CheckboxListTile(
+                            title: Text(selectedCanteens[index].name),
+                            value: state.selectedCanteens
+                                .contains(selectedCanteens[index]),
+                            onChanged: (bool value) {
+                              addCanteenBloc.add(SelectCanteenEvent(
+                                  selectedCanteens[index], value));
+                            },
+                          );
+                        }
+                        return null;
+                      },
+                    ),
+                    onRefresh: () async {
+                      //TODO: Add notice if refresh couldnt be done, ie. no internet connection
+                      addCanteenBloc.add(LoadCanteenOverview(refresh: true));
                     },
                   );
                 } else {

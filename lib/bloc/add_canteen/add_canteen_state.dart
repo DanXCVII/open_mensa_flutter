@@ -15,8 +15,9 @@ class LoadingCanteenOverview extends AddCanteenState {}
 class LoadedCanteenOverview extends AddCanteenState {
   final List<Canteen> canteens;
   final List<Canteen> selectedCanteens;
+  final bool refreshed;
 
-  LoadedCanteenOverview([this.canteens, this.selectedCanteens]);
+  LoadedCanteenOverview([this.canteens, this.selectedCanteens, this.refreshed=false]);
 
   @override
   List<Object> get props => [canteens, selectedCanteens];

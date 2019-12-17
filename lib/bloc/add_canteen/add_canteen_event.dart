@@ -6,6 +6,17 @@ abstract class AddCanteenEvent extends Equatable {
 }
 
 class LoadCanteenOverview extends AddCanteenEvent {
+  final bool refresh;
+  const LoadCanteenOverview(
+    {this.refresh = false}
+  );
+
+  @override
+  List<Object> get props => [];
+}
+
+
+class RefreshAvailableCanteensEvent extends AddCanteenEvent {
   @override
   List<Object> get props => [];
 }

@@ -36,7 +36,7 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                 ),
                 SliverPersistentHeader(
                   delegate: _SliverAppBarDelegate(
-                    TabBar(isScrollable: true, tabs: [
+                    TabBar(isScrollable: false, tabs: [
                       Tab(text: 'Favorites'),
                       Tab(text: 'Liked'),
                       Tab(text: 'Shit'),

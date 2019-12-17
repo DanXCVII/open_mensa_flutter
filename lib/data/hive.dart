@@ -8,12 +8,14 @@ const currentSelectedCanteen = 'currentKey';
 const dislikedDishesKey = 'dislikedDishes';
 const likedDishesKey = 'likedDishes';
 const favoriteDishesKey = 'favoriteDishes';
+const availableCanteensKey = 'availableCanteens';
 
 class BoxNames {
   static final selectedCanteensBox = "selectedCanteens";
   static final selectedCanteenIndexBox = "selectedCanteenIndex";
   static final currentDishesBox = "currentDishes";
   static final ratedDishesBox = "ratedDishes";
+  static final availableCanteensBox = "availableCanteens";
 }
 
 class HiveProvider {
@@ -22,12 +24,14 @@ class HiveProvider {
     Hive.box<String>(BoxNames.selectedCanteenIndexBox),
     Hive.box<Map>(BoxNames.currentDishesBox),
     Hive.box<List>(BoxNames.ratedDishesBox),
+    Hive.box<List>(BoxNames.availableCanteensBox),
   );
 
   Box<Canteen> selectedCanteensBox;
   Box<String> selectedCanteenIndexBox;
   Box<Map> currentDishesBox;
   Box<List> ratedDishesBox;
+  Box<List> availableCanteensBox;
 
   factory HiveProvider() {
     return _singleton;
@@ -38,6 +42,7 @@ class HiveProvider {
     this.selectedCanteenIndexBox,
     this.currentDishesBox,
     this.ratedDishesBox,
+    this.availableCanteensBox,
   );
 
   Map<DateTime, List<Dish>> getCachedDataOfCanteen(Canteen canteen) {
@@ -67,6 +72,18 @@ class HiveProvider {
         .toList();
 
     return selectedCanteens;
+  }
+
+
+  // returns the currently cached list of available canteeens of the API
+  // if nothing is cached, it returns an empty list
+  List<Canteen> getAvailableCanteens() {
+    var availableCanteensHive = availableCanteensBox.get(availableCanteensKey);
+    List<Canteen> availableCanteens = availableCanteensHive != null
+        ? availableCanteensHive.cast<Canteen>()
+        : [];
+
+    return availableCanteens;
   }
 
   List<Dish> getDislikedDishes() {
@@ -135,6 +152,15 @@ class HiveProvider {
 
   Future<void> addSelectedCanteen(Canteen canteen) async {
     await selectedCanteensBox.put(getHiveKey(canteen.name), canteen);
+  }
+
+  // changes the cached list of available canteens.
+  // takes a list of the full data and puts it in the hive database
+  // since its not expected that the user wants to frequently update
+  // the list of available canteens, delta-updates arent performed.
+  Future<void> changeAvailableCanteens(List<Canteen> availableCanteens) async {
+    await availableCanteensBox.put(availableCanteensKey, availableCanteens);
+    return;
   }
 
   Future<void> changeRatedState(Dish dish, DishRated ratedState) async {

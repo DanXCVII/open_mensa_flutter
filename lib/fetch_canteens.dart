@@ -5,6 +5,9 @@ import 'package:http/http.dart' as http;
 
 import 'models/canteen.dart';
 
+
+// fetch the list of available canteens from the API
+// returns null if the API is not reachable!
 Future<List<Canteen>> fetchAllCanteens() async {
   List<Canteen> canteens = [];
 
@@ -13,29 +16,35 @@ Future<List<Canteen>> fetchAllCanteens() async {
   List decodedResponses = [];
 
   // inital api response, used to determine how many pages we need to get
-  var response = await http.get('http://openmensa.org/api/v2/canteens');
+  try {
+    var response = await http.get('http://openmensa.org/api/v2/canteens');
 
-  if (response.statusCode == 200) {
-    print(
-        'Commander: We established a connection to the openMensaAPI to fetch the canteens around you');
+    if (response.statusCode == 200) {
+      print(
+          'Commander: We established a connection to the openMensaAPI to fetch the canteens around you');
 
-    // add to list
-    decodedResponses.addAll(json.decode(response.body));
-
-    // number of pages
-    var pages = int.parse(response.headers["x-total-pages"]);
-    for (int i = 2; i <= pages; i++) {
-      response = await http.get('http://openmensa.org/api/v2/canteens?page=$i');
+      // add to list
       decodedResponses.addAll(json.decode(response.body));
+
+      // number of pages
+      var pages = int.parse(response.headers["x-total-pages"]);
+      for (int i = 2; i <= pages; i++) {
+        response =
+            await http.get('http://openmensa.org/api/v2/canteens?page=$i');
+        decodedResponses.addAll(json.decode(response.body));
+      }
+
+      decodedResponses.forEach((item) {
+        canteens.add(Canteen.fromJson(item));
+      });
+
+      return canteens;
+    } else {
+      throw Exception(
+          'Commander: We faild loading the Post from the server. Sorry for that.');
     }
-
-    decodedResponses.forEach((item) {
-      canteens.add(Canteen.fromJson(item));
-    });
-
-    return canteens;
-  } else {
-    throw Exception(
-        'Commander: We faild loading the Post from the server. Sorry for that.');
+  } catch (e) {
+    print("Loading list of canteens failed. No internet connection?");
+    return null;
   }
 }

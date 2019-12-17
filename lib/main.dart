@@ -41,6 +41,7 @@ class App extends StatelessWidget {
       Hive.openBox<String>(BoxNames.selectedCanteenIndexBox),
       Hive.openBox<Map>(BoxNames.currentDishesBox),
       Hive.openBox<List>(BoxNames.ratedDishesBox),
+      Hive.openBox<List>(BoxNames.availableCanteensBox),
     ]);
   }
 

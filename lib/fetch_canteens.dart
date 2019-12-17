@@ -45,6 +45,7 @@ Future<List<Canteen>> fetchAllCanteens() async {
     }
   } catch (e) {
     print("Loading list of canteens failed. No internet connection?");
+    print(e);
     return null;
   }
 }

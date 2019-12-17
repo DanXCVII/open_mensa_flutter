@@ -38,7 +38,8 @@ class AddCanteenBloc extends Bloc<AddCanteenEvent, AddCanteenState> {
       if (canteensFromApi == null) {
         yield LoadedCanteenOverview(canteens, selectedCanteens, event.refresh);
       } else {
-        await HiveProvider().changeAvailableCanteens(canteensFromApi);
+        canteens = canteensFromApi;
+        await HiveProvider().changeAvailableCanteens(canteens);
       }
     } else {
       print("used cached available canteens");

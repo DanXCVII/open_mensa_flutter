@@ -13,7 +13,7 @@ class AddCanteenBloc extends Bloc<AddCanteenEvent, AddCanteenState> {
   AddCanteenBloc(this.masterBloc);
 
   @override
-  AddCanteenState get initialState => InitialAddCanteenState();
+  AddCanteenState get initialState => LoadingCanteenOverview();
 
   @override
   Stream<AddCanteenState> mapEventToState(
@@ -28,10 +28,10 @@ class AddCanteenBloc extends Bloc<AddCanteenEvent, AddCanteenState> {
 
   Stream<AddCanteenState> _mapLoadCanteenOverviewToState(
       LoadCanteenOverview event) async* {
-    yield LoadingCanteenOverview();
-
     List<Canteen> canteens = await fetchAllCanteens();
     List<Canteen> selectedCanteens = HiveProvider().getSelectedCanteens();
+    print(
+        'fetched canteens: $canteens and selectedCanteens: $selectedCanteens');
 
     yield LoadedCanteenOverview(canteens, selectedCanteens);
   }

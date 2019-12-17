@@ -31,10 +31,12 @@ class CheckableCanteenList extends StatelessWidget {
             return true;
           }, builder: (context, state) {
             if (state is LoadingCanteenOverview) {
+              print('loadingCanteenOverview');
               return Center(
                 child: CircularProgressIndicator(),
               );
             } else if (state is LoadedCanteenOverview) {
+              print('loadedCanteenList');
               return IconButton(
                 icon: Icon(Icons.search),
                 tooltip: S.of(context).search,
@@ -74,7 +76,7 @@ class ListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (canteens == null || canteens.isNotEmpty) {
       return Container(
-          child: BlocBuilder(
+          child: BlocBuilder<AddCanteenBloc, AddCanteenState>(
               bloc: addCanteenBloc,
               builder: (context, state) {
                 if (state is LoadingCanteenOverview) {

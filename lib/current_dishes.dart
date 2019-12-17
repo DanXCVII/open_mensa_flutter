@@ -130,22 +130,21 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
                 body: state.currentDishesList.keys.isEmpty
                     ? Container(child: Text('This canteen has no dishes :/'))
                     : TabBarView(
-                        children: state.currentDishesList.keys.map((key) {
-                          int i = -1;
-                          return ListView(
-                              children:
-                                  state.currentDishesList[key].map((dish) {
-                            i++;
-                            return BlocProvider<FavoriteDishBloc>(
-                              create: (context) => state.favoriteBlocs[key][i],
-                              child: Dishcard(
-                                dish,
-                                context,
-                                state.favoriteBlocs[key][i],
-                              ),
-                            );
-                          }).toList());
-                        }).toList(),
+                        children: state.currentDishesList.keys
+                            .map((key) => ListView(
+                                children: state.currentDishesList[key]
+                                    .map((dish) =>
+                                        BlocProvider<FavoriteDishBloc>(
+                                          create: (context) =>
+                                              state.favoriteBlocs[dish],
+                                          child: Dishcard(
+                                            dish,
+                                            context,
+                                            state.favoriteBlocs[dish],
+                                          ),
+                                        ))
+                                    .toList()))
+                            .toList(),
                       )),
           );
         } else {

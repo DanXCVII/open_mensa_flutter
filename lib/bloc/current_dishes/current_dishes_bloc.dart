@@ -48,7 +48,7 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
     final List<Canteen> canteens = HiveProvider().getSelectedCanteens();
     final Canteen selectedCanteen = HiveProvider().getCurrentCanteen();
     Map<int, List<Dish>> currentDishes = {};
-    Map<int, List<FavoriteDishBloc>> favoriteDishBlocs = {};
+    Map<Dish, FavoriteDishBloc> favoriteDishBlocs = {};
 
     if (selectedCanteen != null) {
       Map<DateTime, List<Dish>> dishes =
@@ -100,7 +100,7 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
           (state as LoadedCurrentDishesState).availableCanteenList)
         ..remove(event.canteen);
       Map<int, List<Dish>> currentDishes = {};
-      Map<int, List<FavoriteDishBloc>> favoriteDishBlocs = {};
+      Map<Dish, FavoriteDishBloc> favoriteDishBlocs = {};
 
       Canteen selectedCanteen;
       // if the selected canteen is equal to the deleted canteen ..
@@ -166,7 +166,7 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
         return;
       }
       Map<int, List<Dish>> currentDishes = _getWeekDayMap(dishes);
-      Map<int, List<FavoriteDishBloc>> favoriteDishBlocs =
+      Map<Dish, FavoriteDishBloc> favoriteDishBlocs =
           _getFavoriteDishBlocs(currentDishes);
 
       yield LoadedCurrentDishesState(
@@ -219,16 +219,16 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
     }
   }
 
-  Map<int, List<FavoriteDishBloc>> _getFavoriteDishBlocs(
+  Map<Dish, FavoriteDishBloc> _getFavoriteDishBlocs(
       Map<int, List<Dish>> currentDishes) {
-    Map<int, List<FavoriteDishBloc>> output = {};
+    Map<Dish, FavoriteDishBloc> output = {};
 
     for (int key in currentDishes.keys) {
-      output.addAll({key: []});
-
       for (Dish dish in currentDishes[key]) {
-        output[key].add(
-            FavoriteDishBloc(masterBloc, dish)..add(InitializeDishEvent(dish)));
+        output.addAll({
+          dish: FavoriteDishBloc(masterBloc, dish)
+            ..add(InitializeDishEvent(dish))
+        });
       }
     }
 

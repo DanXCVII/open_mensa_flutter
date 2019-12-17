@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:open_mensa_flutter/bloc/favorite_dish/favorite_dish_bloc.dart';
-import 'package:open_mensa_flutter/bloc/favorite_dish/favorite_dish_event.dart';
 import 'package:open_mensa_flutter/bloc/master/master.dart';
 import 'package:open_mensa_flutter/data/hive.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
@@ -47,7 +45,6 @@ class FavoriteDishesBloc
         (state as LoadedFavoriteDishes).dislikedDishes,
         (state as LoadedFavoriteDishes).likedDishes,
         favoriteDishes,
-        (state as LoadedFavoriteDishes).favoriteDishBlocs,
       );
     }
   }
@@ -58,29 +55,10 @@ class FavoriteDishesBloc
     final List<Dish> likedDishes = HiveProvider().getLikedDishes();
     final List<Dish> dislikedDishes = HiveProvider().getDislikedDishes();
 
-    Map<Dish, FavoriteDishBloc> dishBlocs = {};
-
-    for (Dish dish in favoriteDishes) {
-      dishBlocs.addAll({
-        dish: FavoriteDishBloc(masterBloc, dish)..add(InitializeDishEvent(dish))
-      });
-    }
-    for (Dish dish in likedDishes) {
-      dishBlocs.addAll({
-        dish: FavoriteDishBloc(masterBloc, dish)..add(InitializeDishEvent(dish))
-      });
-    }
-    for (Dish dish in dislikedDishes) {
-      dishBlocs.addAll({
-        dish: FavoriteDishBloc(masterBloc, dish)..add(InitializeDishEvent(dish))
-      });
-    }
-
     yield LoadedFavoriteDishes(
       dislikedDishes,
       likedDishes,
       favoriteDishes,
-      dishBlocs,
     );
   }
 
@@ -111,20 +89,10 @@ class FavoriteDishesBloc
           break;
       }
 
-      Map<Dish, FavoriteDishBloc> favBlocs =
-          (state as LoadedFavoriteDishes).favoriteDishBlocs;
-      if (!favBlocs.containsKey(event.dish)) {
-        favBlocs.addAll({
-          event.dish: FavoriteDishBloc(masterBloc, event.dish)
-            ..add(InitializeDishEvent(event.dish))
-        });
-      }
-
       yield LoadedFavoriteDishes(
         dislikedDishes,
         likedDishes,
         favoriteDishes,
-        (state as LoadedFavoriteDishes).favoriteDishBlocs,
       );
     }
   }

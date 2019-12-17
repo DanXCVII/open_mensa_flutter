@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import './dish_card.dart';
 import 'bloc/current_dishes/current_dishes.dart';
-import 'bloc/favorite_dish/favorite_dish_bloc.dart';
 import 'generated/i18n.dart';
 import 'models/canteen.dart';
 
@@ -134,14 +133,9 @@ class CurrentDishesScreenState extends State<CurrentDishesScreen> {
                             .map((key) => ListView(
                                 children: state.currentDishesList[key]
                                     .map<Widget>(
-                                      (dish) => BlocProvider<FavoriteDishBloc>(
-                                        create: (context) =>
-                                            state.favoriteBlocs[dish],
-                                        child: Dishcard(
-                                          dish,
-                                          context,
-                                          state.favoriteBlocs[dish],
-                                        ),
+                                      (dish) => Dishcard(
+                                        dish,
+                                        context,
                                       ),
                                     )
                                     .toList()

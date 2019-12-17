@@ -72,7 +72,6 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                                 return Dishcard(
                                   dish,
                                   context,
-                                  state.favoriteDishBlocs[dish],
                                 );
                               }).toList()),
                         ListView(
@@ -81,7 +80,6 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                           return Dishcard(
                             dish,
                             context,
-                            state.favoriteDishBlocs[dish],
                           );
                         }).toList()),
                         ListView(
@@ -90,7 +88,6 @@ class FavouriteDishesState extends State<FavouriteDishes> {
                           return Dishcard(
                             dish,
                             context,
-                            state.favoriteDishBlocs[dish],
                           );
                         }).toList()),
                       ]);

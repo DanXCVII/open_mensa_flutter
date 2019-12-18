@@ -46,15 +46,14 @@ class HiveProvider {
   );
 
   Map<DateTime, List<Dish>> getCachedDataOfCanteen(Canteen canteen) {
-    Map<String, List> hiveData;
-    var tmpHiveData = currentDishesBox.get(getHiveKey(canteen.name));
-    hiveData = tmpHiveData == null ? null : tmpHiveData.cast<String, List>();
+    Map<String, List> hiveData =
+        currentDishesBox.get(getHiveKey(canteen.name))?.cast<String, List>() ??
+            {};
 
     Map<DateTime, List<Dish>> output = {};
 
     for (String key in hiveData.keys) {
-      var dynamicList = hiveData[key];
-      List<Dish> dishList = dynamicList.cast<Dish>();
+      List<Dish> dishList = hiveData[key]?.cast<Dish>() ?? [];
       output.addAll(
           {DateTime.parse(key): dishList..map((dish) => dish).toList()});
     }
@@ -74,52 +73,35 @@ class HiveProvider {
     return selectedCanteens;
   }
 
-
   // returns the currently cached list of available canteeens of the API
   // if nothing is cached, it returns an empty list
   List<Canteen> getAvailableCanteens() {
-    var availableCanteensHive = availableCanteensBox.get(availableCanteensKey);
-    List<Canteen> availableCanteens = availableCanteensHive != null
-        ? availableCanteensHive.cast<Canteen>()
-        : [];
-
-    return availableCanteens;
+    return availableCanteensBox.get(availableCanteensKey)?.cast<Canteen>() ??
+        [];
   }
 
   List<Dish> getDislikedDishes() {
-    var dislikedDishesHive = ratedDishesBox.get(dislikedDishesKey);
-    List<Dish> dislikedDishes =
-        dislikedDishesHive != null ? dislikedDishesHive.cast<Dish>() : [];
-
-    return dislikedDishes;
+    return ratedDishesBox.get(dislikedDishesKey).cast<Dish>() ?? [];
   }
 
   List<Dish> getLikedDishes() {
-    var hiveLikedDishes = ratedDishesBox.get(likedDishesKey);
-    List<Dish> likedDishes =
-        hiveLikedDishes != null ? hiveLikedDishes.cast<Dish>() : [];
-
-    return likedDishes;
+    return ratedDishesBox.get(likedDishesKey)?.cast<Dish>() ?? [];
   }
 
   List<Dish> getFavoriteDishes() {
-    var hiveFavoriteDishes = ratedDishesBox.get(favoriteDishesKey);
-    List<Dish> favoriteDishes =
-        hiveFavoriteDishes != null ? hiveFavoriteDishes.cast<Dish>() : [];
-
-    return favoriteDishes;
+    return ratedDishesBox.get(favoriteDishesKey)?.cast<Dish>() ?? [];
   }
 
   /// returns the first date of the cached data which the canteen holds on index 0.
   /// And on index 1 the latest date of dishinfo in the cache. If
   /// there is no data cached under this canteen, it returns null.
   List<DateTime> getDateRangeOfCache(Canteen canteen) {
-    Map<String, List<Dish>> currentDishes;
-    var tmpHiveData = currentDishesBox.get(getHiveKey(canteen.name));
-    currentDishes =
-        tmpHiveData == null ? null : tmpHiveData.cast<String, List<Dish>>();
+    Map<String, List<Dish>> currentDishes = currentDishesBox
+            .get(getHiveKey(canteen.name))
+            ?.cast<String, List<Dish>>() ??
+        {};
 
-    if (currentDishes == null || currentDishes.keys.isEmpty) return null;
+    if (currentDishes.keys.isEmpty) return null;
     return [
       DateTime.parse(currentDishes.keys.first),
       DateTime.parse(currentDishes.keys.last)

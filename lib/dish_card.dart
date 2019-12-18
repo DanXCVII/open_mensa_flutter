@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
+import 'package:open_mensa_flutter/bloc/favorite_dishes/favorite_dishes_state.dart';
 import 'package:open_mensa_flutter/data/hive.dart';
 
 import './generated/i18n.dart';
 import './models/dish.dart';
+import 'bloc/favorite_dishes/favorite_dishes_bloc.dart';
 import 'bloc/master/master.dart';
 
 class Dishcard extends StatelessWidget {
@@ -123,107 +125,110 @@ class RatedIcons extends StatefulWidget {
 class _RatedIconsState extends State<RatedIcons> {
   DishRated ratedState;
 
-  @override
-  void initState() {
-    super.initState();
-    if (HiveProvider().getDislikedDishes().contains(widget.dish)) {
-      ratedState = DishRated.Disliked;
-    } else if (HiveProvider().getLikedDishes().contains(widget.dish)) {
-      ratedState = DishRated.Liked;
-    } else if (HiveProvider().getFavoriteDishes().contains(widget.dish)) {
-      ratedState = DishRated.Favorite;
-    } else {
-      ratedState = DishRated.Undecided;
-    }
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   if (HiveProvider().getDislikedDishes().contains(widget.dish)) {
+  //     ratedState = DishRated.Disliked;
+  //   } else if (HiveProvider().getLikedDishes().contains(widget.dish)) {
+  //     ratedState = DishRated.Liked;
+  //   } else if (HiveProvider().getFavoriteDishes().contains(widget.dish)) {
+  //     ratedState = DishRated.Favorite;
+  //   } else {
+  //     ratedState = DishRated.Undecided;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        IconButton(
-            icon: ratedState == DishRated.Disliked
-                ? Icon(
-                    GroovinMaterialIcons.emoticon_poop,
-                    color: Colors.brown,
-                  )
-                : Icon(
-                    GroovinMaterialIcons.emoticon_poop,
-                    color: Colors.white,
-                  ),
-            onPressed: () {
-              if (ratedState == DishRated.Disliked) {
-                BlocProvider.of<MasterBloc>(context)
-                    .add(MChangeRatedEvent(widget.dish, DishRated.Undecided));
-                HiveProvider()
-                    .changeRatedState(widget.dish, DishRated.Undecided)
-                    .then((_) {
+    return BlocListener<FavoriteDishesBloc, FavoriteDishesState>(
+      listener: (context, state) => {
+        if (state is LoadedFavoriteDishes)
+          {
+            setState(() {
+              if (state.dislikedDishes.contains(widget.dish)) {
+                ratedState = DishRated.Disliked;
+              } else if (state.likedDishes.contains(widget.dish)) {
+                ratedState = DishRated.Liked;
+              } else if (state.favoriteDishes.contains(widget.dish)) {
+                ratedState = DishRated.Favorite;
+              } else {
+                ratedState = DishRated.Undecided;
+              }
+            })
+          }
+      },
+      child: Row(
+        children: <Widget>[
+          IconButton(
+              icon: ratedState == DishRated.Disliked
+                  ? Icon(
+                      GroovinMaterialIcons.emoticon_poop,
+                      color: Colors.brown,
+                    )
+                  : Icon(
+                      GroovinMaterialIcons.emoticon_poop,
+                      color: Colors.white,
+                    ),
+              onPressed: () {
+                if (ratedState == DishRated.Disliked) {
+                  BlocProvider.of<MasterBloc>(context)
+                      .add(MChangeRatedEvent(widget.dish, DishRated.Undecided));
+
                   setState(() {
                     ratedState = DishRated.Undecided;
                   });
-                });
-              } else {
-                BlocProvider.of<MasterBloc>(context)
-                    .add(MChangeRatedEvent(widget.dish, DishRated.Disliked));
-                HiveProvider()
-                    .changeRatedState(widget.dish, DishRated.Disliked)
-                    .then((_) {
+                } else {
+                  BlocProvider.of<MasterBloc>(context)
+                      .add(MChangeRatedEvent(widget.dish, DishRated.Disliked));
+
                   setState(() {
                     ratedState = DishRated.Disliked;
                   });
-                });
-              }
-            }),
-        Spacer(),
-        IconButton(
-            icon: ratedState == DishRated.Liked
-                ? Icon(
-                    GroovinMaterialIcons.heart_half_full,
-                    color: Colors.pink,
-                  )
-                : ratedState == DishRated.Favorite
-                    ? Icon(
-                        Icons.favorite,
-                        color: Colors.pink,
-                      )
-                    : Icon(
-                        Icons.favorite_border,
-                        color: Colors.white,
-                      ),
-            onPressed: () {
-              if (ratedState == DishRated.Liked) {
-                BlocProvider.of<MasterBloc>(context)
-                    .add(MChangeRatedEvent(widget.dish, DishRated.Favorite));
-                HiveProvider()
-                    .changeRatedState(widget.dish, DishRated.Favorite)
-                    .then((_) {
+                }
+              }),
+          Spacer(),
+          IconButton(
+              icon: ratedState == DishRated.Liked
+                  ? Icon(
+                      GroovinMaterialIcons.heart_half_full,
+                      color: Colors.pink,
+                    )
+                  : ratedState == DishRated.Favorite
+                      ? Icon(
+                          Icons.favorite,
+                          color: Colors.pink,
+                        )
+                      : Icon(
+                          Icons.favorite_border,
+                          color: Colors.white,
+                        ),
+              onPressed: () {
+                if (ratedState == DishRated.Liked) {
+                  BlocProvider.of<MasterBloc>(context)
+                      .add(MChangeRatedEvent(widget.dish, DishRated.Favorite));
+
                   setState(() {
                     ratedState = DishRated.Favorite;
                   });
-                });
-              } else if (ratedState == DishRated.Favorite) {
-                BlocProvider.of<MasterBloc>(context)
-                    .add(MChangeRatedEvent(widget.dish, DishRated.Undecided));
-                HiveProvider()
-                    .changeRatedState(widget.dish, DishRated.Undecided)
-                    .then((_) {
+                } else if (ratedState == DishRated.Favorite) {
+                  BlocProvider.of<MasterBloc>(context)
+                      .add(MChangeRatedEvent(widget.dish, DishRated.Undecided));
+
                   setState(() {
                     ratedState = DishRated.Undecided;
                   });
-                });
-              } else {
-                BlocProvider.of<MasterBloc>(context)
-                    .add(MChangeRatedEvent(widget.dish, DishRated.Liked));
-                HiveProvider()
-                    .changeRatedState(widget.dish, DishRated.Liked)
-                    .then((_) {
+                } else {
+                  BlocProvider.of<MasterBloc>(context)
+                      .add(MChangeRatedEvent(widget.dish, DishRated.Liked));
+
                   setState(() {
                     ratedState = DishRated.Liked;
                   });
-                });
-              }
-            })
-      ],
+                }
+              })
+        ],
+      ),
     );
   }
 }

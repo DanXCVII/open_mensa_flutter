@@ -47,104 +47,88 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _openBoxes(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            // if (snapshot.error != 0) {
-            //   print("Hive Error: $snapshot.error");
-            //   return Scaffold(
-            //     body: Center(
-            //       child: Text("Hive error, check logs"),
-            //     ),
-            //   );
-            // } else {
-            return BlocProvider<MasterBloc>(
-              create: (context) => MasterBloc(),
-              child: MultiBlocProvider(
-                providers: [
-                  BlocProvider<CurrentDishesBloc>(
-                      create: (context) => CurrentDishesBloc(
-                          BlocProvider.of<MasterBloc>(context))
-                        ..add(InitializeDataEvent())),
-                  BlocProvider<FavoriteDishesBloc>(
-                      create: (context) => FavoriteDishesBloc(
-                          BlocProvider.of<MasterBloc>(context))
-                        ..add(FLoadFavoriteDishesEvent())),
-                  BlocProvider<CanteenOverviewBloc>(
-                      create: (context) => CanteenOverviewBloc(
-                          BlocProvider.of<MasterBloc>(context))
-                        ..add(LoadCanteenOverviewEvent())),
-                ],
-                child: MaterialApp(
-                  showPerformanceOverlay: false,
-                  title: 'First Route',
-                  localizationsDelegates: [
-                    S.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                  ],
-                  supportedLocales: S.delegate.supportedLocales,
+    return MaterialApp(
+      showPerformanceOverlay: false,
+      title: 'First Route',
+      localizationsDelegates: [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
 
-                  /// TODO: Change the themeColor?
-                  theme: ThemeData(
-                    primaryColor: Colors.orange[900],
-                    canvasColor: Color(0xff3F3B35),
-                    brightness: Brightness.dark,
-                    primaryTextTheme:
-                        TextTheme(body2: TextStyle(color: Colors.white)),
-                    tabBarTheme: TabBarTheme(
-                      labelColor: Colors.white,
-                    ),
-                    cardColor: Color(0xff312F2A),
-                    accentColor: Colors.red,
-                  ),
-                  initialRoute: '/',
-                  onGenerateRoute: (settings) {
-                    switch (settings.name) {
-                      case "/":
-                        return MaterialPageRoute(
-                            builder: (context) => MyHomePage());
+      /// TODO: Change the themeColor?
+      theme: ThemeData(
+        primaryColor: Colors.orange[900],
+        canvasColor: Color(0xff3F3B35),
+        brightness: Brightness.dark,
+        primaryTextTheme: TextTheme(body2: TextStyle(color: Colors.white)),
+        tabBarTheme: TabBarTheme(
+          labelColor: Colors.white,
+        ),
+        cardColor: Color(0xff312F2A),
+        accentColor: Colors.red,
+      ),
+      initialRoute: '/',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case "/":
+            return MaterialPageRoute(
+              builder: (context) => FutureBuilder(
+                  future: _openBoxes(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return BlocProvider<MasterBloc>(
+                        create: (context) => MasterBloc(),
+                        child: MultiBlocProvider(providers: [
+                          BlocProvider<CurrentDishesBloc>(
+                              create: (context) => CurrentDishesBloc(
+                                  BlocProvider.of<MasterBloc>(context))
+                                ..add(InitializeDataEvent())),
+                          BlocProvider<FavoriteDishesBloc>(
+                              create: (context) => FavoriteDishesBloc(
+                                  BlocProvider.of<MasterBloc>(context))
+                                ..add(FLoadFavoriteDishesEvent())),
+                          BlocProvider<CanteenOverviewBloc>(
+                              create: (context) => CanteenOverviewBloc(
+                                  BlocProvider.of<MasterBloc>(context))
+                                ..add(LoadCanteenOverviewEvent())),
+                        ], child: MyHomePage()),
+                      );
                       //}
-
-                      case "/canteen_list":
-                        final CheckableCanteenListBlocArgs args =
-                            settings.arguments;
-
-                        return MaterialPageRoute(
-                          builder: (context) => BlocProvider<AddCanteenBloc>(
-                            create: (context) => AddCanteenBloc(
-                                BlocProvider.of<MasterBloc>(
-                                    args.masterBlocContext))
-                              ..add(LoadCanteenOverview()),
-                            child: CheckableCanteenList(),
-                          ),
-                        );
-
-                      default:
-                        return MaterialPageRoute(
-                          builder: (context) => Container(
-                            child: Center(
-                              child: Text("Default route"),
-                            ),
-                          ),
-                        );
+                    } else {
+                      return Scaffold(
+                        body: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
                     }
-                  },
+                  }),
+            );
+
+          case "/canteen_list":
+            final CheckableCanteenListBlocArgs args = settings.arguments;
+
+            return MaterialPageRoute(
+              builder: (context) => BlocProvider<AddCanteenBloc>(
+                create: (context) => AddCanteenBloc(
+                    BlocProvider.of<MasterBloc>(args.masterBlocContext))
+                  ..add(LoadCanteenOverview()),
+                child: CheckableCanteenList(),
+              ),
+            );
+
+          default:
+            return MaterialPageRoute(
+              builder: (context) => Container(
+                child: Center(
+                  child: Text("Default route"),
                 ),
               ),
             );
-          } else {
-            return MaterialApp(
-                home: Scaffold(
-                    body: Container(
-              color: Color(0xff3F3B35),
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )));
-          }
-        });
+        }
+      },
+    );
   }
 }
 

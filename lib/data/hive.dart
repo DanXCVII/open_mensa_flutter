@@ -81,7 +81,7 @@ class HiveProvider {
   }
 
   List<Dish> getDislikedDishes() {
-    return ratedDishesBox.get(dislikedDishesKey).cast<Dish>() ?? [];
+    return ratedDishesBox.get(dislikedDishesKey)?.cast<Dish>() ?? [];
   }
 
   List<Dish> getLikedDishes() {

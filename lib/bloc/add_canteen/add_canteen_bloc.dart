@@ -45,8 +45,6 @@ class AddCanteenBloc extends Bloc<AddCanteenEvent, AddCanteenState> {
       print("used cached available canteens");
     }
     //List<Canteen> canteens = await fetchAllCanteens();
-    print(
-        'fetched canteens: $canteens.first to $canteens.last and selectedCanteens: $selectedCanteens');
 
     yield LoadedCanteenOverview(canteens, selectedCanteens);
   }

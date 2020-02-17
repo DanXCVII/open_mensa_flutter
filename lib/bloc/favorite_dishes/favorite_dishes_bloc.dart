@@ -3,7 +3,6 @@ import 'package:bloc/bloc.dart';
 import 'package:open_mensa_flutter/bloc/master/master.dart';
 import 'package:open_mensa_flutter/data/hive.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
-import '../../dish_card.dart';
 import './favorite_dishes.dart';
 
 class FavoriteDishesBloc

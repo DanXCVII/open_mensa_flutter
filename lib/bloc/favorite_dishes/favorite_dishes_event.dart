@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_mensa_flutter/dish_card.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
 
 abstract class FavoriteDishesEvent extends Equatable {

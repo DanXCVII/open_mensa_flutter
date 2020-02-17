@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:open_mensa_flutter/data/hive.dart';
-import 'package:open_mensa_flutter/models/dish.dart';
-import '../../models/dish.dart';
-import '../../dish_card.dart';
 import './master.dart';
 
 class MasterBloc extends Bloc<MasterEvent, MasterState> {

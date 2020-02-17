@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_mensa_flutter/bloc/canteen_overview/canteen_overview_event.dart';
 
 import './generated/i18n.dart';
 import 'bloc/add_canteen/add_canteen.dart';

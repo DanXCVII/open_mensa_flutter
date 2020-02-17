@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:open_mensa_flutter/bloc/favorite_dishes/favorite_dishes_state.dart';
-import 'package:open_mensa_flutter/data/hive.dart';
 
 import './generated/i18n.dart';
 import './models/dish.dart';

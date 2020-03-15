@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:open_mensa_flutter/bloc/current_dishes/current_dishes.dart';
 import 'package:open_mensa_flutter/models/canteen.dart';
 import 'package:open_mensa_flutter/models/dish.dart';
 
@@ -10,6 +11,8 @@ abstract class CurrentDishesState extends Equatable {
 }
 
 class InitialCurrentDishesState extends CurrentDishesState {}
+
+class FailedLoadingState extends CurrentDishesState {}
 
 class NoInternetConnectionState extends CurrentDishesState {
   final List<Canteen> availableCanteenList;

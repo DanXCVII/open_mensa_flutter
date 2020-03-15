@@ -181,6 +181,9 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
       } else {
         // else fetch the data: data is thus refreshed once every day
         Map<DateTime, List<Dish>> currentDishes = await fetchMeals(canteen.id);
+        //if (currentDishes.keys.first == DateTime(0)){
+
+        //}
         // no connection or other error: check if 'today' is included in the cash
         // if today is not included, delete the old data from the db and return null
         if (currentDishes == null &&
@@ -197,6 +200,7 @@ class CurrentDishesBloc extends Bloc<CurrentDishesEvent, CurrentDishesState> {
         HiveProvider().deleteCachedDataFromCanteen(canteen);
         if (currentDishes == null) return null;
         await HiveProvider().cacheDataOfCanteen(canteen, currentDishes);
+        return currentDishes;
       }
     } else {
       Map<DateTime, List<Dish>> currentDishes = await fetchMeals(canteen.id);

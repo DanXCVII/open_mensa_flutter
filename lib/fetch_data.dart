@@ -21,7 +21,8 @@ Future<Map<DateTime, List<Dish>>> fetchMeals(String id) async {
     }
   } catch (e) {
     print("Loading meals of canteen $id failed");
-    return null;
+    print(e);
+    return {DateTime(0): []};
   }
 }
 
